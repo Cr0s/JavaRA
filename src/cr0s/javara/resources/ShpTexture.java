@@ -64,7 +64,7 @@ public class ShpTexture {
 		ByteBuffer bb = shp.getImage(index);
 		ImageBuffer imgbuf = new ImageBuffer(shp.width(), shp.height());
 		for (int y = 0; y < shp.height(); y++) {
-			for (int x = 0; x < shp.height(); x++) {
+			for (int x = 0; x < shp.width(); x++) {
 				int colorValue = bb.get() & 0xFF;
 				
 				// Check for shadow color
@@ -91,14 +91,24 @@ public class ShpTexture {
 		int combinedHeight = this.height * this.numImages;
 		int combinedWidth = this.width;
 		
+		ImageBuffer imgBuf = RemappedTextureCache.getInstance().checkInCache(shp.getFileName(), remapColor, -1);
+		if (imgBuf != null) {
+			return imgBuf;
+		}
+		
+		// Image is not cached
 		// Create big sized common image, which will combine all frames of source .SHP
-		ImageBuffer imgbuf = new ImageBuffer(combinedWidth, combinedHeight);
+		imgBuf = new ImageBuffer(combinedWidth, combinedHeight);
 		
 		for (int i = 0; i < this.numImages; i++) {
+			ImageBuffer frameBuf = remapShpFrame(i, remapColor);
+			
 			
 		}
 		
-		return imgbuf;
+		// Cache result and return
+		RemappedTextureCache.getInstance().putInCache(imgBuf, shp.getFileName(), remapColor, -1);
+		return imgBuf;
 	}
 	
 	/**
