@@ -28,7 +28,7 @@ public class ResourceManager {
 	public static final String palFolder = resourceFolder + "pal" + System.getProperty("file.separator");
 	
 	private HashMap<String, MixFile> mixes = new HashMap<>();
-	private HashMap<String, ShpTexture> conquerTextures = new HashMap<>();
+	private HashMap<String, ShpTexture> conquerTextureSources = new HashMap<>();
 	private HashMap<String, PalFile> palettes = new HashMap<>();
 	
 	private ResourceManager() {
@@ -70,8 +70,9 @@ public class ResourceManager {
 	public ShpTexture getConquerTexture(String name) {
 		MixFile mix = mixes.get("conquer.mix");
 		
-		if (conquerTextures.containsKey(name)) {
-			return conquerTextures.get(name);
+		// Check texture sources cache
+		if (conquerTextureSources.containsKey(name)) {
+			return conquerTextureSources.get(name);
 		}
 		
 		if (mix != null) {
@@ -82,7 +83,7 @@ public class ResourceManager {
 				
 				ShpFileCnc shp = new ShpFileCnc(name, rbc);
 				ShpTexture shpTexture = new ShpTexture(shp);
-				conquerTextures.put(name, shpTexture);
+				conquerTextureSources.put(name, shpTexture);
 				return shpTexture;
 			} else {
 				return null;

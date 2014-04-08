@@ -6,7 +6,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 
-public class EntityBuilding extends Entity {
+public abstract class EntityBuilding extends Entity {
 	public int tileX, tileY;
 	
 	public int hp, maxHp;
@@ -33,17 +33,11 @@ public class EntityBuilding extends Entity {
 	}
 
 	@Override
-	public void updateEntity(int delta) {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void updateEntity(int delta);
 
 	@Override
-	public void renderEntity(Graphics g) {
-	}
+	public abstract void renderEntity(Graphics g);
 
 	@Override
-	public boolean shouldRenderedInPass(int passNum) {
-		return true;
-	}
+	public abstract boolean shouldRenderedInPass(int passNum);
 }

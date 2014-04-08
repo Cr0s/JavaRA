@@ -34,8 +34,6 @@ public class EntityConstructionYard extends EntityBuilding {
 	
 	@Override
 	public void renderEntity(Graphics g) {
-		super.renderEntity(g);
-
 		float nx = posX + 12f;
 		float ny = posY + 12f;
 		
@@ -52,5 +50,11 @@ public class EntityConstructionYard extends EntityBuilding {
 	@Override
 	public boolean shouldRenderedInPass(int passnum) {
 		return passnum == 0;
+	}
+
+	@Override
+	public void updateEntity(int delta) {
+		// TODO Auto-generated method stub
+		
 	}
 }
