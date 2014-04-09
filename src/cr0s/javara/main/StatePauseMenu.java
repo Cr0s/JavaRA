@@ -1,3 +1,4 @@
+package cr0s.javara.main;
 
 import java.util.ArrayList;
 
@@ -53,14 +54,15 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 	
 	GameContainer c;
 	
+	Color bgColor = new Color(0xC0, 0xC0, 0xC0, 255);
+	Color pColor;
+	
 	public StatePauseMenu() {
 
 	}
 	
 	@Override
-	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {
-		System.out.println(arg0);
-		
+	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {	
 	}
 
 	@Override
@@ -77,7 +79,6 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 
 	@Override
 	public void mousePressed(int button, int x, int y) {
-		System.out.println(button);
 		if (button == 0) {
 			this.leftMousePressed = true;
 		}
@@ -136,8 +137,9 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 
 	@Override
 	public void keyPressed(int arg0, char arg1) {
-		// TODO Auto-generated method stub
-		
+		if (c.getInput().isKeyPressed(Input.KEY_ESCAPE)) {
+			Main.getInstance().enterState(StateGameMap.STATE_ID);
+		}
 	}
 
 	@Override
@@ -207,10 +209,9 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 	}
 
 	@Override
-	public void enter(GameContainer arg0, StateBasedGame arg1)
+	public void enter(GameContainer c, StateBasedGame arg1)
 			throws SlickException {
-		// TODO Auto-generated method stub
-		
+		this.pColor = c.getGraphics().getColor();
 	}
 
 	@Override
@@ -222,7 +223,7 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 	public void init(GameContainer c, StateBasedGame arg1)
 			throws SlickException {
 		this.c = c;
-		
+
 		menuItems.add(new MainMenuItem(0, "Resume"));
 		menuItems.add(new MainMenuItem(1, "Options"));
 		menuItems.add(new MainMenuItem(2, "Exit to main menu"));
@@ -256,7 +257,9 @@ public class StatePauseMenu extends BasicGameState implements MouseListener, Inp
 	@Override
 	public void render(GameContainer c, StateBasedGame arg1, Graphics g)
 			throws SlickException {
-		//g.clear();
+		g.setColor(bgColor);
+		g.fillRect(0, 0, c.getWidth(), c.getHeight());
+		g.setColor(pColor);
 		
 		this.menuBackground.draw(MENU_X, MENU_Y);
 		

@@ -2,6 +2,7 @@ package cr0s.javara.resources;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -56,7 +57,6 @@ public class ShpTexture {
 	}
 	
 	private ImageBuffer remapShpFrame(int index, Color remapColor) {
-		
 		PalFile pal = ResourceManager.getInstance().getPaletteByName("temperat.pal");
 		Color[] colors = new Color[256];
 		remapPallete(colors, pal, remapColor);
@@ -102,8 +102,25 @@ public class ShpTexture {
 		
 		for (int i = 0; i < this.numImages; i++) {
 			ImageBuffer frameBuf = remapShpFrame(i, remapColor);
+			Image frame = frameBuf.getImage();
 			
+			byte[] rgba = frameBuf.getRGBA();
 			
+			int shiftX = 0;
+			int shiftY = i * height;
+			
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					int r, g, b, a;
+					Color c = frame.getColor(x, y);
+					r = c.getRed();
+					g = c.getGreen();
+					b = c.getBlue();
+					a = c.getAlpha();
+					
+					imgBuf.setRGBA(shiftX + x, shiftY + y, r, g, b, a);
+				}
+			}
 		}
 		
 		// Cache result and return

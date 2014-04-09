@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.Log;
@@ -317,8 +318,8 @@ public class TiledMap {
 	 * @param x The x location to render at 
 	 * @param y The y location to render at
 	 */
-	public void render(int x,int y) {
-		render(x,y,0,0,width,height,false, 0, 0, 0, 0);
+	public void render(Graphics g, int x,int y) {
+		render(g, x,y,0,0,width,height,false, 0, 0, 0, 0);
 	}
 
 	/**
@@ -342,12 +343,12 @@ public class TiledMap {
 	 * @param width The width of the section to render (in tiles)
 	 * @param height The height of the secton to render (in tiles)
 	 */
-	public void render(int x,int y,int sx,int sy,int width,int height) {
-		render(x,y,sx,sy,width,height,false, 0, 0, 0, 0);
+	public void render(Graphics g, int x,int y,int sx,int sy,int width,int height) {
+		render(g, x,y,sx,sy,width,height,false, 0, 0, 0, 0);
 	}
 
-	public void render(int x,int y,int sx,int sy,int width,int height, int vpX, int vpY, int sw, int sh) {
-		render(x,y,sx,sy,width,height,false, vpX, vpY, sw, sh);
+	public void render(Graphics g, int x,int y,int sx,int sy,int width,int height, int vpX, int vpY, int sw, int sh) {
+		render(g, x,y,sx,sy,width,height,false, vpX, vpY, sw, sh);
 	}
 	
 	/**
@@ -369,7 +370,7 @@ public class TiledMap {
 		switch(orientation){
 		case ORTHOGONAL:
 			for (int ty=0;ty<height;ty++) {
-				layer.render(x,y,sx,sy,width,ty,lineByLine, tileWidth, tileHeight, vpX, vpY, sw, sh);
+				layer.render(null, x,y,sx,sy,width,ty,lineByLine, tileWidth, tileHeight, vpX, vpY, sw, sh);
 			}
 			break;
 		case ISOMETRIC:
@@ -392,7 +393,7 @@ public class TiledMap {
 	 * @param lineByLine True if we should render line by line, i.e. giving us a chance
 	 * to render something else between lines (@see {@link #renderedLine(int, int, int)}
 	 */
-	public void render(int x,int y,int sx,int sy,int width,int height, boolean lineByLine, int vpX, int vpY, int sw, int sh) {
+	public void render(Graphics g, int x,int y,int sx,int sy,int width,int height, boolean lineByLine, int vpX, int vpY, int sw, int sh) {
 		switch(orientation){
 		case ORTHOGONAL:
 			for (int ty=0;ty<height;ty++) {
@@ -404,7 +405,7 @@ public class TiledMap {
 				
 				for (int i=0;i<layers.size();i++) {
 					Layer layer = (Layer) layers.get(i);
-					layer.render(x,y,sx,sy,width, ty,lineByLine, tileWidth, tileHeight, vpX, vpY, sw, sh);
+					layer.render(g, x,y,sx,sy,width, ty,lineByLine, tileWidth, tileHeight, vpX, vpY, sw, sh);
 				}
 			}
 			break;

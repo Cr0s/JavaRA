@@ -8,8 +8,7 @@ import cr0s.javara.gameplay.Team;
 
 public abstract class EntityVehicle extends Entity {
 	public int tileX, tileY;
-	public float x, y; // Actual screen coordinates for smooth movement
-	
+
 	public int hp, maxHp;
 	
 	public int rotation = 0;
@@ -17,11 +16,8 @@ public abstract class EntityVehicle extends Entity {
 	
 	public boolean isPrimary = false, isRepairing = false, isInvuln = false, isDestroyed = false;
 		
-	public EntityVehicle(int tileX, int tileY, Team team, Player player, int sizeWidth, int sizeHeight) {
-		super(tileX, tileY, team, player, sizeWidth, sizeHeight);
-		
-		this.x = this.tileX = tileX;
-		this.y = this.tileY = tileY;
+	public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
+		super(posX, posY, team, player, sizeWidth, sizeHeight);
 	}
 	
 	public void giveDamage(int amount) {
@@ -49,6 +45,14 @@ public abstract class EntityVehicle extends Entity {
 	 */
 	public void rotate(int rot) {
 		this.newRotation = rot;
+	}
+	
+	/**
+	 * Returns rotation value
+	 * @return rotation value
+	 */
+	public int getRotation() {
+		return this.rotation;
 	}
 	
 	@Override

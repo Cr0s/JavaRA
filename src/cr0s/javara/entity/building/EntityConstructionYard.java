@@ -34,8 +34,8 @@ public class EntityConstructionYard extends EntityBuilding {
 	
 	@Override
 	public void renderEntity(Graphics g) {
-		float nx = posX + 12f;
-		float ny = posY + 12f;
+		float nx = posX;
+		float ny = posY;
 		
 		if (this.hp > this.maxHp / 2) {
 			normal.draw(nx, ny);
@@ -43,8 +43,10 @@ public class EntityConstructionYard extends EntityBuilding {
 			corrupted.draw(nx, ny);
 		}
 		
-		//g.setColor(Color.green);
-		//g.draw(boundingBox);
+		g.setLineWidth(2);
+		g.setColor(owner.playerColor);
+		g.draw(boundingBox);
+		g.setLineWidth(1);
 	}
 	
 	@Override

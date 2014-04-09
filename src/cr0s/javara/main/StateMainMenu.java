@@ -1,3 +1,4 @@
+package cr0s.javara.main;
 
 import java.util.ArrayList;
 
@@ -58,9 +59,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	}
 	
 	@Override
-	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {
-		System.out.println(arg0);
-		
+	public void mouseClicked(int arg0, int arg1, int arg2, int arg3) {	
 	}
 
 	@Override
@@ -77,7 +76,6 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 
 	@Override
 	public void mousePressed(int button, int x, int y) {
-		System.out.println(button);
 		if (button == 0) {
 			this.leftMousePressed = true;
 		}

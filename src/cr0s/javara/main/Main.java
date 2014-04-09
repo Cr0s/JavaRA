@@ -1,3 +1,4 @@
+package cr0s.javara.main;
 import java.util.Random;
 
 import org.newdawn.slick.Animation;
@@ -17,6 +18,7 @@ import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.Log;
 
 import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -37,6 +39,8 @@ public class Main extends StateBasedGame {
 	private World w;
 	private Camera camera;
 	private Controller controller;
+	
+	public static boolean DEBUG_MODE = true;
 	
 	public Main() {
 		super("Java RA");
@@ -61,6 +65,7 @@ public class Main extends StateBasedGame {
 			AppGameContainer container = new AppGameContainer(Main.getInstance(), 800,
 					600, false);
 			
+			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
 			//container.setTargetFrameRate(60);
 			container.setClearEachFrame(false);
@@ -117,6 +122,7 @@ public class Main extends StateBasedGame {
 		Random r = new Random(System.currentTimeMillis());
 		
 		Team t = new Team();
+		
 		for (int x = 0; x < 10; x++) {
 			EntityConstructionYard e = new EntityConstructionYard(r.nextInt(50) * 24, r.nextInt(50) * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
 			
@@ -127,5 +133,11 @@ public class Main extends StateBasedGame {
 			e.isVisible = true;
 			w.spawnEntityInWorld(e);
 		}
+		
+		EntityMcv mcv = new EntityMcv(15 * 24, 15 * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
+		mcv.isVisible = true;
+		
+		w.spawnEntityInWorld(mcv);
+		
 	}
 }

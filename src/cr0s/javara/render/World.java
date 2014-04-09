@@ -46,7 +46,10 @@ public class World {
 	}
 
 	public void update(int delta) {
-
+		// Update all entities
+		for (Entity e : this.entities) {
+			e.updateEntity(delta);
+		}
 	}
 
 	public void render(Graphics g) {
@@ -60,7 +63,7 @@ public class World {
 			e1.printStackTrace();
 		}		
 		
-		map.render(0, 0, 0 , 0, (int) container.getWidth(), (int)container.getHeight(), (int)-camera.offsetX / 24, (int)-camera.offsetY / 24, (int) container.getWidth() / 24, (int)container.getHeight() / 24);
+		map.render(g, 0, 0, 0, 0, (int) container.getWidth(), (int)container.getHeight(), (int)-camera.offsetX / 24, (int)-camera.offsetY / 24, (int) container.getWidth() / 24, (int)container.getHeight() / 24);
 
 		
 		// Make rendering passes

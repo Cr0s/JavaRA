@@ -5,11 +5,17 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import cr0s.javara.main.Main;
 
 /**
  * A layer of tiles on the map
@@ -177,11 +183,10 @@ public class Layer {
 	 * @param mapTileWidth the tile width specified in the map file
 	 * @param mapTileHeight the tile height specified in the map file
 	 */
-	public void render(int x,int y,int sx,int sy,int width, int ty,boolean lineByLine, int mapTileWidth, int mapTileHeight, int vpX, int vpY, int viewWidth, int viewHeight) {
+	public void render(Graphics g, int x,int y,int sx,int sy,int width, int ty,boolean lineByLine, int mapTileWidth, int mapTileHeight, int vpX, int vpY, int viewWidth, int viewHeight) {
 		for (int tileset=0;tileset<map.getTileSetCount();tileset++) {
 			TileSet set = null;
 			
-			int skipped = 0;
 			for (int tx=0;tx<width;tx++) {
 				if ((sx+tx < 0) || (sy+ty < 0)) {
 					continue;
@@ -192,7 +197,6 @@ public class Layer {
 				
 				if (viewWidth != 0 && viewHeight != 0) {
 					if (tx < vpX || tx > vpX + viewWidth) {
-						skipped++;
 						continue;
 					}			
 				}
@@ -208,8 +212,15 @@ public class Layer {
 					
 					int tileOffsetY = set.tileHeight - mapTileHeight;
 					
-//						set.tiles.renderInUse(x+(tx*set.tileWidth), y+(ty*set.tileHeight), sheetX, sheetY);
 					set.tiles.renderInUse(x+(tx*mapTileWidth), y+(ty*mapTileHeight)-tileOffsetY, sheetX, sheetY);
+					
+					//if (tileset == 1) {
+					//Color c = g.getColor();
+					//g.setColor(Color.red);
+					//g.drawRect(x+(tx*mapTileWidth), y+(ty*mapTileHeight)-tileOffsetY, 24, 24);
+					//g.setColor(c);
+					//}
+					
 				}
 			}
 			
@@ -223,8 +234,34 @@ public class Layer {
 			
 			if (set != null) {
 				set.tiles.endUse();
-			}
+			}		
 		}
+		
+		if (!Main.DEBUG_MODE) {
+			return;
+		}
+		
+		for (int tx=0;tx<width;tx++) {
+			if ((sx+tx < 0) || (sy+ty < 0)) {
+				continue;
+			}
+			if ((sx+tx >= this.width) || (sy+ty >= this.height)) {
+				continue;
+			}
+			
+			if (viewWidth != 0 && viewHeight != 0) {
+				if (tx < vpX || tx > vpX + viewWidth) {
+					continue;
+				}			
+			}
+			
+			int tileOffsetY = 24 - mapTileHeight;
+			
+			Color c = g.getColor();
+			g.setColor(Color.red);
+			g.drawRect(x+(tx*mapTileWidth), y+(ty*mapTileHeight)-tileOffsetY, 24, 24);
+			g.setColor(c);
+		}		
 	}
 	
 	/**
