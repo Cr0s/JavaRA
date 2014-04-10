@@ -6,13 +6,14 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.entity.ISelectable;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityConstructionYard extends EntityBuilding {
+public class EntityConstructionYard extends EntityBuilding implements ISelectable {
 
 	private SpriteSheet sheet;
 	
@@ -51,6 +52,10 @@ public class EntityConstructionYard extends EntityBuilding {
 			g.draw(boundingBox);
 			g.setLineWidth(1);
 		}
+		
+		if (isSelected) {
+		    drawSelectionBox(g);
+		}
 	}
 	
 	@Override
@@ -62,5 +67,20 @@ public class EntityConstructionYard extends EntityBuilding {
 	public void updateEntity(int delta) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void select() {
+	    this.isSelected = true;
+	}
+
+	@Override
+	public void cancelSelect() {
+	    this.isSelected = false;
+	}
+
+	@Override
+	public boolean isSelected() {
+	    return this.isSelected;
 	}
 }

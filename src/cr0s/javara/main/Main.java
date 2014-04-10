@@ -69,7 +69,7 @@ public class Main extends StateBasedGame {
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
 			//container.setTargetFrameRate(60);
-			//container.setClearEachFrame(false);
+			container.setClearEachFrame(false);
 			container.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +124,7 @@ public class Main extends StateBasedGame {
 		
 		Team t = new Team();
 		
-		for (int x = 0; x < 10; x++) {
+		for (int x = 0; x < 15; x++) {
 			EntityConstructionYard e = new EntityConstructionYard(r.nextInt(50) * 24, r.nextInt(50) * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
 			
 			if (r.nextBoolean()) {
@@ -135,7 +135,7 @@ public class Main extends StateBasedGame {
 			w.spawnEntityInWorld(e);
 		}
 		
-		EntityMcv mcv = new EntityMcv(15 * 24, 15 * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
+		EntityMcv mcv = new EntityMcv(40 * 24, 40 * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
 		mcv.isVisible = true;
 		
 		w.spawnEntityInWorld(mcv);

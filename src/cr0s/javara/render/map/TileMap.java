@@ -1,6 +1,5 @@
 package cr0s.javara.render.map;
 
-import java.awt.Container;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,16 +11,23 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.geom.Rectangle;
 import org.yaml.snakeyaml.Yaml;
 
 import redhorizon.filetypes.pal.PalFile;
 import redhorizon.utilities.BufferUtility;
+import cr0s.javara.main.Main;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.TmpTexture;
 
 public class TileMap {
     private short width, height;
@@ -31,6 +37,7 @@ public class TileMap {
 
     private TileReference[][] mapTiles;
     
+    int displayList = 0;
     public TileMap(String mapName) {
 	InputStream input;
 	try {
@@ -48,12 +55,20 @@ public class TileMap {
 	    
 	    // Read binary map
 	    loadBinaryMap(mapName);
+	    
+	    if (displayList == 0) {
+		displayList = GL11.glGenLists(1); //Save this int so you can access it later
+		GL11.glNewList(displayList, GL11.GL_COMPILE);
+		render(Main.getInstance().getContainer(), Main.getInstance().getContainer().getGraphics(), Main.getInstance().getCamera());
+		GL11.glEndList();
+	    }
+
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	}
     }
 
-    private void loadBinaryMap(String mapName) {
+    private void loadBinaryMap(String mapName) {	
 	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
 		.get(ResourceManager.mapsFolder + mapName + System.getProperty("file.separator") + "map.bin").toString(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
@@ -80,6 +95,7 @@ public class TileMap {
 	    ByteBuffer mapBytes = BufferUtility.readRemaining(inChannel);
 	    mapBytes.order(ByteOrder.LITTLE_ENDIAN);
 	    
+	    Random r = new Random();
 	    for (int x = 0; x < this.width; x++) {
 		for (int y = 0; y < this.height; y++) {
 			short tile = mapBytes.getShort();
@@ -88,6 +104,11 @@ public class TileMap {
 			if (index == 0xFF)
 			    index = (byte)(x % 4 + (y % 4) * 4);
 
+			// Randomize clear grass
+			if (tile == 0xFF) {
+			    index = (short)r.nextInt(16);
+			}
+			
 			this.mapTiles[x][y] = new TileReference<Short, Byte>(tile, (byte)index);		    
 		}
 		
@@ -108,7 +129,11 @@ public class TileMap {
 	return height;
     }
     
-    public void render(GameContainer c, Graphics g, Camera camera) {
+    public void render(GameContainer c, Graphics g, Camera camera) {	
+	Color pColor = g.getColor();
+	
+	this.theater.getSpriteSheet().startUse();
+
 	for (int y = 0; y < this.height; y++) {
 	    for (int x = 0; x < this.width; x++) {
 		if (x < (int)-camera.offsetX / 24 - 1 || x > (int)-camera.offsetX / 24 + (int)c.getWidth() / 24 + 1) {
@@ -119,8 +144,37 @@ public class TileMap {
 		    continue;
 		}		
 		
-		this.theater.getTileImage(this.mapTiles[x][y]).draw(x * 24, y * 24);
+		if ((short)this.mapTiles[x][y].getTile() != 0) {
+		    Point sheetPoint = theater.getTileTextureSheetCoord(this.mapTiles[x][y]);
+
+		    int index = (int)((byte)this.mapTiles[x][y].getIndex() & 0xFF);
+		    int sX = (int)sheetPoint.getX();
+		    int sY = (int)sheetPoint.getY();
+
+		    this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, (sY / 24) + index);
+		}
+		
+		/*if (Main.DEBUG_MODE) {
+		    g.setColor(Color.red);
+		    g.drawRect(x * 24, y * 24, 24, 24);
+		    g.setColor(pColor);
+		}*/
 	    }
 	}
+	
+	/*
+	this.theater.getSpriteSheet().draw(0, 0);
+	for (Rectangle rect : this.theater.rectangles) {
+	    Color cl = g.getColor();
+	    g.setColor(Color.red);
+	    g.draw(rect);
+	    g.setColor(cl);
+	}*/
+	this.theater.getSpriteSheet().endUse();
+	
+	
+	if (!Main.DEBUG_MODE) {
+		return;
+	}			
     }
 }

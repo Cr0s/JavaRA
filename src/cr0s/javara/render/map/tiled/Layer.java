@@ -236,32 +236,6 @@ public class Layer {
 				set.tiles.endUse();
 			}		
 		}
-		
-		if (!Main.DEBUG_MODE) {
-			return;
-		}
-		
-		for (int tx=0;tx<width;tx++) {
-			if ((sx+tx < 0) || (sy+ty < 0)) {
-				continue;
-			}
-			if ((sx+tx >= this.width) || (sy+ty >= this.height)) {
-				continue;
-			}
-			
-			if (viewWidth != 0 && viewHeight != 0) {
-				if (tx < vpX || tx > vpX + viewWidth) {
-					continue;
-				}			
-			}
-			
-			int tileOffsetY = 24 - mapTileHeight;
-			
-			Color c = g.getColor();
-			g.setColor(Color.red);
-			g.drawRect(x+(tx*mapTileWidth), y+(ty*mapTileHeight)-tileOffsetY, 24, 24);
-			g.setColor(c);
-		}		
 	}
 	
 	/**

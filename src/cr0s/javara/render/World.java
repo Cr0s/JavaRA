@@ -1,6 +1,8 @@
 package cr0s.javara.render;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Animation;
@@ -18,6 +20,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.Log;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.ISelectable;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.tiled.TiledMap;
@@ -89,5 +92,37 @@ public class World {
 	
 	public Camera getCamera() {
 		return camera;
+	}
+	
+	/**
+	 * 
+	 * @param boundingBox
+	 * @return
+	 */
+	public List<Entity> selectEntitiesInsideBox(Rectangle boundingBox) {
+	    List<Entity> selectedEntities = new LinkedList<>();
+	    
+	    for (Entity e : this.entities) {
+		if (e instanceof ISelectable) {
+		    if (boundingBox.intersects(e.boundingBox)) { 
+			((ISelectable)e).select();
+			
+			selectedEntities.add(e);
+		    } else
+		    {
+			((ISelectable)e).cancelSelect();
+		    }
+		}
+	    }
+	    
+	    return selectedEntities;
+	}
+	
+	public void cancelAllSelection() {
+	    for (Entity e : this.entities) {
+		if (e instanceof ISelectable) {
+		    ((ISelectable) e).cancelSelect();
+		}
+	    }	    
 	}
 }

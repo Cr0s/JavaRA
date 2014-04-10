@@ -16,4 +16,9 @@ public class Point {
 	public int getTileY() {
 		return (int)y;
 	}
+	
+	public void changePos(float aX, float aY) {
+	    this.x = aX;
+	    this.y = aY;
+	}
 }
