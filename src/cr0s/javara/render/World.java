@@ -10,6 +10,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
@@ -17,11 +18,15 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.Log;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.main.Main;
+import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.tiled.TiledMap;
 import cr0s.javara.render.viewport.Camera;
+import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.TmpTexture;
 
 public class World {
-	private TiledMap map;
+	private TileMap map;
 	private Camera camera;
 
 	private GameContainer container;
@@ -32,12 +37,10 @@ public class World {
 	
 	private int[][] blockingMap;
 	
+	boolean canRender = true;
 	public World(String mapName, GameContainer c, Camera camera) {
-		try {
-			map = new TiledMap(mapName);
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
+		map = new TileMap(mapName);
+
 
 		this.container = c;
 
@@ -63,7 +66,11 @@ public class World {
 			e1.printStackTrace();
 		}		
 		
-		map.render(g, 0, 0, 0, 0, (int) container.getWidth(), (int)container.getHeight(), (int)-camera.offsetX / 24, (int)-camera.offsetY / 24, (int) container.getWidth() / 24, (int)container.getHeight() / 24);
+		//if (canRender) {
+		    map.render(container, g, camera);//, y, sx, sy, width, height, vpX, vpY, sw, sh);//
+		   // canRender = false;
+		//}
+		//map.render(g, 0, 0, 0, 0, (int) container.getWidth(), (int)container.getHeight(), (int)-camera.offsetX / 24, (int)-camera.offsetY / 24, (int) container.getWidth() / 24, (int)container.getHeight() / 24);
 
 		
 		// Make rendering passes
@@ -76,7 +83,7 @@ public class World {
 		}	
 	}
 
-	public TiledMap getMap() {
+	public TileMap getMap() {
 		return map;
 	}
 

@@ -8,6 +8,7 @@ import org.newdawn.slick.SpriteSheet;
 
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
@@ -21,15 +22,15 @@ public class EntityConstructionYard extends EntityBuilding {
 	public EntityConstructionYard(int tileX, int tileY, Team team, Player player) {
 		super(tileX, tileY, team, player, 72, 72);
 		
-		maxHp = 100;
-		hp = maxHp;
+		setMaxHp(100);
+		setHp(getMaxHp());
 		initTextures();
 	}
 
 	private void initTextures() {
 		ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-		corrupted = tex.getAsImage(51, owner.playerColor).getImage();
-		normal = tex.getAsImage(0, owner.playerColor).getImage();	
+		corrupted = tex.getAsImage(51, owner.playerColor);
+		normal = tex.getAsImage(0, owner.playerColor);	
 	}
 	
 	@Override
@@ -37,16 +38,19 @@ public class EntityConstructionYard extends EntityBuilding {
 		float nx = posX;
 		float ny = posY;
 		
-		if (this.hp > this.maxHp / 2) {
+		if (this.getHp() > this.getMaxHp() / 2) {
 			normal.draw(nx, ny);
 		} else {
 			corrupted.draw(nx, ny);
 		}
 		
-		g.setLineWidth(2);
-		g.setColor(owner.playerColor);
-		g.draw(boundingBox);
-		g.setLineWidth(1);
+		// Draw bounding box if debug mode is on
+		if (Main.DEBUG_MODE) {
+			g.setLineWidth(2);
+			g.setColor(owner.playerColor);
+			g.draw(boundingBox);
+			g.setLineWidth(1);
+		}
 	}
 	
 	@Override

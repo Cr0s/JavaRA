@@ -24,6 +24,7 @@ import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.render.Controller;
 import cr0s.javara.render.World;
+import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Point;
@@ -67,7 +68,7 @@ public class Main extends StateBasedGame {
 			
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
-			//container.setTargetFrameRate(60);
+			container.setTargetFrameRate(60);
 			container.setClearEachFrame(false);
 			container.start();
 		} catch (Exception e) {
@@ -101,7 +102,7 @@ public class Main extends StateBasedGame {
 		this.w = w;
 	}
 	
-	public void startNewGame(String mapName) {		
+	public void startNewGame(String mapName) {	
 		rm = ResourceManager.getInstance();
 		
 		camera = new Camera();
@@ -112,7 +113,7 @@ public class Main extends StateBasedGame {
 		}
 
 		controller = new Controller(null, camera, this.getContainer().getInput());	
-		w = new World(System.getProperty("user.dir") + "\\maps\\" + mapName + ".tmx",
+		w = new World("forest-path",
 				this.getContainer(), camera);		
 		
 		initGame();
@@ -127,7 +128,7 @@ public class Main extends StateBasedGame {
 			EntityConstructionYard e = new EntityConstructionYard(r.nextInt(50) * 24, r.nextInt(50) * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
 			
 			if (r.nextBoolean()) {
-				e.hp = 1;
+				e.setHp(1);
 			}
 			
 			e.isVisible = true;

@@ -1,18 +1,20 @@
 package cr0s.javara.render.map;
 
-public class TileReference {
+public class TileReference<U, V> {
 	
-	/*
-	 * Reference format
-	 * bytebyte|byte
-	 * ushort   byte
-	 */
+    	private U tile;
+    	private V index;
 	
-	public static int getType(int tileRef) {
-		return (int)((tileRef >> 8) & 0xFFFF);
+	public TileReference(final U aTile, final V aIndex) {
+	    this.tile = aTile;
+	    this.index = aIndex;
 	}
 	
-	public static int getIndex(int tileRef) {
-		return (int)(tileRef & 0xFF);
+	public U getTile() {
+	    return this.tile;
+	}
+	
+	public V getIndex() {
+	    return this.index;
 	}
 }

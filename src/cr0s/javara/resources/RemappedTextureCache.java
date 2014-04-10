@@ -3,6 +3,7 @@ package cr0s.javara.resources;
 import java.util.WeakHashMap;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
 
 /**
@@ -13,7 +14,7 @@ import org.newdawn.slick.ImageBuffer;
  */
 public class RemappedTextureCache {
 	private static RemappedTextureCache instance = null;
-	private WeakHashMap<String, ImageBuffer> remappedTextures;
+	private WeakHashMap<String, Image> remappedTextures;
 	
 	private RemappedTextureCache() {
 		this.remappedTextures = new WeakHashMap<>();
@@ -34,7 +35,7 @@ public class RemappedTextureCache {
 	 * @param textureIndex index in texture sheet of .shp (number of frame) or -1 if we need all frames as one image
 	 * @return null if image is not cached
 	 */
-	public ImageBuffer checkInCache(String textureName, Color remapColor, int textureIndex) {
+	public Image checkInCache(String textureName, Color remapColor, int textureIndex) {
 		// Generate key to search
 		// searchKey = textureName + r + g + b + textureIndex
 		String cacheKey = textureName + new Integer(remapColor.getRed()).toString() + new Integer(remapColor.getGreen()).toString() + new Integer(remapColor.getBlue()).toString() + textureIndex;
@@ -44,12 +45,12 @@ public class RemappedTextureCache {
 	
 	/**
 	 * Puts specified image as ImageBuffer in cache
-	 * @param image ImageBuffer of remapped image
+	 * @param image Image of remapped image
 	 * @param textureName texture name
 	 * @param remapColor remapping color (team color)
 	 * @param textureIndex index of texture, or -1 if we need all .SHP frames as one whole image
 	 */
-	public void putInCache(ImageBuffer image, String textureName, Color remapColor, int textureIndex) {
+	public void putInCache(Image image, String textureName, Color remapColor, int textureIndex) {
 		String cacheKey = textureName + new Integer(remapColor.getRed()).toString() + new Integer(remapColor.getGreen()).toString() + new Integer(remapColor.getBlue()).toString() + textureIndex;	
 		
 		if (!this.remappedTextures.containsKey(cacheKey)) {

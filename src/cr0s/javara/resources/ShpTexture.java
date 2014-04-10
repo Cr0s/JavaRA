@@ -41,9 +41,9 @@ public class ShpTexture {
 	 * @param remapColor team color
 	 * @return ImageBuffer for remapped texture
 	 */
-	public ImageBuffer getAsImage(int index, Color remapColor) {
+	public Image getAsImage(int index, Color remapColor) {
 		// Check image in cache
-		ImageBuffer res = RemappedTextureCache.getInstance().checkInCache(shp.getFileName(), remapColor, index);
+		Image res = RemappedTextureCache.getInstance().checkInCache(shp.getFileName(), remapColor, index);
 		if (res != null) {
 			return res;
 		}
@@ -52,8 +52,9 @@ public class ShpTexture {
 		ImageBuffer imgbuf = remapShpFrame(index, remapColor);
 			
 		// Cache image and return
-		RemappedTextureCache.getInstance().putInCache(imgbuf, shp.getFileName(), remapColor, index);
-		return imgbuf;
+		Image img = imgbuf.getImage();
+		RemappedTextureCache.getInstance().putInCache(img, shp.getFileName(), remapColor, index);
+		return img;
 	}
 	
 	private ImageBuffer remapShpFrame(int index, Color remapColor) {
@@ -87,18 +88,18 @@ public class ShpTexture {
 	 * @param remapColor
 	 * @return
 	 */
-	public ImageBuffer getAsCombinedImage(Color remapColor) {
+	public Image getAsCombinedImage(Color remapColor) {
 		int combinedHeight = this.height * this.numImages;
 		int combinedWidth = this.width;
 		
-		ImageBuffer imgBuf = RemappedTextureCache.getInstance().checkInCache(shp.getFileName(), remapColor, -1);
-		if (imgBuf != null) {
-			return imgBuf;
+		Image img = RemappedTextureCache.getInstance().checkInCache(shp.getFileName(), remapColor, -1);
+		if (img != null) {
+			return img;
 		}
 		
 		// Image is not cached
 		// Create big sized common image, which will combine all frames of source .SHP
-		imgBuf = new ImageBuffer(combinedWidth, combinedHeight);
+		ImageBuffer imgBuf = new ImageBuffer(combinedWidth, combinedHeight);
 		
 		for (int i = 0; i < this.numImages; i++) {
 			ImageBuffer frameBuf = remapShpFrame(i, remapColor);
@@ -124,8 +125,9 @@ public class ShpTexture {
 		}
 		
 		// Cache result and return
-		RemappedTextureCache.getInstance().putInCache(imgBuf, shp.getFileName(), remapColor, -1);
-		return imgBuf;
+		img = imgBuf.getImage();
+		RemappedTextureCache.getInstance().putInCache(img, shp.getFileName(), remapColor, -1);
+		return img;
 	}
 	
 	/**

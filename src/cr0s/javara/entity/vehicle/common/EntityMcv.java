@@ -26,7 +26,7 @@ public class EntityMcv extends EntityVehicle {
 	public EntityMcv(float posX, float posY, Team team, Player player) {
 		super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
-		texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor).getImage(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	}
 
 	@Override
