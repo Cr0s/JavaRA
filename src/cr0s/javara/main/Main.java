@@ -68,8 +68,8 @@ public class Main extends StateBasedGame {
 			
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
-			container.setTargetFrameRate(60);
-			container.setClearEachFrame(false);
+			//container.setTargetFrameRate(60);
+			//container.setClearEachFrame(false);
 			container.start();
 		} catch (Exception e) {
 			e.printStackTrace();

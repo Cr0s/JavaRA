@@ -66,12 +66,7 @@ public class World {
 			e1.printStackTrace();
 		}		
 		
-		//if (canRender) {
-		    map.render(container, g, camera);//, y, sx, sy, width, height, vpX, vpY, sw, sh);//
-		   // canRender = false;
-		//}
-		//map.render(g, 0, 0, 0, 0, (int) container.getWidth(), (int)container.getHeight(), (int)-camera.offsetX / 24, (int)-camera.offsetY / 24, (int) container.getWidth() / 24, (int)container.getHeight() / 24);
-
+		map.render(container, g, camera);//, y, sx, sy, width, height, vpX, vpY, sw, sh);//
 		
 		// Make rendering passes
 		for (int i = 0; i < PASSES_COUNT; i++) {

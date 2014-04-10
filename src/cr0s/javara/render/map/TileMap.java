@@ -111,11 +111,11 @@ public class TileMap {
     public void render(GameContainer c, Graphics g, Camera camera) {
 	for (int y = 0; y < this.height; y++) {
 	    for (int x = 0; x < this.width; x++) {
-		if (x < (int)-camera.offsetX / 24 || x > (int)-camera.offsetX / 24 + (int)c.getWidth() / 24) {
+		if (x < (int)-camera.offsetX / 24 - 1 || x > (int)-camera.offsetX / 24 + (int)c.getWidth() / 24 + 1) {
 		    continue;
 		}
 		
-		if (y < (int)-camera.offsetY / 24 || y > (int)-camera.offsetY / 24 + (int)c.getHeight() / 24) {
+		if (y < (int)-camera.offsetY / 24  -1 || y > (int)-camera.offsetY / 24 + (int)c.getHeight() / 24 + 1) {
 		    continue;
 		}		
 		

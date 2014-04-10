@@ -3,6 +3,7 @@ package cr0s.javara.resources;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashMap;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
@@ -26,6 +27,8 @@ public class TmpTexture {
 	
 	private final String type;
 	private Image combinedImage = null;
+	
+	private HashMap<Integer, Image> frameCache = new HashMap<>();
 	
 	public TmpTexture(TmpFileRA aTmp, String aType) {
 		this.width = aTmp.width();
@@ -101,11 +104,9 @@ public class TmpTexture {
 
 			ImageBuffer frameBuf = null;
 			if (tmp.getImage(imgIndex) == null) {
-			    System.out.println(tileX + " x " + tileY + " -> " + imgIndex + " -> empty");
 			    // Create empty image
 			    frameBuf = new ImageBuffer(width, height);
 			} else {
-			    System.out.println(tileX + " x " + tileY + " -> " + imgIndex + " -> image");
 			    frameBuf = applyPalette(imgIndex);    
 			}
 
@@ -136,6 +137,13 @@ public class TmpTexture {
 	}
 	
 	public Image getByIndex(int index) {
-	    return applyPalette(index).getImage();
+	    if (this.frameCache.containsKey(index)) {
+		return frameCache.get(index);
+	    } else {
+		Image img = applyPalette(index).getImage();
+		frameCache.put(index, img);
+		
+		return img;
+	    }
 	}
 }
