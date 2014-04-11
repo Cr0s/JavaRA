@@ -40,6 +40,7 @@ public class ResourceManager {
 
     private HashMap<String, MixFile> mixes = new HashMap<>();
     private HashMap<String, ShpTexture> conquerTextureSources = new HashMap<>();
+    private HashMap<String, ShpTexture> shpTextureSources = new HashMap<>();
     private HashMap<String, TmpTexture> templatesTexureSources = new HashMap<>();
     private HashMap<String, PalFile> palettes = new HashMap<>();
 
@@ -100,6 +101,36 @@ public class ResourceManager {
 
 	return null;
     }
+    
+    public ShpTexture getTemplateShpTexture(String tileSetName, String name) {
+	MixFile mix = mixes.get(tileSetName.toLowerCase() + ".mix");
+
+	// Check texture sources cache
+	if (shpTextureSources.containsKey(name)) {
+	    return shpTextureSources.get(name);
+	}
+
+	if (mix != null) {
+	    MixRecord rec = mix.getEntry(name);
+
+	    if (rec != null) {
+		ReadableByteChannel rbc = mix.getEntryData(rec);
+
+		ShpFileCnc shp = new ShpFileCnc(name, rbc);
+		ShpTexture shpTexture = new ShpTexture(shp);
+		shpTextureSources.put(name, shpTexture);
+		
+		return shpTexture;
+	    } else {
+		System.out.println("Record SHP (" + name +") in " + tileSetName + ".mix is not found");
+		return null;
+	    }
+	} else {
+	    System.out.println("Mix file " + tileSetName + ".mix is not found");    
+	}
+
+	return null;
+    }    
     
     public TmpTexture getTemplateTexture(String type, String name) {
 	type = type.toLowerCase();

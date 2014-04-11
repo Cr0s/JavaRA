@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.TmpTexture;
 
 /**
  * Describes set of tiles and templates for current map renderer.
@@ -17,6 +19,7 @@ import cr0s.javara.resources.ResourceManager;
  */
 public class TileSet {
     private HashMap<Integer, String> tiles;
+    
     private String setName;
     
     public TileSet(final String aSetName) {
@@ -47,7 +50,6 @@ public class TileSet {
 		
 		this.tiles.put(id, image);
 	    }
-	    
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	}

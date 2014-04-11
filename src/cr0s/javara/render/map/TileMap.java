@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
@@ -18,12 +19,15 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.geom.Rectangle;
 import org.yaml.snakeyaml.Yaml;
 
 import redhorizon.utilities.BufferUtility;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.resources.TmpTexture;
 
 public class TileMap {
     private short width, height;
@@ -32,6 +36,7 @@ public class TileMap {
     private TileSet tileSet;
 
     private TileReference[][] mapTiles;
+    private LinkedList<MapEntity> mapEntities;
     
     private final int GRASS_ID = 0xFF; // 255
     
@@ -41,13 +46,31 @@ public class TileMap {
 	    input = new FileInputStream(new File(ResourceManager.mapsFolder + mapName + System.getProperty("file.separator") + "map.yaml"));
 
 	    Yaml mapYaml = new Yaml();
-	    Map<String, String> mapYamlMap = (Map) mapYaml.load(input);
+	    Map<String, Object> mapYamlMap = (Map) mapYaml.load(input);
 
 
-	    TileSet tileYamlSet = new TileSet(mapYamlMap.get("Tileset"));
+	    TileSet tileYamlSet = new TileSet((String) mapYamlMap.get("Tileset"));
 	    this.tileSet = tileYamlSet;
 	 
-	    this.theater = new Theater(this.tileSet);
+	    this.mapEntities = new LinkedList<MapEntity>();
+	    Map<String, Object> entitiesMap = (Map) mapYamlMap.get("Actors");
+	    for (Object v : entitiesMap.values()) {
+		Map<String, Object> actor = (Map) v;
+		
+		String id = (String) actor.get("Name");
+		System.out.println("id: " + id);
+		int x = (Integer) actor.get("LocationX");
+		int y = (Integer) actor.get("LocationY");
+		
+		ShpTexture st = ResourceManager.getInstance().getTemplateShpTexture(this.tileSet.getSetName(), id + ".tem");
+		
+		if (st != null) {
+		    MapEntity me = new MapEntity(x, y, st);
+		    this.mapEntities.add(me);
+		}
+	    }	    
+	    
+	    this.theater = new Theater(this, this.tileSet);
 	    
 	    // Read binary map
 	    loadBinaryMap(mapName);
@@ -119,6 +142,7 @@ public class TileMap {
 	
 	this.theater.getSpriteSheet().startUse();
 
+	// Draw tiles layer
 	for (int y = 0; y < this.height; y++) {
 	    for (int x = 0; x < this.width; x++) {
 		if (x < (int) -camera.offsetX / 24 - 1 || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 1) {
@@ -142,11 +166,46 @@ public class TileMap {
 		/*if (Main.DEBUG_MODE) {
 		    g.setColor(Color.red);
 		    g.drawRect(x * 24, y * 24, 24, 24);
-		    g.setColor(pColor);
-		}*/
+		    g.setColor(pColor);*/
 	    }
+	}
+	
+	//theater.getSpriteSheet().draw();
+	/*for (Rectangle r : theater.texturesBounds) {
+	    g.setColor(Color.red);
+	    g.draw(r);
+	    g.setColor(pColor);
+	}*/
+	
+
+	// Draw map entities
+	for (MapEntity me : this.mapEntities) {
+	    int x = me.getX();
+	    int y = me.getY();
+	    
+	    // Don't draw invisible entities
+	    if (x < (int) -camera.offsetX / 24 - 1 || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 1) {
+		continue;
+	    }
+
+	    if (y < (int) -camera.offsetY / 24  -1 || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 1) {
+		continue;
+	    }
+	    
+	    ShpTexture t = me.getTexture();
+	    
+	    Point sheetPoint = this.theater.getShpTexturePoint(t.getTextureName());
+
+    	    int sX = (int) sheetPoint.getX();
+    	    int sY = (int) sheetPoint.getY();
+
+    	    this.theater.getSpriteSheet().getSubImage(sX, sY, t.width, t.height).drawEmbedded(x * 24, y * 24, t.width, t.height);
 	}
 	
 	this.theater.getSpriteSheet().endUse();			
     }
+    
+    public LinkedList<MapEntity> getMapEntities() {
+	return this.mapEntities;
+    }    
 }

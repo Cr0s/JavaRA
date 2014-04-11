@@ -41,7 +41,7 @@ public class Main extends StateBasedGame {
 	private Camera camera;
 	private Controller controller;
 	
-	public static boolean DEBUG_MODE = true;
+	public static boolean DEBUG_MODE = false;
 	
 	public Main() {
 		super("Java RA");
