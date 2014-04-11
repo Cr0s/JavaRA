@@ -21,6 +21,7 @@ import org.newdawn.slick.util.Log;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.tiled.TiledMap;
@@ -124,5 +125,27 @@ public class World {
 		    ((ISelectable) e).cancelSelect();
 		}
 	    }	    
+	}
+
+	public Entity getEntityInPoint(float x, float y) {
+	    // First check non-buildings entities
+	    for (Entity e : this.entities) {
+		if (e instanceof ISelectable && !(e instanceof EntityBuilding)) {
+		    if (e.boundingBox.contains(x, y)) {
+			return e;
+		    }
+		}
+	    }
+	    
+	    // Check buildings
+	    for (Entity e : this.entities) {
+		if (e instanceof ISelectable && (e instanceof EntityBuilding)) {
+		    if (e.boundingBox.contains(x, y)) {
+			return e;
+		    }
+		}
+	    }
+	    
+	    return null;
 	}
 }

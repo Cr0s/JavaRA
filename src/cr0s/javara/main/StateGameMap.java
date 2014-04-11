@@ -1,29 +1,17 @@
 package cr0s.javara.main;
 
-import java.util.Random;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.InputListener;
-import org.newdawn.slick.MouseListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.tiled.TiledMap;
 
-import cr0s.javara.entity.building.EntityConstructionYard;
-import cr0s.javara.gameplay.Player;
-import cr0s.javara.gameplay.Team;
-import cr0s.javara.gameplay.Team.Alignment;
-import cr0s.javara.render.Controller;
-import cr0s.javara.render.World;
-import cr0s.javara.render.viewport.Camera;
-import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.entity.Entity;
 import cr0s.javara.util.Point;
+import cr0s.javara.entity.ISelectable;
 
 public class StateGameMap extends BasicGameState {
 	public static final int STATE_ID = 1;
@@ -79,12 +67,15 @@ public class StateGameMap extends BasicGameState {
 
 	@Override
 	public final void mouseClicked(final int button, final int x, final int y, final int clickCount) {
-		Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
+	    	Main.getInstance().getWorld().cancelAllSelection();
+	    	Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
 		
 		if (button == 0) { 
-		    // TODO: check click inside entity
+		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
 		    
-		    Main.getInstance().getWorld().cancelAllSelection();
+		    if (e != null) { 
+			((ISelectable) e).select();
+		    }
 		}
 	}
 
