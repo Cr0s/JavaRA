@@ -78,7 +78,7 @@ public class ShpTexture {
 		    imgbuf.setRGBA(x, y, colors[colorValue].getRed(), colors[colorValue].getGreen(), colors[colorValue].getBlue(), (colorValue == 0) ? 0 : 255);
 		} else {
 		    // Shadows
-		    imgbuf.setRGBA(x, y, 0, 0, 0, 64); // Replace shadow color with black color with 3/4 transparency
+		    imgbuf.setRGBA(x, y, 0, 0, 0, 128); // Replace shadow color with black color with 3/4 transparency
 		}
 	    }
 	}
