@@ -48,8 +48,8 @@ public class StateGameMap extends BasicGameState {
 		float startX = this.pressStart.x;
 		float startY = this.pressStart.y;
 		
-		float endX= newX;
-		float endY = newY;
+		float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
+		float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
 		float s;
 		
 		// Swap if necessary
@@ -68,7 +68,7 @@ public class StateGameMap extends BasicGameState {
 		int boxH = (int) (endY - startY);
 		int boxW = (int) (endX - startX);
 		
-		this.selectionRect.setBounds(-Main.getInstance().getCamera().getOffsetX() + startX, -Main.getInstance().getCamera().getOffsetY() + startY, boxW, boxH);	
+		this.selectionRect.setBounds(startX, startY, boxW, boxH);	
 	    }
 	}
 
@@ -91,7 +91,7 @@ public class StateGameMap extends BasicGameState {
 	@Override
 	public final void mousePressed(final int button, final int x, final int y) {
 	    	if (button == 0) { 
-	    	    this.pressStart.changePos(x, y);
+	    	    this.pressStart.changePos(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
 	    	}
 	    	
 		Main.getInstance().getController().mousePressed(button, x, y);
