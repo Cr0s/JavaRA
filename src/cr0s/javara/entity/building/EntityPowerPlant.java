@@ -22,7 +22,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable {
 	private final String MAKE_TEXTURE_NAME = "powrmake.shp";
 	
 	public static final int WIDTH_TILES = 2;
-	public static final int HEIGHT_TILES = 3;
+	public static final int HEIGHT_TILES = 2;
 	
 	public EntityPowerPlant(int tileX, int tileY, Team team, Player player) {
 		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24);
