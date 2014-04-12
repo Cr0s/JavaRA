@@ -18,8 +18,10 @@ import java.util.List;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.opengl.CursorLoader;
 
+import cr0s.javara.entity.building.BibType;
 import redhorizon.filetypes.mix.MixFile;
 import redhorizon.filetypes.mix.MixRecord;
 import redhorizon.filetypes.pal.PalFile;
@@ -48,6 +50,7 @@ public class ResourceManager {
     public static final String MAIN_CURSOR = CURSORS_FOLDER + "pointer.png";
     public static final String GOTO_CURSOR = CURSORS_FOLDER + "goto.tga";
     public static final String SELECT_CURSOR = CURSORS_FOLDER + "select.tga";
+    public static final String DEPLOY_CURSOR = CURSORS_FOLDER + "deploy.tga";
     
     public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();
@@ -56,6 +59,8 @@ public class ResourceManager {
     private HashMap<String, TmpTexture> templatesTexureSources = new HashMap<>();
     private HashMap<String, PalFile> palettes = new HashMap<>();
 
+    private SpriteSheet bib1, bib2, bib3;
+    
     private ResourceManager() {
 	try {
 	    this.pointerCursor = CursorLoader.get().getCursor(MAIN_CURSOR, 0, 0);
@@ -66,6 +71,7 @@ public class ResourceManager {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+	
 	loadMixes();
     }
 
@@ -77,6 +83,27 @@ public class ResourceManager {
 	return instance;
     }
 
+    public void loadBibs() {
+	bib1 = new SpriteSheet(getTemplateShpTexture("temperat", "bib1.tem").getAsCombinedImage(null), 24, 24);
+	bib2 = new SpriteSheet(getTemplateShpTexture("temperat", "bib2.tem").getAsCombinedImage(null), 24, 24);
+	bib3 = new SpriteSheet(getTemplateShpTexture("temperat", "bib3.tem").getAsCombinedImage(null), 24, 24);
+    }
+    
+    public SpriteSheet getBibSheet(BibType bt) {
+	switch (bt) {
+	case SMALL:
+	    return bib3;
+	case MIDDLE:
+	    return bib2;
+	    
+	case BIG:
+	    return bib1;
+	    
+	default:
+	    return null;
+	}
+    }
+    
     private void loadMixes() {
 	RandomAccessFile randomAccessFile = null;
 

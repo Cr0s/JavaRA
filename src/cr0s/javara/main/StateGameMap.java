@@ -13,8 +13,10 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.util.Point;
 import cr0s.javara.entity.ISelectable;
 
@@ -31,8 +33,12 @@ public class StateGameMap extends BasicGameState {
 	
 	private Entity mouseOverEntity = null;
 	
+	private GameSideBar gsb;
+	
 	public StateGameMap(final GameContainer container) {
 		this.container = container;
+		
+		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
 	}
 	
 	@Override
@@ -78,7 +84,13 @@ public class StateGameMap extends BasicGameState {
 		    this.mouseOverEntity.isMouseOver = false;
 		} else {
 		    if (e.isSelected && this.mouseOverEntity == e) {
-			Main.getInstance().resetCursor();
+			if (e instanceof IDeployable) {
+			    if (((IDeployable)e).canDeploy()) { 
+				Main.getInstance().setDeployCursor();
+			    }
+			} else {
+			    Main.getInstance().resetCursor();
+			}
 			return;
 		    }
 		}
@@ -87,7 +99,7 @@ public class StateGameMap extends BasicGameState {
 		e.isMouseOver = true;
 		
 		if (!e.isSelected) { 
-		    Main.getInstance().setSelectursor();
+		    Main.getInstance().setSelectCursor();
 		}
 	    } else {
 		if (this.mouseOverEntity != null) {
@@ -117,13 +129,41 @@ public class StateGameMap extends BasicGameState {
 			
 			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
 			if (this.isAnyMovableEntitySelected) {
-			    Main.getInstance().setGotoCursor();
+			    if (this.mouseOverEntity == e && (e instanceof IDeployable)) {
+				if (((IDeployable) e).canDeploy()) {
+				    Main.getInstance().setDeployCursor();
+				} else {
+				    // TODO: Main.getInstance().setNoDeployCursor();
+				}
+			    } else {
+				Main.getInstance().setGotoCursor();
+			    }
 			} else {
 			    Main.getInstance().resetCursor();
 			}
 		    } else {
 			this.isAnyMovableEntitySelected = false;
 			Main.getInstance().resetCursor();
+		    }
+		} else if (button == 1) {
+		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
+		    
+		    if (e != null) { 
+			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
+			if (this.isAnyMovableEntitySelected) {
+			    if (this.mouseOverEntity == e && (e instanceof IDeployable) && (e.isSelected)) {
+				if (((IDeployable) e).canDeploy()) { 
+				    ((IDeployable) e).deploy();
+				    
+				    this.isAnyMovableEntitySelected = false;
+				    this.mouseOverEntity = null;
+				    
+				    Main.getInstance().resetCursor();
+				}
+			    } else {
+				// TODO: move to cell code
+			    }
+			}
 		    }
 		}
 	}
@@ -288,8 +328,10 @@ public class StateGameMap extends BasicGameState {
 		    g.setColor(Color.white);
 		    g.draw(selectionRect);
 		}
-		
+				
 		Main.getInstance().getCamera().renderFinish(container, g);
+		
+		this.gsb.render(g);
 	}
 
 	@Override
@@ -299,6 +341,7 @@ public class StateGameMap extends BasicGameState {
 		Main.getInstance().getController().update(container, delta);
 		Main.getInstance().getCamera().update(container, delta);
 		Main.getInstance().getWorld().update(delta);
+		this.gsb.update(delta);
 	}
 
 }

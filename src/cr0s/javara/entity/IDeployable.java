@@ -5,5 +5,6 @@ package cr0s.javara.entity;
  * @author Cr0s
  */
 public interface IDeployable {
-
+    public boolean canDeploy();
+    public void deploy();
 }

@@ -15,9 +15,9 @@ import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 
-public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable {
+public class EntityHarvester extends EntityVehicle implements ISelectable {
 
-	private String TEXTURE_NAME = "mcv.shp";
+	private String TEXTURE_NAME = "harv.shp";
 	private SpriteSheet texture;
 	
 	private final int ROTATION_START_TEXTURE_INDEX = 0;
@@ -31,9 +31,9 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	private int updateTicks = 0;
 	
 	private int rotationDirection = 1;
-	private boolean isDeploying = false;
+	private boolean isHarvesting = false; // TODO: make harvesting animation
 	
-	public EntityMcv(float posX, float posY, Team team, Player player) {
+	public EntityHarvester(float posX, float posY, Team team, Player player) {
 		super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
 		texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -42,33 +42,12 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 		this.setHp(50);
 		this.setMaxHp(50);
 		
-		this.rotation = r.nextInt(32);
-		
+		setRotation(12);
 	}
 
 	@Override
 	public void updateEntity(int delta) {
 		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-		
-		if (isDeploying && this.canDeploy()) {
-		    if (updateTicks++ < 2) {
-			return;
-		    }
-		    
-		    updateTicks = 0;
-		    
-		    if (this.rotation != BUILD_ROTATION) {
-			this.setRotation(this.rotation + this.rotationDirection % MAX_ROTATION);
-		    } else {
-			EntityConstructionYard cy = new EntityConstructionYard((int) posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), (int) posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
-			cy.isVisible = true;
-			cy.isSelected = true;
-			world.addBuildingTo(cy);
-			
-			setDead();
-			return;
-		    }
-		}
 	}
 
 	@Override
@@ -98,25 +77,6 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	@Override
 	public boolean isSelected() {
 	    return this.isSelected;
-	}
-
-	@Override
-	public boolean canDeploy() {
-	    // Check deploy possibility via World blockingMap
-	    return true;
-	}
-
-	@Override
-	public void deploy() {
-	    if (canDeploy()) { 
-		deployConstructionYard();
-	    }
-	}
-	
-	private void deployConstructionYard() {
-	    this.isDeploying = true;
-	    
-	    this.rotationDirection = (this.rotation < BUILD_ROTATION) ? 1 : -1;
 	}
 
 	@Override

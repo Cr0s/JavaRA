@@ -5,5 +5,5 @@ package cr0s.javara.entity;
  * @author Cr0s
  */
 public interface IMovable {
-
+    public void moveTo(int tileX, int tileY);
 }

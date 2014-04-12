@@ -17,7 +17,11 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.Log;
 
+import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.EntityPowerPlant;
+import cr0s.javara.entity.building.EntityProc;
+import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -40,6 +44,10 @@ public class Main extends StateBasedGame {
 	private World w;
 	private Camera camera;
 	private Controller controller;
+
+	private Team team;
+
+	private Player player;
 	
 	public static boolean DEBUG_MODE = false;
 	
@@ -68,7 +76,7 @@ public class Main extends StateBasedGame {
 			
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
-			//container.setTargetFrameRate(60);
+			container.setTargetFrameRate(75);
 			container.setClearEachFrame(false);
 			container.start();
 		} catch (Exception e) {
@@ -108,6 +116,7 @@ public class Main extends StateBasedGame {
 	
 	public void startNewGame(String mapName) {	
 		rm = ResourceManager.getInstance();
+		rm.loadBibs();
 		
 		camera = new Camera();
 		try {
@@ -126,22 +135,35 @@ public class Main extends StateBasedGame {
 	public void initGame() {
 		Random r = new Random(System.currentTimeMillis());
 		
-		Team t = new Team();
+		team = new Team();
+		player = new Player("anus", Alignment.SOVIET, Color.red);//new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+
+
+		// Create testing base
+		EntityPowerPlant e1 = new EntityPowerPlant(24 * 15, 24 * 18, team, player);
+		e1.setHp(r.nextInt(e1.getMaxHp()));
 		
-		for (int x = 0; x < 15; x++) {
-			EntityConstructionYard e = new EntityConstructionYard(r.nextInt(50) * 24, r.nextInt(50) * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
-			
-			if (r.nextBoolean()) {
-				e.setHp(1);
-			}
-			
-			e.isVisible = true;
-			w.spawnEntityInWorld(e);
-		}
+		EntityPowerPlant e2 = new EntityPowerPlant(24 * 12, 24 * 18, team, player);
+		e2.setHp(r.nextInt(e2.getMaxHp()));
+
+		EntityBarracks b1 = new EntityBarracks(24 * 14, 24 * 23, team, player);
+		b1.setHp(r.nextInt(b1.getMaxHp()));		
+
+		EntityProc p1 = new EntityProc(24 * 8, 24 * 22, team, player);
+		p1.setHp(r.nextInt(p1.getMaxHp()));		
 		
-		EntityMcv mcv = new EntityMcv(40 * 24, 40 * 24, t, new Player("anus", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256))));
+		w.addBuildingTo(p1);
+		w.addBuildingTo(b1);
+		w.addBuildingTo(e1);
+		w.addBuildingTo(e2);
+		
+		EntityMcv mcv = new EntityMcv(24 * 20, 28 * 20, team, player);
 		mcv.isVisible = true;
 		
+		EntityHarvester harv = new EntityHarvester(24 * 9, 24 * 24, team, player);
+		harv.isVisible = true;
+		
+		w.spawnEntityInWorld(harv);
 		w.spawnEntityInWorld(mcv);
 		
 	}
@@ -162,11 +184,27 @@ public class Main extends StateBasedGame {
 	    }	    
 	}
 	
-	public void setSelectursor() {
+	public void setSelectCursor() {
 	    try {
-		getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 12, 12, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
+		getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }	    
+	}
+	
+	public void setDeployCursor() {
+	    try {
+		getContainer().setAnimatedMouseCursor(ResourceManager.DEPLOY_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 });
 	    } catch (SlickException e) {
 		e.printStackTrace();
 	    }	    
 	}	
+	
+	public Player getPlayer() {
+	    return this.player;
+	}
+	
+	public Team getTeam() {
+	    return this.team;
+	}
 }

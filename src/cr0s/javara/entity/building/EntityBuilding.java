@@ -18,9 +18,24 @@ public abstract class EntityBuilding extends Entity {
 	private int tileX, tileY;
 	
 	/**
-	 * Health of building. Current and maximum HP.
+	 * Size of building in tiles.
 	 */
-	private int hp, maxHp;
+	protected int tileWidth, tileHeight;
+	
+	/**
+	 * Size of building in pixels
+	 */
+	protected float width, height;
+	
+	/**
+	 * Speed of building.
+	 */
+	public int buildingSpeed;
+	
+	/**
+	 * Make texture name.
+	 */
+	public String makeTextureName;
 	
 	/**
 	 * Additional properties.
@@ -34,6 +49,11 @@ public abstract class EntityBuilding extends Entity {
 	 */
 	private boolean isPrimary = false, isRepairing = false, 
 		isInvuln = false, isDestroyed = false;
+	
+	/**
+	 * Bib type. Big, middle or small.
+	 */
+	private BibType bibType;
 	
 	/**
 	 * Progress current and maximum values.
@@ -61,21 +81,12 @@ public abstract class EntityBuilding extends Entity {
 		
 		this.tileX = aTileX;
 		this.tileY = aTileY;
-	}
-	
-	/**
-	 * Gives damage to entity with specified amount.
-	 * @param amount damage amount
-	 */
-	public final void giveDamage(final int amount) {
-		if (!isInvuln) {
-			hp -= amount;
-			
-			if (hp <= 0) {
-				hp = 0;
-				isDestroyed = true;
-			}
-		}
+		
+		this.width = aSizeWidth;
+		this.height = aSizeHeight;
+		
+		this.tileWidth = (int) aSizeWidth / 24;
+		this.tileHeight = (int) aSizeHeight / 24;
 	}
 
 	@Override
@@ -119,25 +130,6 @@ public abstract class EntityBuilding extends Entity {
 	    this.tileY = aTileY;
 	}
 
-	/**
-	 * Gets building's HP value.
-	 * @return HP amount
-	 */
-	public int getHp() {
-	    return hp;
-	}
-
-	public void setHp(final int aHp) {
-	    this.hp = aHp;
-	}
-
-	public int getMaxHp() {
-	    return maxHp;
-	}
-
-	public void setMaxHp(final int aMaxHp) {
-	    this.maxHp = aMaxHp;
-	}
 
 	public boolean isPrimary() {
 	    return isPrimary;
@@ -185,5 +177,28 @@ public abstract class EntityBuilding extends Entity {
 
 	public void setMaxProgress(final int aMaxProgress) {
 	    this.maxProgress = aMaxProgress;
+	}
+
+	public float getWidth() {
+	    return this.width;
+	}
+	
+	public float getHeight() {
+	    return this.height;
+	}
+	
+	public void drawBib() {
+	    
+	}
+	
+	public abstract float getHeightInTiles();
+	public abstract float getWidthInTiles();	
+	
+	public void setBibType(BibType bt) {
+	    this.bibType = bt;
+	}
+	
+	public BibType getBibType() {
+	    return this.bibType;
 	}
 }

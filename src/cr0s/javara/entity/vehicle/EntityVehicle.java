@@ -9,8 +9,6 @@ import cr0s.javara.gameplay.Team;
 
 public abstract class EntityVehicle extends Entity implements IMovable {
 	public int tileX, tileY;
-
-	public int hp, maxHp;
 	
 	public int rotation = 0;
 	public int newRotation = 0;
@@ -19,17 +17,6 @@ public abstract class EntityVehicle extends Entity implements IMovable {
 		
 	public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
 		super(posX, posY, team, player, sizeWidth, sizeHeight);
-	}
-	
-	public void giveDamage(int amount) {
-		if (!isInvuln) {
-			hp -= amount;
-			
-			if (hp <= 0) {
-				hp = 0;
-				isDestroyed = true;
-			}
-		}
 	}
 
 	/**
@@ -61,9 +48,4 @@ public abstract class EntityVehicle extends Entity implements IMovable {
 
 	@Override
 	public abstract void renderEntity(Graphics g);
-
-	@Override
-	public boolean shouldRenderedInPass(int passNum) {
-		return true;
-	}
 }

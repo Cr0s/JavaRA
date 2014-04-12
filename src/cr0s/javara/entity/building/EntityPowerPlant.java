@@ -13,35 +13,35 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityConstructionYard extends EntityBuilding implements ISelectable {
+public class EntityPowerPlant extends EntityBuilding implements ISelectable {
 
 	private SpriteSheet sheet;
 	
 	private Image normal, corrupted;
-	private final String TEXTURE_NAME = "fact.shp";
-	private final String MAKE_TEXTURE_NAME = "factmake.shp";
+	private final String TEXTURE_NAME = "powr.shp";
+	private final String MAKE_TEXTURE_NAME = "powrmake.shp";
 	
-	public static final int WIDTH_TILES = 3;
+	public static final int WIDTH_TILES = 2;
 	public static final int HEIGHT_TILES = 3;
 	
-	public EntityConstructionYard(int tileX, int tileY, Team team, Player player) {
+	public EntityPowerPlant(int tileX, int tileY, Team team, Player player) {
 		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24);
 		
-		setBibType(BibType.MIDDLE);
+		setBibType(BibType.SMALL);
 		setProgressValue(-1);
 		
-		setMaxHp(100);
+		setMaxHp(50);
 		setHp(getMaxHp());
 		
-		this.buildingSpeed = 10;
+		this.buildingSpeed = 5;
 		this.makeTextureName = MAKE_TEXTURE_NAME;
 		initTextures();
 	}
 
 	private void initTextures() {
 		ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-		corrupted = tex.getAsImage(51, owner.playerColor);
 		normal = tex.getAsImage(0, owner.playerColor);	
+		corrupted = tex.getAsImage(1, owner.playerColor);
 	}
 	
 	@Override

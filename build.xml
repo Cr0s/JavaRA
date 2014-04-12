@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project JavaRA">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Users/user/Desktop/JavaRA/JavaRA.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="cr0s.javara.main.Main"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="C:/Users/user/Desktop/JavaRA/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/lwjgl.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/slick.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/ibxm.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/jinput.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/jnlp.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/jogg-0.0.7.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/jorbis-0.0.15.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/lwjgl_util.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/lwjgl_util_applet.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/tinylinepp.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Downloads/redhorizon-master/redhorizon-master/Libraries/blowfishj-2.41.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="C:/Users/user/Desktop/JavaRA/lib/snakeyaml-1.13.jar"/>
+        </jar>
+    </target>
+</project>

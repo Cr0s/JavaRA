@@ -149,7 +149,7 @@ public class TileMap {
 		    continue;
 		}
 		
-		if (y < (int) -camera.offsetY / 24  -1 || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 1) {
+		if (y < (int) - camera.offsetY / 24  -1 || y > (int) - camera.offsetY / 24 + (int) c.getHeight() / 24 + 1) {
 		    continue;
 		}		
 		
