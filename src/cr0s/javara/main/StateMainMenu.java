@@ -208,8 +208,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	@Override
 	public void enter(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
-		// TODO Auto-generated method stub
-		
+	    Main.getInstance().resetCursor();
 	}
 
 	@Override
@@ -229,7 +228,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 		this.MENU_HEIGHT = MENU_FRAME_HORIZ_HEIGHT + menuItems.size() * (this.MENU_BUTTON_HEIGHT + MENU_BUTTONS_SPACE);
 		
 		try {
-			this.ss = new SpriteSheet(ResourceManager.resourceFolder + "dialog.png", 1024, 512);
+			this.ss = new SpriteSheet(ResourceManager.RESOURCE_FOLDER + "dialog.png", 1024, 512);
 			
 			this.menuBackground = ss.getSubImage(0, 0, MENU_WIDTH, MENU_HEIGHT);
 			this.menuFrameVert = ss.getSubImage(480, 0, MENU_FRAME_VERT_WIDTH, MENU_FRAME_VERT_HEIGHT);

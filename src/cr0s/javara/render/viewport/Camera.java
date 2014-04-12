@@ -82,7 +82,7 @@ public class Camera {
 		viewportRect.setBounds(x, y, width, height);
 	}
 
-	public boolean isEntityInsideViewpor(Entity e) {
+	public boolean isEntityInsideViewport(Entity e) {
 		float posX = e.posX;
 		float posY = e.posY;
 

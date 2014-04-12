@@ -47,10 +47,6 @@ public class EntityMcv extends EntityVehicle implements ISelectable {
 			g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
 		}
 		
-		if (isSelected) {
-		    drawSelectionBox(g);
-		}
-		
 		texture.startUse();
 		texture.getSubImage(0, rotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_HEIGHT / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		texture.endUse();

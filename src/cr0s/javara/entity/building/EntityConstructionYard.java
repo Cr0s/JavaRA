@@ -52,10 +52,6 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 			g.draw(boundingBox);
 			g.setLineWidth(1);
 		}
-		
-		if (isSelected) {
-		    drawSelectionBox(g);
-		}
 	}
 	
 	@Override

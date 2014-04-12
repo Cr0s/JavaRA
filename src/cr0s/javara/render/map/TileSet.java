@@ -28,9 +28,9 @@ public class TileSet {
 	
 	InputStream input;
 	try {
-	    input = new FileInputStream(new File(ResourceManager.tilesetsFolder + aSetName + ".yaml"));
+	    input = new FileInputStream(new File(ResourceManager.TILESETS_FOLDER + aSetName + ".yaml"));
 
-	    System.out.println("Loaded tileSet: " + ResourceManager.tilesetsFolder + aSetName + ".yaml");
+	    System.out.println("Loaded tileSet: " + ResourceManager.TILESETS_FOLDER + aSetName + ".yaml");
 	    Yaml tilesetYaml = new Yaml();
 	    Map<String, Object> tilesetYamlMap = (Map) tilesetYaml.load(input);
 	    for (String s : tilesetYamlMap.keySet()) {

@@ -75,13 +75,32 @@ public class World {
 		// Make rendering passes
 		for (int i = 0; i < PASSES_COUNT; i++) {
 			for (Entity e : this.entities) {
-				if (e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewpor(e)) { 
+				if (e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
 					e.renderEntity(g);
 				}
 			}
 		}	
+		
+		renderSelectionBoxes(g);
+		renderHpBars(g);
 	}
 
+	private void renderSelectionBoxes(Graphics g) {
+	    for (Entity e : this.entities) {
+		if (e.isVisible && (e instanceof ISelectable) && (e.isSelected) && camera.isEntityInsideViewport(e)) { 
+		    e.drawSelectionBox(g);
+		}
+	    }		    
+	}
+	
+	private void renderHpBars(Graphics g) {
+	    for (Entity e : this.entities) {
+		if (e.isVisible && (e instanceof ISelectable) && !(e.isSelected) && (e.isMouseOver) && camera.isEntityInsideViewport(e)) { 
+		    e.drawHpBar(g);
+		}
+	    }		    
+	}
+	
 	public TileMap getMap() {
 		return map;
 	}
@@ -100,8 +119,8 @@ public class World {
 	 * @param boundingBox
 	 * @return
 	 */
-	public List<Entity> selectEntitiesInsideBox(Rectangle boundingBox) {
-	    List<Entity> selectedEntities = new LinkedList<>();
+	public LinkedList<Entity> selectEntitiesInsideBox(Rectangle boundingBox) {
+	    LinkedList<Entity> selectedEntities = new LinkedList<>();
 	    
 	    for (Entity e : this.entities) {
 		if (e instanceof ISelectable) {

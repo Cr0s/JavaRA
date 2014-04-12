@@ -76,6 +76,10 @@ public class Main extends StateBasedGame {
 		}
 	}
 
+	private void loadCursors() {
+	    
+	}
+	
 	@Override
 	public void initStatesList(GameContainer arg0) throws SlickException {
 		this.addState(new StateMainMenu());		
@@ -141,4 +145,28 @@ public class Main extends StateBasedGame {
 		w.spawnEntityInWorld(mcv);
 		
 	}
+	
+	public void resetCursor() {
+	    try {
+		this.getContainer().setMouseCursor(ResourceManager.getInstance().pointerCursor, 32, 0);
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }
+	}
+	
+	public void setGotoCursor() {
+	    try {
+		getContainer().setAnimatedMouseCursor(ResourceManager.GOTO_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50});
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }	    
+	}
+	
+	public void setSelectursor() {
+	    try {
+		getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 12, 12, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }	    
+	}	
 }

@@ -15,6 +15,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.opengl.CursorLoader;
+
 import redhorizon.filetypes.mix.MixFile;
 import redhorizon.filetypes.mix.MixRecord;
 import redhorizon.filetypes.pal.PalFile;
@@ -25,19 +30,26 @@ import redhorizon.filetypes.tmp.TmpFileRA;
 public class ResourceManager {
 
     private static ResourceManager instance;
-    public static final String rootFolder = System.getProperty("user.dir")
+    public static final String ROOT_FOLDER = System.getProperty("user.dir")
 	    + System.getProperty("file.separator");
     
-    public static final String resourceFolder = rootFolder + "assets"
+    public static final String RESOURCE_FOLDER = ROOT_FOLDER + "assets"
 	    + System.getProperty("file.separator");
-    public static final String palFolder = resourceFolder + "pal"
+    public static final String PAL_FOLDER = RESOURCE_FOLDER + "pal"
 	    + System.getProperty("file.separator");
-    public static final String tilesetsFolder = rootFolder + "tilesets"
+    public static final String TILESETS_FOLDER = ROOT_FOLDER + "tilesets"
 	    + System.getProperty("file.separator");
     
-    public static final String mapsFolder = rootFolder + "maps"
+    public static final String MAPS_FOLDER = ROOT_FOLDER + "maps"
 	    + System.getProperty("file.separator");
+    
+    public static final String CURSORS_FOLDER = RESOURCE_FOLDER + "cursors" + System.getProperty("file.separator");
 
+    public static final String MAIN_CURSOR = CURSORS_FOLDER + "pointer.png";
+    public static final String GOTO_CURSOR = CURSORS_FOLDER + "goto.tga";
+    public static final String SELECT_CURSOR = CURSORS_FOLDER + "select.tga";
+    
+    public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();
     private HashMap<String, ShpTexture> conquerTextureSources = new HashMap<>();
     private HashMap<String, ShpTexture> shpTextureSources = new HashMap<>();
@@ -45,6 +57,15 @@ public class ResourceManager {
     private HashMap<String, PalFile> palettes = new HashMap<>();
 
     private ResourceManager() {
+	try {
+	    this.pointerCursor = CursorLoader.get().getCursor(MAIN_CURSOR, 0, 0);
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (LWJGLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
 	loadMixes();
     }
 
@@ -60,7 +81,7 @@ public class ResourceManager {
 	RandomAccessFile randomAccessFile = null;
 
 	try {
-	    List<Path> mixFiles = listDirectoryMixes(Paths.get(resourceFolder));
+	    List<Path> mixFiles = listDirectoryMixes(Paths.get(RESOURCE_FOLDER));
 
 	    for (Path f : mixFiles) {
 		randomAccessFile = new RandomAccessFile(f.toString(), "r");
@@ -168,7 +189,7 @@ public class ResourceManager {
 	}
 
 	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
-		.get(palFolder + name).toString(), "r")) {
+		.get(PAL_FOLDER + name).toString(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 	    PalFile palfile = new PalFile(name, inChannel);
 

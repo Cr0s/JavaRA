@@ -43,7 +43,7 @@ public class TileMap {
     public TileMap(String mapName) {
 	InputStream input;
 	try {
-	    input = new FileInputStream(new File(ResourceManager.mapsFolder + mapName + System.getProperty("file.separator") + "map.yaml"));
+	    input = new FileInputStream(new File(ResourceManager.MAPS_FOLDER + mapName + System.getProperty("file.separator") + "map.yaml"));
 
 	    Yaml mapYaml = new Yaml();
 	    Map<String, Object> mapYamlMap = (Map) mapYaml.load(input);
@@ -82,7 +82,7 @@ public class TileMap {
 
     private void loadBinaryMap(String mapName) {	
 	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
-		.get(ResourceManager.mapsFolder + mapName + System.getProperty("file.separator") + "map.bin").toString(), "r")) {
+		.get(ResourceManager.MAPS_FOLDER + mapName + System.getProperty("file.separator") + "map.bin").toString(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 
 	    // Read one byte and pair of two shorts: map height and width
@@ -184,11 +184,11 @@ public class TileMap {
 	    int y = me.getY();
 	    
 	    // Don't draw invisible entities
-	    if (x < (int) -camera.offsetX / 24 - 1 || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 1) {
+	    if (x < (int) -camera.offsetX / 24 - 2 || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 2) {
 		continue;
 	    }
 
-	    if (y < (int) -camera.offsetY / 24  -1 || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 1) {
+	    if (y < (int) -camera.offsetY / 24  -2 || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 2) {
 		continue;
 	    }
 	    

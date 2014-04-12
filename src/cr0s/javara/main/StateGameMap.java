@@ -1,15 +1,20 @@
 package cr0s.javara.main;
 
+import java.util.LinkedList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.opengl.CursorLoader;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IMovable;
+import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Point;
 import cr0s.javara.entity.ISelectable;
 
@@ -21,6 +26,10 @@ public class StateGameMap extends BasicGameState {
 	private Point pressStart = new Point(0, 0);
 	private boolean selectionRectVisible = true;
 	private Rectangle selectionRect = new Rectangle(0, 0, 0, 0);
+	
+	private boolean isAnyMovableEntitySelected = false;
+	
+	private Entity mouseOverEntity = null;
 	
 	public StateGameMap(final GameContainer container) {
 		this.container = container;
@@ -61,20 +70,60 @@ public class StateGameMap extends BasicGameState {
 	}
 
 	@Override
-	public final void mouseMoved(final int arg0, final int arg1, final int newX, final int newY) {
-
+	public final void mouseMoved(final int arg0, final int arg1, final int x, final int y) {
+	    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
+	
+	    if (e != null) {
+		if (this.mouseOverEntity != null && this.mouseOverEntity != e) {
+		    this.mouseOverEntity.isMouseOver = false;
+		} else {
+		    if (e.isSelected && this.mouseOverEntity == e) {
+			Main.getInstance().resetCursor();
+			return;
+		    }
+		}
+		
+		this.mouseOverEntity = e;
+		e.isMouseOver = true;
+		
+		if (!e.isSelected) { 
+		    Main.getInstance().setSelectursor();
+		}
+	    } else {
+		if (this.mouseOverEntity != null) {
+		    this.mouseOverEntity.isMouseOver = false;
+		    this.mouseOverEntity = null;
+		}
+		
+		if (!this.isAnyMovableEntitySelected) {
+		    Main.getInstance().resetCursor();
+		} else {
+		    Main.getInstance().setGotoCursor();
+		}
+	    }
 	}
 
 	@Override
 	public final void mouseClicked(final int button, final int x, final int y, final int clickCount) {
-	    	Main.getInstance().getWorld().cancelAllSelection();
 	    	Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
 		
 		if (button == 0) { 
+		    Main.getInstance().getWorld().cancelAllSelection();
+		    
 		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
 		    
 		    if (e != null) { 
 			((ISelectable) e).select();
+			
+			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
+			if (this.isAnyMovableEntitySelected) {
+			    Main.getInstance().setGotoCursor();
+			} else {
+			    Main.getInstance().resetCursor();
+			}
+		    } else {
+			this.isAnyMovableEntitySelected = false;
+			Main.getInstance().resetCursor();
 		    }
 		}
 	}
@@ -90,14 +139,27 @@ public class StateGameMap extends BasicGameState {
 
 	@Override
 	public final void mouseReleased(final int button, final int x, final int y) {
+	    Main.getInstance().getController().mouseReleased(button, x, y);
+	    
 	    if (button == 0 && this.selectionRectVisible) {
 		this.selectionRectVisible = false;
 		
 		if (this.selectionRect.getWidth() * this.selectionRect.getHeight() > 4) {
-		    Main.getInstance().getWorld().selectEntitiesInsideBox(this.selectionRect);
+		    LinkedList<Entity> entities = Main.getInstance().getWorld().selectEntitiesInsideBox(this.selectionRect);
+		    
+		    for (Entity e : entities) {
+			if (e instanceof IMovable) {
+			    this.isAnyMovableEntitySelected = true;
+			    Main.getInstance().setGotoCursor();
+			    return;
+			}
+		    }
+		    
+		    
+		    this.isAnyMovableEntitySelected = false;
+		    Main.getInstance().resetCursor();	    
 		}
 	    }
-		Main.getInstance().getController().mouseReleased(button, x, y);
 	}
 
 	@Override
@@ -193,7 +255,7 @@ public class StateGameMap extends BasicGameState {
 	@Override
 	public void enter(final GameContainer arg0, final StateBasedGame arg1)
 			throws SlickException {
-		
+	    
 	}
 
 	@Override
@@ -233,6 +295,7 @@ public class StateGameMap extends BasicGameState {
 	@Override
 	public final void update(final GameContainer arg0, final StateBasedGame arg1, final int delta)
 			throws SlickException {
+	    
 		Main.getInstance().getController().update(container, delta);
 		Main.getInstance().getCamera().update(container, delta);
 		Main.getInstance().getWorld().update(delta);

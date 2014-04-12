@@ -3,10 +3,11 @@ package cr0s.javara.entity.vehicle;
 import org.newdawn.slick.Graphics;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IMovable;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 
-public abstract class EntityVehicle extends Entity {
+public abstract class EntityVehicle extends Entity implements IMovable {
 	public int tileX, tileY;
 
 	public int hp, maxHp;
