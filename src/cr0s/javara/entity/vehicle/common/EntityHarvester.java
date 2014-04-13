@@ -90,7 +90,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	@Override
 	public void moveTo(int tileX, int tileY) {
-	    this.rotateTo(RotationUtil.getRotationFromXY(posX, posY, tileX, tileY) % 32);	    
+	    int rot = RotationUtil.getRotationFromXY(posX, posY, tileX, tileY);
+	    this.rotateTo(rot);
 	}
 
 	@Override

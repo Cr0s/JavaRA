@@ -123,7 +123,6 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	@Override
 	public void moveTo(int tileX, int tileY) {
 	    int rot = RotationUtil.getRotationFromXY(posX, posY, tileX, tileY);
-	    System.out.println("Rotaton: " + (rot % 32) + " (" + tileX + "; " + tileY + ")");
 	    this.rotateTo(rot);
 	}
 

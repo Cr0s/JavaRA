@@ -27,7 +27,6 @@ import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
-import cr0s.javara.render.map.tiled.TiledMap;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.TmpTexture;

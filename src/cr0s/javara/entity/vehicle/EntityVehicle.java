@@ -65,9 +65,9 @@ public abstract class EntityVehicle extends Entity implements IMovable {
 	    this.newRotation = rot;
 	    
 	    // Select nearest rotation direction
-	    if (getRotation() > 24 && rot < 8) {
+	    if (getRotation() >= 24 && rot <= 8) {
 		this.rotationDirection = RotationDirection.LEFT;
-	    } else if (getRotation() < 8 && rot > 24) {
+	    } else if (getRotation() <= 8 && rot >= 24) {
 		this.rotationDirection = RotationDirection.RIGHT;
 	    } else
 	    if (getRotation() < rot) {

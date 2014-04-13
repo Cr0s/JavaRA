@@ -9,7 +9,6 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.render.map.TileMap;
-import cr0s.javara.render.map.tiled.TiledMap;
 import cr0s.javara.util.Point;
 
 
