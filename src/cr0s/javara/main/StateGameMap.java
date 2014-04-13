@@ -126,6 +126,7 @@ public class StateGameMap extends BasicGameState {
 		    
 		    if (e != null) { 
 			((ISelectable) e).select();
+			Main.getInstance().getPlayer().selectedEntities.add(e);
 			
 			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
 			if (this.isAnyMovableEntitySelected) {
@@ -142,6 +143,7 @@ public class StateGameMap extends BasicGameState {
 			    Main.getInstance().resetCursor();
 			}
 		    } else {
+			Main.getInstance().getPlayer().selectedEntities.clear();
 			this.isAnyMovableEntitySelected = false;
 			Main.getInstance().resetCursor();
 		    }
@@ -158,11 +160,17 @@ public class StateGameMap extends BasicGameState {
 				    this.isAnyMovableEntitySelected = false;
 				    this.mouseOverEntity = null;
 				    
+				    Main.getInstance().getPlayer().selectedEntities.clear();
 				    Main.getInstance().resetCursor();
 				}
-			    } else {
-				// TODO: move to cell code
 			    }
+			}
+		    } else {
+			if (this.isAnyMovableEntitySelected) {
+			    float destX = -Main.getInstance().getCamera().getOffsetX() + x;
+			    float destY = -Main.getInstance().getCamera().getOffsetY() + y;
+
+			    Main.getInstance().getPlayer().postMoveOrder(destX, destY);			    
 			}
 		    }
 		}
@@ -186,6 +194,8 @@ public class StateGameMap extends BasicGameState {
 		
 		if (this.selectionRect.getWidth() * this.selectionRect.getHeight() > 4) {
 		    LinkedList<Entity> entities = Main.getInstance().getWorld().selectEntitiesInsideBox(this.selectionRect);
+		    
+		    Main.getInstance().getPlayer().selectedEntities.addAll(entities);
 		    
 		    for (Entity e : entities) {
 			if (e instanceof IMovable) {

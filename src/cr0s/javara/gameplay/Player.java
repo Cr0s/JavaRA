@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.newdawn.slick.Color;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IMovable;
 import cr0s.javara.gameplay.Team.Alignment;
 
 public class Player {
@@ -24,5 +25,13 @@ public class Player {
 		this.name = name;
 		this.side = side;
 		this.playerColor = color;
+	}
+	
+	public void postMoveOrder(float destX, float destY) {
+	    for (Entity e : this.selectedEntities) {
+		if (!e.isDead() && (e instanceof IMovable)) {
+		    ((IMovable)e).moveTo((int)destX, (int)destY);
+		}
+	    }
 	}
 }

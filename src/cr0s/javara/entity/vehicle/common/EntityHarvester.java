@@ -14,6 +14,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.RotationUtil;
 
 public class EntityHarvester extends EntityVehicle implements ISelectable {
 
@@ -48,6 +49,14 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	@Override
 	public void updateEntity(int delta) {
 		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+		
+		if (updateTicks++ < 2) {
+		    return;
+		}
+		
+		updateTicks = 0;
+		
+		doRotationTick();		
 	}
 
 	@Override
@@ -81,8 +90,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	@Override
 	public void moveTo(int tileX, int tileY) {
-	    // TODO Auto-generated method stub
-	    
+	    this.rotateTo(RotationUtil.getRotationFromXY(posX, posY, tileX, tileY) % 32);	    
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.RotationUtil;
 
 public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable {
 
@@ -50,16 +51,16 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	public void updateEntity(int delta) {
 		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 		
+		if (updateTicks++ < 2) {
+		    return;
+		}
+		
+		updateTicks = 0;
+		
+		doRotationTick();
+		
 		if (isDeploying && this.canDeploy()) {
-		    if (updateTicks++ < 2) {
-			return;
-		    }
-		    
-		    updateTicks = 0;
-		    
-		    if (this.rotation != BUILD_ROTATION) {
-			this.setRotation(this.rotation + this.rotationDirection % MAX_ROTATION);
-		    } else {
+		    if (this.rotation == BUILD_ROTATION) {
 			EntityConstructionYard cy = new EntityConstructionYard((int) posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), (int) posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
 			cy.isVisible = true;
 			cy.isSelected = true;
@@ -115,14 +116,15 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	
 	private void deployConstructionYard() {
 	    this.isDeploying = true;
-	    
-	    this.rotationDirection = (this.rotation < BUILD_ROTATION) ? 1 : -1;
+
+	    this.rotateTo(this.BUILD_ROTATION);
 	}
 
 	@Override
 	public void moveTo(int tileX, int tileY) {
-	    // TODO Auto-generated method stub
-	    
+	    int rot = RotationUtil.getRotationFromXY(posX, posY, tileX, tileY);
+	    System.out.println("Rotaton: " + (rot % 32) + " (" + tileX + "; " + tileY + ")");
+	    this.rotateTo(rot);
 	}
 
 	@Override

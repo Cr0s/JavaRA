@@ -13,6 +13,7 @@ public abstract class Entity {
 	public World world;
 	
 	public float posX, posY;
+	public float moveX, moveY;
 	
 	private boolean isDead;
 	private int hp, maxHp;
