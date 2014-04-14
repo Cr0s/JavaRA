@@ -20,6 +20,7 @@ import org.lwjgl.input.Cursor;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.opengl.CursorLoader;
+import org.newdawn.slick.opengl.Texture;
 
 import cr0s.javara.entity.building.BibType;
 import redhorizon.filetypes.mix.MixFile;
@@ -56,6 +57,7 @@ public class ResourceManager {
     public static final String DEPLOY_CURSOR = CURSORS_FOLDER + "deploy.tga";
     
     public static final String NO_DEPLOY_CURSOR = CURSORS_FOLDER + "no_deploy.tga";
+    public static final String SIDEBAR_CATEGORIES_SHEET = RESOURCE_FOLDER + "sidebar_buttons.png";
     
     public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();

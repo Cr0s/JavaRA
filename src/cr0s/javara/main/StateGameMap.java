@@ -33,12 +33,8 @@ public class StateGameMap extends BasicGameState {
 	
 	private Entity mouseOverEntity = null;
 	
-	private GameSideBar gsb;
-	
 	public StateGameMap(final GameContainer container) {
 		this.container = container;
-		
-		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
 	}
 	
 	@Override
@@ -354,7 +350,7 @@ public class StateGameMap extends BasicGameState {
 				
 		Main.getInstance().getCamera().renderFinish(container, g);
 		
-		this.gsb.render(g);
+		Main.getInstance().getSideBar().render(g);
 	}
 
 	@Override
@@ -364,7 +360,8 @@ public class StateGameMap extends BasicGameState {
 		Main.getInstance().getController().update(container, delta);
 		Main.getInstance().getCamera().update(container, delta);
 		Main.getInstance().getWorld().update(delta);
-		this.gsb.update(delta);
+
+		Main.getInstance().getSideBar().update(delta);
 	}
 
 }

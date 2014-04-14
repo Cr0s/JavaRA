@@ -31,6 +31,7 @@ import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.util.Point;
 
 public class Main extends StateBasedGame {
@@ -52,6 +53,8 @@ public class Main extends StateBasedGame {
 	public static boolean DEBUG_MODE = false;
 	
 	private CursorType currentCursor = CursorType.CURSOR_POINTER;
+	
+	private GameSideBar gsb;
 	
 	public Main() {
 		super("Java RA");
@@ -79,7 +82,7 @@ public class Main extends StateBasedGame {
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
 			container.setSmoothDeltas(true);
-			container.setVSync(true);
+			//container.setVSync(true);
 			container.setTargetFrameRate(75);
 			container.setClearEachFrame(false);
 			container.start();
@@ -142,7 +145,8 @@ public class Main extends StateBasedGame {
 		team = new Team();
 		player = new Player("anus", Alignment.SOVIET, Color.red);//new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 
-
+		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
+		
 		// Create testing base
 		EntityPowerPlant e1 = new EntityPowerPlant(24 * 49, 24 * 53, team, player);
 		e1.setHp(r.nextInt(e1.getMaxHp()));
@@ -218,5 +222,9 @@ public class Main extends StateBasedGame {
 		e.printStackTrace();
 	    }
 	    this.currentCursor = cursor;
+	}
+	
+	public GameSideBar getSideBar() {
+	    return this.gsb;
 	}
 }

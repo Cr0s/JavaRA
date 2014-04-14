@@ -10,7 +10,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 
 public class Player {
 	public String name;
-	public Alignment side;
+	private Alignment side;
 
 	public Color playerColor;
 	
@@ -33,5 +33,9 @@ public class Player {
 		    ((IMovable)e).moveTo((int)destX, (int)destY);
 		}
 	    }
+	}
+	
+	public Alignment getAlignment() {
+	    return this.side;
 	}
 }
