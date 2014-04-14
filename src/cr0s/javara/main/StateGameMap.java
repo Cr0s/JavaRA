@@ -86,10 +86,12 @@ public class StateGameMap extends BasicGameState {
 		    if (e.isSelected && this.mouseOverEntity == e) {
 			if (e instanceof IDeployable) {
 			    if (((IDeployable)e).canDeploy()) { 
-				Main.getInstance().setDeployCursor();
+				Main.getInstance().setCursorType(CursorType.CURSOR_DEPLOY);
+			    } else {
+				Main.getInstance().setCursorType(CursorType.CURSOR_NO_DEPLOY);
 			    }
 			} else {
-			    Main.getInstance().resetCursor();
+			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 			}
 			return;
 		    }
@@ -99,7 +101,7 @@ public class StateGameMap extends BasicGameState {
 		e.isMouseOver = true;
 		
 		if (!e.isSelected) { 
-		    Main.getInstance().setSelectCursor();
+		    Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
 		}
 	    } else {
 		if (this.mouseOverEntity != null) {
@@ -108,9 +110,9 @@ public class StateGameMap extends BasicGameState {
 		}
 		
 		if (!this.isAnyMovableEntitySelected) {
-		    Main.getInstance().resetCursor();
+		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 		} else {
-		    Main.getInstance().setGotoCursor();
+		    setGotoCursorIfCellPassable(x, y);
 		}
 	    }
 	}
@@ -132,20 +134,20 @@ public class StateGameMap extends BasicGameState {
 			if (this.isAnyMovableEntitySelected) {
 			    if (this.mouseOverEntity == e && (e instanceof IDeployable)) {
 				if (((IDeployable) e).canDeploy()) {
-				    Main.getInstance().setDeployCursor();
+				    Main.getInstance().setCursorType(CursorType.CURSOR_DEPLOY);
 				} else {
-				    // TODO: Main.getInstance().setNoDeployCursor();
+				    Main.getInstance().setCursorType(CursorType.CURSOR_NO_DEPLOY);
 				}
 			    } else {
-				Main.getInstance().setGotoCursor();
+				setGotoCursorIfCellPassable(x, y);
 			    }
 			} else {
-			    Main.getInstance().resetCursor();
+			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 			}
 		    } else {
 			Main.getInstance().getPlayer().selectedEntities.clear();
 			this.isAnyMovableEntitySelected = false;
-			Main.getInstance().resetCursor();
+			Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 		    }
 		} else if (button == 1) {
 		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
@@ -161,12 +163,12 @@ public class StateGameMap extends BasicGameState {
 				    this.mouseOverEntity = null;
 				    
 				    Main.getInstance().getPlayer().selectedEntities.clear();
-				    Main.getInstance().resetCursor();
+				    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 				}
 			    }
 			}
 		    } else {
-			if (this.isAnyMovableEntitySelected) {
+			if (this.isAnyMovableEntitySelected && Main.getInstance().getCursor() != CursorType.CURSOR_NO_GOTO) {
 			    float destX = -Main.getInstance().getCamera().getOffsetX() + x;
 			    float destY = -Main.getInstance().getCamera().getOffsetY() + y;
 
@@ -200,18 +202,29 @@ public class StateGameMap extends BasicGameState {
 		    for (Entity e : entities) {
 			if (e instanceof IMovable) {
 			    this.isAnyMovableEntitySelected = true;
-			    Main.getInstance().setGotoCursor();
+			    setGotoCursorIfCellPassable(x, y);
 			    return;
 			}
 		    }
 		    
 		    
 		    this.isAnyMovableEntitySelected = false;
-		    Main.getInstance().resetCursor();	    
+		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);    
 		}
 	    }
 	}
 
+	private void setGotoCursorIfCellPassable(int mouseX, int mouseY) {
+		int cellX = (int) (-Main.getInstance().getCamera().getOffsetX() + mouseX) / 24;
+		int cellY = (int) (-Main.getInstance().getCamera().getOffsetY() + mouseY) / 24;
+
+		if (Main.getInstance().getWorld().isCellPassable(cellX, cellY)) {
+		    Main.getInstance().setCursorType(CursorType.CURSOR_GOTO);
+		} else {
+		    Main.getInstance().setCursorType(CursorType.CURSOR_NO_GOTO);
+		}	    
+	}
+	
 	@Override
 	public void mouseWheelMoved(final int arg0) {
 		

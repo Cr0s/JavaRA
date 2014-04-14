@@ -24,12 +24,10 @@ public class Controller {
 	private boolean mouseDownRight = false;
 	private boolean mouseDownLeft = false;
 
-	private final int VIEWPORT_SCROLL_TRESHOLD = 50; // TODO: config this
-	private final float SCROLL_SPEED = 0.6f; // TODO: config this
+	private final int VIEWPORT_SCROLL_TRESHOLD = 35; // TODO: config this
+	private final float SCROLL_SPEED = 0.5f; // TODO: config this
 	private final int ALLOWED_BORDER_TILES = 0;
 
-	private HashMap<Integer, Boolean> isKeyDown = new HashMap<Integer, Boolean>(
-			24);
 
 	public Controller(Player player, Camera camera, Input input) {
 		this.player = player;
@@ -48,15 +46,6 @@ public class Controller {
 			throws SlickException {
 		if (gc.isPaused()) {
 			return;
-		}
-
-		if (mouseDownRight) {
-			offsetX = input.getMouseX() - baseX;
-			offsetY = input.getMouseY() - baseY;
-
-			if (offsetX <= 0 && offsetY <= 0) {
-				camera.setOffset(offsetX, offsetY);
-			}
 		}
 
 		float dx = 0f, dy = 0;

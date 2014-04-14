@@ -42,7 +42,7 @@ public class World {
 
     private final int PASSES_COUNT = 2;
 
-    private int[][] blockingMap;
+    public int[][] blockingMap;
 
     boolean canRender = true;
     
@@ -50,9 +50,11 @@ public class World {
     private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
     
     public World(String mapName, GameContainer c, Camera camera) {
-	map = new TileMap(mapName);
+	map = new TileMap(this, mapName);
 
-
+	this.blockingMap = new int[map.getWidth()][map.getHeight()];
+	map.fillBlockingMap(this.blockingMap);
+	
 	this.container = c;
 
 	this.camera = camera;
@@ -103,6 +105,22 @@ public class World {
 
 	map.render(container, g, camera);
 
+	Color blockedColor = new Color(64, 0, 0, 64);
+	Color pColor = g.getColor();
+
+	// Debug: render blocked cells
+	if (Main.DEBUG_MODE) {
+	    for (int y = 0; y < map.getHeight(); y++) {
+		for (int x = 0; x < map.getWidth(); x++) {
+		    if (!isCellPassable(x, y)) {
+			g.setColor(blockedColor);
+			g.fillRect(x * 24, y * 24, 24, 24);
+			g.setColor(pColor);
+		    }		
+		}
+	    }
+	}
+	
 	// Make rendering passes
 	for (int i = 0; i < PASSES_COUNT; i++) {
 	    for (Entity e : this.entities) {
@@ -249,5 +267,20 @@ public class World {
 	ebp.isVisible = true;
 	
 	this.spawnEntityInWorld(ebp);
+    }
+    
+    public boolean isCellPassable(int x, int y) {
+	return !(blockingMap[x][y] != 0 
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_CLEAR_ID
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_BEACH_ID
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROAD_ID
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROUGH_ID);
+    }
+    
+    public boolean isCellBuildable(int x, int y) {
+	return !(blockingMap[x][y] != 0 
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_CLEAR_ID
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_BEACH_ID
+		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROAD_ID);	
     }
 }

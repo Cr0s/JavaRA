@@ -1,0 +1,963 @@
+Selectable: True
+
+MapFormat: 6
+
+RequiresMod: ra
+
+Title: Haos Ridges
+
+Description: Team map
+
+Author: Seru
+
+Tileset: TEMPERAT
+
+MapSize: 128,128
+
+Bounds: 16,16,96,96
+
+UseAsShellmap: False
+
+Type: Conquest
+
+Options:
+
+Players:
+    PlayerReference@Neutral:
+        Name: Neutral
+        OwnsWorld: True
+        NonCombatant: True
+        Race: allies
+    PlayerReference@Creeps:
+        Name: Creeps
+        NonCombatant: True
+        Race: allies
+        Enemies: Multi0,Multi1,Multi2,Multi3,Multi4,Multi5
+    PlayerReference@Multi0:
+        Name: Multi0
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+    PlayerReference@Multi1:
+        Name: Multi1
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+    PlayerReference@Multi2:
+        Name: Multi2
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+    PlayerReference@Multi3:
+        Name: Multi3
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+    PlayerReference@Multi4:
+        Name: Multi4
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+    PlayerReference@Multi5:
+        Name: Multi5
+        Playable: True
+        Race: Random
+        Enemies: Creeps
+
+Actors:
+    Actor0:
+        Name: mine
+        LocationX: 77
+        LocationY: 76
+        Owner: Neutral
+    Actor1:
+        Name: mine
+        LocationX: 49
+        LocationY: 52
+        Owner: Neutral
+    Actor2:
+        Name: mine
+        LocationX: 22
+        LocationY: 56
+        Owner: Neutral
+    Actor3:
+        Name: mine
+        LocationX: 105
+        LocationY: 72
+        Owner: Neutral
+    Actor4:
+        Name: mine
+        LocationX: 24
+        LocationY: 93
+        Owner: Neutral
+    Actor5:
+        Name: mine
+        LocationX: 62
+        LocationY: 93
+        Owner: Neutral
+    Actor6:
+        Name: mine
+        LocationX: 64
+        LocationY: 35
+        Owner: Neutral
+    Actor7:
+        Name: mine
+        LocationX: 43
+        LocationY: 93
+        Owner: Neutral
+    Actor8:
+        Name: mine
+        LocationX: 43
+        LocationY: 103
+        Owner: Neutral
+    Actor9:
+        Name: mine
+        LocationX: 102
+        LocationY: 35
+        Owner: Neutral
+    Actor10:
+        Name: mine
+        LocationX: 83
+        LocationY: 35
+        Owner: Neutral
+    Actor11:
+        Name: mine
+        LocationX: 83
+        LocationY: 24
+        Owner: Neutral
+    Actor12:
+        Name: t01
+        LocationX: 16
+        LocationY: 16
+        Owner: Neutral
+    Actor13:
+        Name: t02
+        LocationX: 19
+        LocationY: 17
+        Owner: Neutral
+    Actor14:
+        Name: t03
+        LocationX: 21
+        LocationY: 17
+        Owner: Neutral
+    Actor15:
+        Name: t03
+        LocationX: 23
+        LocationY: 18
+        Owner: Neutral
+    Actor16:
+        Name: t05
+        LocationX: 22
+        LocationY: 18
+        Owner: Neutral
+    Actor17:
+        Name: t05
+        LocationX: 22
+        LocationY: 19
+        Owner: Neutral
+    Actor18:
+        Name: t05
+        LocationX: 18
+        LocationY: 21
+        Owner: Neutral
+    Actor19:
+        Name: t06
+        LocationX: 17
+        LocationY: 21
+        Owner: Neutral
+    Actor20:
+        Name: t07
+        LocationX: 18
+        LocationY: 19
+        Owner: Neutral
+    Actor21:
+        Name: t07
+        LocationX: 18
+        LocationY: 20
+        Owner: Neutral
+    Actor22:
+        Name: t07
+        LocationX: 19
+        LocationY: 20
+        Owner: Neutral
+    Actor23:
+        Name: t10
+        LocationX: 21
+        LocationY: 20
+        Owner: Neutral
+    Actor24:
+        Name: t11
+        LocationX: 19
+        LocationY: 21
+        Owner: Neutral
+    Actor25:
+        Name: t11
+        LocationX: 20
+        LocationY: 22
+        Owner: Neutral
+    Actor26:
+        Name: t12
+        LocationX: 25
+        LocationY: 19
+        Owner: Neutral
+    Actor27:
+        Name: t14
+        LocationX: 25
+        LocationY: 17
+        Owner: Neutral
+    Actor28:
+        Name: t15
+        LocationX: 19
+        LocationY: 18
+        Owner: Neutral
+    Actor29:
+        Name: t16
+        LocationX: 22
+        LocationY: 21
+        Owner: Neutral
+    Actor30:
+        Name: t17
+        LocationX: 23
+        LocationY: 20
+        Owner: Neutral
+    Actor31:
+        Name: tc01
+        LocationX: 24
+        LocationY: 20
+        Owner: Neutral
+    Actor32:
+        Name: tc01
+        LocationX: 24
+        LocationY: 16
+        Owner: Neutral
+    Actor33:
+        Name: tc02
+        LocationX: 27
+        LocationY: 17
+        Owner: Neutral
+    Actor34:
+        Name: tc03
+        LocationX: 27
+        LocationY: 19
+        Owner: Neutral
+    Actor35:
+        Name: tc04
+        LocationX: 23
+        LocationY: 22
+        Owner: Neutral
+    Actor36:
+        Name: tc05
+        LocationX: 16
+        LocationY: 23
+        Owner: Neutral
+    Actor37:
+        Name: tc05
+        LocationX: 19
+        LocationY: 24
+        Owner: Neutral
+    Actor38:
+        Name: t01
+        LocationX: 17
+        LocationY: 27
+        Owner: Neutral
+    Actor39:
+        Name: t02
+        LocationX: 16
+        LocationY: 30
+        Owner: Neutral
+    Actor40:
+        Name: t02
+        LocationX: 18
+        LocationY: 27
+        Owner: Neutral
+    Actor41:
+        Name: t03
+        LocationX: 19
+        LocationY: 28
+        Owner: Neutral
+    Actor42:
+        Name: t03
+        LocationX: 18
+        LocationY: 29
+        Owner: Neutral
+    Actor43:
+        Name: t05
+        LocationX: 21
+        LocationY: 28
+        Owner: Neutral
+    Actor44:
+        Name: t06
+        LocationX: 21
+        LocationY: 27
+        Owner: Neutral
+    Actor45:
+        Name: t07
+        LocationX: 26
+        LocationY: 23
+        Owner: Neutral
+    Actor46:
+        Name: t07
+        LocationX: 28
+        LocationY: 22
+        Owner: Neutral
+    Actor47:
+        Name: t08
+        LocationX: 29
+        LocationY: 21
+        Owner: Neutral
+    Actor48:
+        Name: t10
+        LocationX: 31
+        LocationY: 18
+        Owner: Neutral
+    Actor49:
+        Name: t10
+        LocationX: 30
+        LocationY: 17
+        Owner: Neutral
+    Actor50:
+        Name: t11
+        LocationX: 29
+        LocationY: 19
+        Owner: Neutral
+    Actor51:
+        Name: t13
+        LocationX: 24
+        LocationY: 25
+        Owner: Neutral
+    Actor52:
+        Name: t14
+        LocationX: 22
+        LocationY: 26
+        Owner: Neutral
+    Actor53:
+        Name: t15
+        LocationX: 26
+        LocationY: 25
+        Owner: Neutral
+    Actor54:
+        Name: t16
+        LocationX: 27
+        LocationY: 22
+        Owner: Neutral
+    Actor55:
+        Name: tc01
+        LocationX: 30
+        LocationY: 21
+        Owner: Neutral
+    Actor56:
+        Name: tc02
+        LocationX: 32
+        LocationY: 17
+        Owner: Neutral
+    Actor57:
+        Name: tc03
+        LocationX: 16
+        LocationY: 18
+        Owner: Neutral
+    Actor58:
+        Name: tc04
+        LocationX: 20
+        LocationY: 16
+        Owner: Neutral
+    Actor59:
+        Name: tc05
+        LocationX: 109
+        LocationY: 109
+        Owner: Neutral
+    Actor60:
+        Name: t01
+        LocationX: 105
+        LocationY: 107
+        Owner: Neutral
+    Actor61:
+        Name: t02
+        LocationX: 107
+        LocationY: 109
+        Owner: Neutral
+    Actor62:
+        Name: t03
+        LocationX: 108
+        LocationY: 107
+        Owner: Neutral
+    Actor63:
+        Name: t05
+        LocationX: 109
+        LocationY: 105
+        Owner: Neutral
+    Actor64:
+        Name: t06
+        LocationX: 110
+        LocationY: 103
+        Owner: Neutral
+    Actor65:
+        Name: t07
+        LocationX: 107
+        LocationY: 103
+        Owner: Neutral
+    Actor66:
+        Name: t08
+        LocationX: 105
+        LocationY: 104
+        Owner: Neutral
+    Actor67:
+        Name: t11
+        LocationX: 102
+        LocationY: 108
+        Owner: Neutral
+    Actor68:
+        Name: t12
+        LocationX: 104
+        LocationY: 105
+        Owner: Neutral
+    Actor69:
+        Name: t14
+        LocationX: 99
+        LocationY: 110
+        Owner: Neutral
+    Actor70:
+        Name: t14
+        LocationX: 99
+        LocationY: 109
+        Owner: Neutral
+    Actor71:
+        Name: t15
+        LocationX: 99
+        LocationY: 108
+        Owner: Neutral
+    Actor72:
+        Name: t16
+        LocationX: 100
+        LocationY: 106
+        Owner: Neutral
+    Actor73:
+        Name: t16
+        LocationX: 102
+        LocationY: 109
+        Owner: Neutral
+    Actor74:
+        Name: t17
+        LocationX: 104
+        LocationY: 109
+        Owner: Neutral
+    Actor75:
+        Name: tc02
+        LocationX: 106
+        LocationY: 106
+        Owner: Neutral
+    Actor76:
+        Name: t01
+        LocationX: 101
+        LocationY: 103
+        Owner: Neutral
+    Actor77:
+        Name: t01
+        LocationX: 103
+        LocationY: 103
+        Owner: Neutral
+    Actor78:
+        Name: t03
+        LocationX: 105
+        LocationY: 102
+        Owner: Neutral
+    Actor79:
+        Name: t05
+        LocationX: 107
+        LocationY: 101
+        Owner: Neutral
+    Actor80:
+        Name: t06
+        LocationX: 109
+        LocationY: 101
+        Owner: Neutral
+    Actor81:
+        Name: t06
+        LocationX: 111
+        LocationY: 101
+        Owner: Neutral
+    Actor82:
+        Name: t07
+        LocationX: 110
+        LocationY: 101
+        Owner: Neutral
+    Actor83:
+        Name: t08
+        LocationX: 108
+        LocationY: 103
+        Owner: Neutral
+    Actor84:
+        Name: t10
+        LocationX: 107
+        LocationY: 104
+        Owner: Neutral
+    Actor85:
+        Name: t12
+        LocationX: 103
+        LocationY: 109
+        Owner: Neutral
+    Actor86:
+        Name: t13
+        LocationX: 103
+        LocationY: 110
+        Owner: Neutral
+    Actor87:
+        Name: t14
+        LocationX: 105
+        LocationY: 110
+        Owner: Neutral
+    Actor88:
+        Name: t15
+        LocationX: 107
+        LocationY: 110
+        Owner: Neutral
+    Actor89:
+        Name: t16
+        LocationX: 109
+        LocationY: 108
+        Owner: Neutral
+    Actor90:
+        Name: t17
+        LocationX: 110
+        LocationY: 107
+        Owner: Neutral
+    Actor91:
+        Name: tc01
+        LocationX: 110
+        LocationY: 106
+        Owner: Neutral
+    Actor92:
+        Name: tc02
+        LocationX: 110
+        LocationY: 104
+        Owner: Neutral
+    Actor93:
+        Name: t02
+        LocationX: 104
+        LocationY: 106
+        Owner: Neutral
+    Actor94:
+        Name: t03
+        LocationX: 105
+        LocationY: 106
+        Owner: Neutral
+    Actor95:
+        Name: t03
+        LocationX: 104
+        LocationY: 107
+        Owner: Neutral
+    Actor96:
+        Name: t06
+        LocationX: 102
+        LocationY: 107
+        Owner: Neutral
+    Actor97:
+        Name: t07
+        LocationX: 103
+        LocationY: 105
+        Owner: Neutral
+    Actor98:
+        Name: t08
+        LocationX: 102
+        LocationY: 105
+        Owner: Neutral
+    Actor99:
+        Name: t08
+        LocationX: 101
+        LocationY: 106
+        Owner: Neutral
+    Actor100:
+        Name: t12
+        LocationX: 101
+        LocationY: 110
+        Owner: Neutral
+    Actor101:
+        Name: t13
+        LocationX: 101
+        LocationY: 108
+        Owner: Neutral
+    Actor102:
+        Name: t14
+        LocationX: 105
+        LocationY: 108
+        Owner: Neutral
+    Actor103:
+        Name: t15
+        LocationX: 107
+        LocationY: 108
+        Owner: Neutral
+    Actor104:
+        Name: tc02
+        LocationX: 97
+        LocationY: 110
+        Owner: Neutral
+    Actor105:
+        Name: tc03
+        LocationX: 95
+        LocationY: 109
+        Owner: Neutral
+    Actor106:
+        Name: t01
+        LocationX: 97
+        LocationY: 107
+        Owner: Neutral
+    Actor107:
+        Name: t02
+        LocationX: 99
+        LocationY: 105
+        Owner: Neutral
+    Actor108:
+        Name: t03
+        LocationX: 100
+        LocationY: 104
+        Owner: Neutral
+    Actor109:
+        Name: t05
+        LocationX: 99
+        LocationY: 107
+        Owner: Neutral
+    Actor110:
+        Name: t06
+        LocationX: 98
+        LocationY: 107
+        Owner: Neutral
+    Actor111:
+        Name: t07
+        LocationX: 98
+        LocationY: 106
+        Owner: Neutral
+    Actor112:
+        Name: t08
+        LocationX: 104
+        LocationY: 102
+        Owner: Neutral
+    Actor113:
+        Name: t08
+        LocationX: 107
+        LocationY: 100
+        Owner: Neutral
+    Actor114:
+        Name: t10
+        LocationX: 108
+        LocationY: 100
+        Owner: Neutral
+    Actor115:
+        Name: t11
+        LocationX: 109
+        LocationY: 99
+        Owner: Neutral
+    Actor116:
+        Name: t11
+        LocationX: 110
+        LocationY: 98
+        Owner: Neutral
+    Actor117:
+        Name: t12
+        LocationX: 110
+        LocationY: 97
+        Owner: Neutral
+    Actor118:
+        Name: t13
+        LocationX: 108
+        LocationY: 99
+        Owner: Neutral
+    Actor119:
+        Name: t14
+        LocationX: 105
+        LocationY: 101
+        Owner: Neutral
+    Actor120:
+        Name: t16
+        LocationX: 106
+        LocationY: 103
+        Owner: Neutral
+    Actor121:
+        Name: t17
+        LocationX: 109
+        LocationY: 102
+        Owner: Neutral
+    Actor122:
+        Name: tc01
+        LocationX: 104
+        LocationY: 100
+        Owner: Neutral
+    Actor123:
+        Name: t02
+        LocationX: 33
+        LocationY: 100
+        Owner: Neutral
+    Actor124:
+        Name: t03
+        LocationX: 33
+        LocationY: 86
+        Owner: Neutral
+    Actor125:
+        Name: t05
+        LocationX: 49
+        LocationY: 76
+        Owner: Neutral
+    Actor126:
+        Name: t10
+        LocationX: 49
+        LocationY: 77
+        Owner: Neutral
+    Actor127:
+        Name: t13
+        LocationX: 93
+        LocationY: 29
+        Owner: Neutral
+    Actor128:
+        Name: t16
+        LocationX: 76
+        LocationY: 43
+        Owner: Neutral
+    Actor129:
+        Name: t14
+        LocationX: 71
+        LocationY: 87
+        Owner: Neutral
+    Actor130:
+        Name: t15
+        LocationX: 67
+        LocationY: 82
+        Owner: Neutral
+    Actor131:
+        Name: t16
+        LocationX: 63
+        LocationY: 81
+        Owner: Neutral
+    Actor132:
+        Name: t17
+        LocationX: 66
+        LocationY: 79
+        Owner: Neutral
+    Actor133:
+        Name: tc01
+        LocationX: 69
+        LocationY: 81
+        Owner: Neutral
+    Actor134:
+        Name: tc01
+        LocationX: 70
+        LocationY: 85
+        Owner: Neutral
+    Actor135:
+        Name: tc02
+        LocationX: 65
+        LocationY: 82
+        Owner: Neutral
+    Actor136:
+        Name: tc03
+        LocationX: 63
+        LocationY: 79
+        Owner: Neutral
+    Actor137:
+        Name: tc05
+        LocationX: 69
+        LocationY: 83
+        Owner: Neutral
+    Actor138:
+        Name: t01
+        LocationX: 68
+        LocationY: 87
+        Owner: Neutral
+    Actor139:
+        Name: t02
+        LocationX: 69
+        LocationY: 88
+        Owner: Neutral
+    Actor140:
+        Name: t03
+        LocationX: 73
+        LocationY: 86
+        Owner: Neutral
+    Actor141:
+        Name: t03
+        LocationX: 63
+        LocationY: 48
+        Owner: Neutral
+    Actor142:
+        Name: t05
+        LocationX: 58
+        LocationY: 46
+        Owner: Neutral
+    Actor143:
+        Name: t06
+        LocationX: 53
+        LocationY: 40
+        Owner: Neutral
+    Actor144:
+        Name: t07
+        LocationX: 55
+        LocationY: 39
+        Owner: Neutral
+    Actor145:
+        Name: t08
+        LocationX: 56
+        LocationY: 44
+        Owner: Neutral
+    Actor146:
+        Name: t08
+        LocationX: 60
+        LocationY: 47
+        Owner: Neutral
+    Actor147:
+        Name: t10
+        LocationX: 61
+        LocationY: 50
+        Owner: Neutral
+    Actor148:
+        Name: t10
+        LocationX: 60
+        LocationY: 49
+        Owner: Neutral
+    Actor149:
+        Name: t11
+        LocationX: 56
+        LocationY: 45
+        Owner: Neutral
+    Actor150:
+        Name: t11
+        LocationX: 57
+        LocationY: 44
+        Owner: Neutral
+    Actor151:
+        Name: t12
+        LocationX: 54
+        LocationY: 40
+        Owner: Neutral
+    Actor152:
+        Name: t13
+        LocationX: 57
+        LocationY: 42
+        Owner: Neutral
+    Actor153:
+        Name: t14
+        LocationX: 62
+        LocationY: 47
+        Owner: Neutral
+    Actor154:
+        Name: t16
+        LocationX: 64
+        LocationY: 49
+        Owner: Neutral
+    Actor155:
+        Name: t17
+        LocationX: 58
+        LocationY: 48
+        Owner: Neutral
+    Actor156:
+        Name: tc01
+        LocationX: 53
+        LocationY: 41
+        Owner: Neutral
+    Actor157:
+        Name: mine
+        LocationX: 63
+        LocationY: 64
+        Owner: Neutral
+    Actor158:
+        Name: mine
+        LocationX: 97
+        LocationY: 96
+        Owner: Neutral
+    Actor159:
+        Name: mine
+        LocationX: 30
+        LocationY: 32
+        Owner: Neutral
+    Actor160:
+        Name: t01
+        LocationX: 37
+        LocationY: 75
+        Owner: Neutral
+    Actor161:
+        Name: t02
+        LocationX: 21
+        LocationY: 69
+        Owner: Neutral
+    Actor162:
+        Name: t03
+        LocationX: 30
+        LocationY: 72
+        Owner: Neutral
+    Actor163:
+        Name: t05
+        LocationX: 26
+        LocationY: 40
+        Owner: Neutral
+    Actor164:
+        Name: t06
+        LocationX: 36
+        LocationY: 48
+        Owner: Neutral
+    Actor165:
+        Name: t05
+        LocationX: 35
+        LocationY: 47
+        Owner: Neutral
+    Actor166:
+        Name: t10
+        LocationX: 37
+        LocationY: 48
+        Owner: Neutral
+    Actor167:
+        Name: t10
+        LocationX: 37
+        LocationY: 55
+        Owner: Neutral
+    Actor168:
+        Name: t10
+        LocationX: 99
+        LocationY: 87
+        Owner: Neutral
+    Actor169:
+        Name: t11
+        LocationX: 75
+        LocationY: 65
+        Owner: Neutral
+    Actor170:
+        Name: t12
+        LocationX: 46
+        LocationY: 60
+        Owner: Neutral
+    Actor171:
+        Name: t13
+        LocationX: 49
+        LocationY: 63
+        Owner: Neutral
+    Actor172:
+        Name: tc02
+        LocationX: 47
+        LocationY: 20
+        Owner: Neutral
+    Actor173:
+        Name: tc02
+        LocationX: 64
+        LocationY: 17
+        Owner: Neutral
+    Actor174:
+        Name: tc04
+        LocationX: 65
+        LocationY: 102
+        Owner: Neutral
+    Actor175:
+        Name: tc05
+        LocationX: 80
+        LocationY: 108
+        Owner: Neutral
+
+Smudges:
+
+Rules:
+
+Sequences:
+
+VoxelSequences:
+
+Weapons:
+
+Voices:
+
+Notifications:
+
+Translations:

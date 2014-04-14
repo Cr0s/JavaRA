@@ -48,9 +48,14 @@ public class ResourceManager {
     public static final String CURSORS_FOLDER = RESOURCE_FOLDER + "cursors" + System.getProperty("file.separator");
 
     public static final String MAIN_CURSOR = CURSORS_FOLDER + "pointer.png";
+    
     public static final String GOTO_CURSOR = CURSORS_FOLDER + "goto.tga";
+    public static final String NO_GOTO_CURSOR = CURSORS_FOLDER + "no_goto.tga";
+    
     public static final String SELECT_CURSOR = CURSORS_FOLDER + "select.tga";
     public static final String DEPLOY_CURSOR = CURSORS_FOLDER + "deploy.tga";
+    
+    public static final String NO_DEPLOY_CURSOR = CURSORS_FOLDER + "no_deploy.tga";
     
     public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();

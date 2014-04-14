@@ -51,6 +51,8 @@ public class Main extends StateBasedGame {
 	
 	public static boolean DEBUG_MODE = false;
 	
+	private CursorType currentCursor = CursorType.CURSOR_POINTER;
+	
 	public Main() {
 		super("Java RA");
 	}
@@ -76,6 +78,8 @@ public class Main extends StateBasedGame {
 			
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
+			container.setSmoothDeltas(true);
+			container.setVSync(true);
 			container.setTargetFrameRate(75);
 			container.setClearEachFrame(false);
 			container.start();
@@ -126,7 +130,7 @@ public class Main extends StateBasedGame {
 		}
 
 		controller = new Controller(null, camera, this.getContainer().getInput());	
-		w = new World("forest-path",
+		w = new World("haos-ridges",
 				this.getContainer(), camera);		
 		
 		initGame();
@@ -140,16 +144,16 @@ public class Main extends StateBasedGame {
 
 
 		// Create testing base
-		EntityPowerPlant e1 = new EntityPowerPlant(24 * 15, 24 * 18, team, player);
+		EntityPowerPlant e1 = new EntityPowerPlant(24 * 49, 24 * 53, team, player);
 		e1.setHp(r.nextInt(e1.getMaxHp()));
 		
-		EntityPowerPlant e2 = new EntityPowerPlant(24 * 12, 24 * 18, team, player);
+		EntityPowerPlant e2 = new EntityPowerPlant(24 * 46, 24 * 53, team, player);
 		e2.setHp(r.nextInt(e2.getMaxHp()));
 
-		EntityBarracks b1 = new EntityBarracks(24 * 14, 24 * 23, team, player);
+		EntityBarracks b1 = new EntityBarracks(24 * 48, 24 * 57, team, player);
 		b1.setHp(r.nextInt(b1.getMaxHp()));		
 
-		EntityProc p1 = new EntityProc(24 * 8, 24 * 22, team, player);
+		EntityProc p1 = new EntityProc(24 * 42, 24 * 56, team, player);
 		p1.setHp(r.nextInt(p1.getMaxHp()));		
 		
 		w.addBuildingTo(p1);
@@ -157,48 +161,16 @@ public class Main extends StateBasedGame {
 		w.addBuildingTo(e1);
 		w.addBuildingTo(e2);
 		
-		EntityMcv mcv = new EntityMcv(24 * 20, 28 * 20, team, player);
+		EntityMcv mcv = new EntityMcv(24 * 54, 28 * 50, team, player);
 		mcv.isVisible = true;
 		
-		EntityHarvester harv = new EntityHarvester(24 * 9, 24 * 24, team, player);
+		EntityHarvester harv = new EntityHarvester(24 * 43, 24 * 58, team, player);
 		harv.isVisible = true;
 		
 		w.spawnEntityInWorld(harv);
 		w.spawnEntityInWorld(mcv);
-		
 	}
 	
-	public void resetCursor() {
-	    try {
-		this.getContainer().setMouseCursor(ResourceManager.getInstance().pointerCursor, 32, 0);
-	    } catch (SlickException e) {
-		e.printStackTrace();
-	    }
-	}
-	
-	public void setGotoCursor() {
-	    try {
-		getContainer().setAnimatedMouseCursor(ResourceManager.GOTO_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50});
-	    } catch (SlickException e) {
-		e.printStackTrace();
-	    }	    
-	}
-	
-	public void setSelectCursor() {
-	    try {
-		getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
-	    } catch (SlickException e) {
-		e.printStackTrace();
-	    }	    
-	}
-	
-	public void setDeployCursor() {
-	    try {
-		getContainer().setAnimatedMouseCursor(ResourceManager.DEPLOY_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 });
-	    } catch (SlickException e) {
-		e.printStackTrace();
-	    }	    
-	}	
 	
 	public Player getPlayer() {
 	    return this.player;
@@ -206,5 +178,45 @@ public class Main extends StateBasedGame {
 	
 	public Team getTeam() {
 	    return this.team;
+	}
+	
+	public CursorType getCursor() {
+	    return this.currentCursor;
+	}
+	
+	public void setCursorType(CursorType cursor) {
+	    try {
+		switch (cursor) {
+		case CURSOR_POINTER:
+		    this.getContainer().setMouseCursor(ResourceManager.getInstance().pointerCursor, 0, 0);
+		    break;
+		    
+		case CURSOR_SELECT:
+		    getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
+		    break;
+		    
+		case CURSOR_GOTO:
+		    getContainer().setAnimatedMouseCursor(ResourceManager.GOTO_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50});
+		    break;
+		    
+		case CURSOR_NO_GOTO:
+		    this.getContainer().setMouseCursor(ResourceManager.NO_GOTO_CURSOR, 16, 16);
+		    break;
+		    
+		case CURSOR_DEPLOY:
+		    getContainer().setAnimatedMouseCursor(ResourceManager.DEPLOY_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 });
+		    break;
+		    
+		case CURSOR_NO_DEPLOY:
+		    this.getContainer().setMouseCursor(ResourceManager.NO_DEPLOY_CURSOR, 16, 16);
+		    break;
+		    
+		default:
+		    break;
+		}
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	    this.currentCursor = cursor;
 	}
 }

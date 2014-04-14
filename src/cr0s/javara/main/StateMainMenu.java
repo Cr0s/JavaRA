@@ -208,7 +208,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	@Override
 	public void enter(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
-	    Main.getInstance().resetCursor();
+	    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	}
 
 	@Override
