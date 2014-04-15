@@ -5,6 +5,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
@@ -34,6 +35,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	private int rotationDirection = 1;
 	private boolean isDeploying = false;
 	
+	private final float MOVE_SPEED = 0.1f;
+	
 	public EntityMcv(float posX, float posY, Team team, Player player) {
 		super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
@@ -44,20 +47,14 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 		this.setMaxHp(50);
 		
 		this.rotation = r.nextInt(32);
-		
 	}
 
 	@Override
 	public void updateEntity(int delta) {
 		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-		
-		if (updateTicks++ < 2) {
-		    return;
-		}
-		
-		updateTicks = 0;
-		
+
 		doRotationTick();
+		this.doMoveTick(delta);
 		
 		if (isDeploying && this.canDeploy()) {
 		    if (this.rotation == BUILD_ROTATION) {
@@ -84,6 +81,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 		texture.startUse();
 		texture.getSubImage(0, rotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_HEIGHT / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		texture.endUse();
+		
+		drawPath(g);
 	}
 	
 	@Override
@@ -122,12 +121,16 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
 	@Override
 	public void moveTo(int tileX, int tileY) {
-	    int rot = RotationUtil.getRotationFromXY(posX, posY, tileX, tileY);
-	    this.rotateTo(rot);
+	    this.findPathAndMoveTo(tileX / 24, tileY / 24);
 	}
 
 	@Override
 	public boolean shouldRenderedInPass(int passNum) {
 	    return passNum == 1;
+	}
+
+	@Override
+	public float getMoveSpeed() {
+	    return MOVE_SPEED;
 	}
 }

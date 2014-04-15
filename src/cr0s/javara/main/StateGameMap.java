@@ -88,6 +88,7 @@ public class StateGameMap extends BasicGameState {
 			    }
 			} else {
 			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+			    Main.getInstance().getPlayer().selectedEntities.clear();
 			}
 			return;
 		    }
@@ -107,6 +108,7 @@ public class StateGameMap extends BasicGameState {
 		
 		if (!this.isAnyMovableEntitySelected) {
 		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+		    Main.getInstance().getPlayer().selectedEntities.clear();
 		} else {
 		    setGotoCursorIfCellPassable(x, y);
 		}
@@ -139,6 +141,7 @@ public class StateGameMap extends BasicGameState {
 			    }
 			} else {
 			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+			    Main.getInstance().getPlayer().selectedEntities.clear();
 			}
 		    } else {
 			Main.getInstance().getPlayer().selectedEntities.clear();
@@ -158,7 +161,6 @@ public class StateGameMap extends BasicGameState {
 				    this.isAnyMovableEntitySelected = false;
 				    this.mouseOverEntity = null;
 				    
-				    Main.getInstance().getPlayer().selectedEntities.clear();
 				    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 				}
 			    }

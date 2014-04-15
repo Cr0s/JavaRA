@@ -26,6 +26,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	private final int MAX_ROTATION = 32;	
 	private final int BUILD_ROTATION = 12;
 	
+	private final float MOVE_SPEED = 0.2f;
+	
 	private static final int TEXTURE_WIDTH = 48;
 	private static final int TEXTURE_HEIGHT = 48;
 		
@@ -50,13 +52,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	public void updateEntity(int delta) {
 		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 		
-		if (updateTicks++ < 2) {
-		    return;
-		}
-		
-		updateTicks = 0;
-		
-		doRotationTick();		
+		doRotationTick();
+		this.doMoveTick(delta);		
 	}
 
 	@Override
@@ -71,6 +68,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 		texture.startUse();
 		texture.getSubImage(0, rotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_HEIGHT / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		texture.endUse();
+		
+		drawPath(g);
 	}
 	
 	@Override
@@ -90,12 +89,16 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	@Override
 	public void moveTo(int tileX, int tileY) {
-	    int rot = RotationUtil.getRotationFromXY(posX, posY, tileX, tileY);
-	    this.rotateTo(rot);
+	    this.findPathAndMoveTo(tileX / 24, tileY / 24);
 	}
 
 	@Override
 	public boolean shouldRenderedInPass(int passNum) {
 	    return passNum == 1;
+	}
+
+	@Override
+	public float getMoveSpeed() {
+	    return MOVE_SPEED;
 	}
 }

@@ -271,7 +271,9 @@ public class TileMap {
 	for (MapEntity me : this.mapEntities) {
 	    for (int cX = 0; cX < me.getWidth(); cX++) {
 		for (int cY = 0; cY < me.getHeight(); cY++) {
-		    blockingMap[me.getX() + cX][me.getY() + cY] = me.getFootprintCells()[cX][cY];
+		    if (blockingMap[me.getX() + cX][me.getY() + cY] == 0) { 
+			blockingMap[me.getX() + cX][me.getY() + cY] = me.getFootprintCells()[cX][cY]; 
+		    }
 		}
 	    }
 	}

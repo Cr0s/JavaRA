@@ -1,6 +1,7 @@
 package cr0s.javara.render;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,23 +20,31 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.Log;
+import org.newdawn.slick.util.pathfinding.Path;
+import org.newdawn.slick.util.pathfinding.Path.Step;
+import org.newdawn.slick.util.pathfinding.PathFindingContext;
+import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
+import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
+import cr0s.javara.render.map.VehiclePathfinder;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.TmpTexture;
 
-public class World {
+public class World implements TileBasedMap {
     private TileMap map;
     private Camera camera;
 
     private GameContainer container;
+    
+    private VehiclePathfinder vp;
 
     private ArrayList<Entity> entities = new ArrayList<>();
     private LinkedList<Entity> entitiesToAdd = new LinkedList<>();
@@ -43,7 +52,8 @@ public class World {
     private final int PASSES_COUNT = 2;
 
     public int[][] blockingMap;
-
+    public int[][] blockingEntityMap;
+    
     boolean canRender = true;
     
     private int removeDeadTicks = 0;
@@ -53,7 +63,11 @@ public class World {
 	map = new TileMap(this, mapName);
 
 	this.blockingMap = new int[map.getWidth()][map.getHeight()];
+	this.blockingEntityMap = new int[map.getWidth()][map.getHeight()];
+	
 	map.fillBlockingMap(this.blockingMap);
+	
+	this.vp = new VehiclePathfinder(this);
 	
 	this.container = c;
 
@@ -80,10 +94,19 @@ public class World {
 	}
 	entitiesToAdd.clear();          
 
+	for (int i = 0; i < this.map.getHeight(); i++) {
+	    Arrays.fill(this.blockingEntityMap[i], 0);
+	}
+	
 	// Update all entities
 	for (Entity e : this.entities) {
 	    if (!e.isDead()) { 
 		e.updateEntity(delta);
+		
+		// Set up blocking map parameters
+		if (e instanceof EntityVehicle) {
+		    this.blockingEntityMap[(int) Math.floor(((EntityVehicle)e).getPosX() / 24)][(int) Math.floor(((EntityVehicle)e).getPosY() / 24)] = 1;
+		}
 	    }
 	}  	
     }
@@ -109,7 +132,7 @@ public class World {
 	Color pColor = g.getColor();
 
 	// Debug: render blocked cells
-	if (Main.DEBUG_MODE) {
+	//if (Main.DEBUG_MODE) {
 	    for (int y = 0; y < map.getHeight(); y++) {
 		for (int x = 0; x < map.getWidth(); x++) {
 		    if (!isCellPassable(x, y)) {
@@ -119,7 +142,7 @@ public class World {
 		    }		
 		}
 	    }
-	}
+	//}
 	
 	// Make rendering passes
 	for (int i = 0; i < PASSES_COUNT; i++) {
@@ -270,17 +293,53 @@ public class World {
     }
     
     public boolean isCellPassable(int x, int y) {
-	return !(blockingMap[x][y] != 0 
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_CLEAR_ID
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_BEACH_ID
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROAD_ID
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROUGH_ID);
+	if (x > this.map.getWidth() || y > this.map.getHeight()) {
+	    return false;
+	}
+	
+	return (blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROUGH_ID);
     }
     
     public boolean isCellBuildable(int x, int y) {
-	return !(blockingMap[x][y] != 0 
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_CLEAR_ID
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_BEACH_ID
-		    && this.blockingMap[x][y] != this.map.getTileSet().SURFACE_ROAD_ID);	
+	if (x > this.map.getWidth() || y > this.map.getHeight()) {
+	    return false;
+	}
+	
+	return (blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
+    }
+
+    @Override
+    public boolean blocked(PathFindingContext arg0, int x, int y) {
+	return !this.isCellPassable(x, y);
+    }
+
+    @Override
+    public float getCost(PathFindingContext ctx, int x, int y) {
+	return 1;
+    }
+
+    @Override
+    public int getHeightInTiles() {
+	return this.map.getHeight();
+    }
+
+    @Override
+    public int getWidthInTiles() {
+	return this.map.getWidth();
+    }
+
+    @Override
+    public void pathFinderVisited(int arg0, int arg1) {
+    }
+    
+    public VehiclePathfinder getVehiclePathfinder() {
+	return this.vp;
     }
 }

@@ -74,8 +74,8 @@ public class Controller {
 			int mapWidthPixels = camera.map.getWidth() * 24;
 			int mapHeightPixels = camera.map.getHeight() * 24;
 			
-			newOffsetX = camera.getOffsetX() + dx * SCROLL_SPEED * delta;
-			newOffsetY = camera.getOffsetY() + dy * SCROLL_SPEED * delta;
+			newOffsetX = camera.getOffsetX() + (float) Math.floor(dx * SCROLL_SPEED * delta);
+			newOffsetY = camera.getOffsetY() + (float) Math.floor(dy * SCROLL_SPEED * delta);
 			
 			// Clamp offset by map size
 			if (newOffsetX > 0) {

@@ -33,6 +33,7 @@ import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.util.Point;
+import cr0s.javara.vehicle.tank.EntityHeavyTank;
 
 public class Main extends StateBasedGame {
 	public ResourceManager rm;
@@ -81,7 +82,7 @@ public class Main extends StateBasedGame {
 			
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
-			container.setSmoothDeltas(true);
+			//container.setSmoothDeltas(true);
 			//container.setVSync(true);
 			container.setTargetFrameRate(75);
 			container.setClearEachFrame(false);
@@ -170,6 +171,13 @@ public class Main extends StateBasedGame {
 		
 		EntityHarvester harv = new EntityHarvester(24 * 43, 24 * 58, team, player);
 		harv.isVisible = true;
+		
+		EntityHeavyTank eht = new EntityHeavyTank(24 * 58, 28 * 50, team, player);
+		w.spawnEntityInWorld(eht);
+		EntityHeavyTank eht1 = new EntityHeavyTank(24 * 62, 28 * 50, team, player);
+		w.spawnEntityInWorld(eht1);
+		EntityHeavyTank eht3 = new EntityHeavyTank(24 * 66, 28 * 50, team, player);
+		w.spawnEntityInWorld(eht3);
 		
 		w.spawnEntityInWorld(harv);
 		w.spawnEntityInWorld(mcv);
