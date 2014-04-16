@@ -194,19 +194,8 @@ public class TileMap {
 			this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, (sY / 24) + index);
 		    }
 		}
-
-		/*
-		 * if (Main.DEBUG_MODE) { g.setColor(Color.red); g.drawRect(x *
-		 * 24, y * 24, 24, 24); g.setColor(pColor);
-		 */
 	    }
 	}
-
-	/*
-	 * theater.getSpriteSheet().draw(); for (Rectangle r :
-	 * theater.texturesBounds) { g.setColor(Color.red); g.draw(r);
-	 * g.setColor(pColor); }
-	 */
 
 	// Draw map entities
 	for (MapEntity me : this.mapEntities) {
@@ -215,21 +204,18 @@ public class TileMap {
 
 	    // Don't draw invisible entities
 	    if (x < (int) -camera.offsetX / 24 - 2
-		    || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24
-			    + 2) {
+		    || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 2) {
 		continue;
 	    }
 
 	    if (y < (int) -camera.offsetY / 24 - 2
-		    || y > (int) -camera.offsetY / 24 + (int) c.getHeight()
-			    / 24 + 2) {
+		    || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 2) {
 		continue;
 	    }
 
 	    ShpTexture t = me.getTexture();
 
-	    Point sheetPoint = this.theater.getShpTexturePoint(t
-		    .getTextureName());
+	    Point sheetPoint = this.theater.getShpTexturePoint(t.getTextureName());
 
 	    int sX = (int) sheetPoint.getX();
 	    int sY = (int) sheetPoint.getY();

@@ -5,7 +5,9 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.pathfinding.Mover;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
@@ -18,7 +20,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMovable {
+public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMovable, Mover {
 
 	private String TEXTURE_NAME = "3tnk.shp";
 	private SpriteSheet texture;
@@ -38,10 +40,16 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 	private boolean isTurretRotatingNow = false;
 	private int newTurretRotation = 0;
 	
-	private final float MOVE_SPEED = 0.2f;
+	private Entity targetEntity = null;
+	
+	private final float MOVE_SPEED = 0.05f;
+	
+	private final float SHIFT = 12;
 	
 	public EntityHeavyTank(float posX, float posY, Team team, Player player) {
 		super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		
+		 boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4 / 2), posY + (TEXTURE_WIDTH / 4 / 2), (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 		
 		texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		Random r = new Random();
@@ -54,26 +62,38 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
 	@Override
 	public void updateEntity(int delta) {
-		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-		
+	    boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4 / 2), posY + (TEXTURE_WIDTH / 4 / 2), (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 		doMoveTick(delta);
 		doRotationTick();
 		doTurretRotationTick();
+		
+		
 	}
 
 	@Override
 	public void renderEntity(Graphics g) {
-		if (Main.DEBUG_MODE) {
+		//if (Main.DEBUG_MODE) {
 			g.setLineWidth(1);
 			g.setColor(owner.playerColor);
-			//g.draw(boundingBox);
-			g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
-		}
+			g.draw(boundingBox);
+			//g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
+		//}
+			
+		float tx = posX - (TEXTURE_WIDTH / 4 / 2);
+		float ty = posY - (TEXTURE_WIDTH /  4 / 2);
+		
+		g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			
+		
 		
 		texture.startUse();
-		texture.getSubImage(0, rotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_WIDTH / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
-		texture.getSubImage(0, 32 + turretRotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_HEIGHT / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		texture.getSubImage(0, rotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		texture.getSubImage(0, 32 + turretRotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		texture.endUse();
+		
+		g.setColor(Color.white);
+		g.fillOval(this.getPosX(), this.getPosY(), 5, 5);
+		g.setColor(owner.playerColor);		
 		
 		drawPath(g);
 	}
@@ -101,7 +121,9 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 		    int rot = RotationUtil.getRotationFromXY(this.getPosX(), this.getPosY(), this.goalX * 24, this.goalY * 24);
 		    this.rotateTurretTo(rot);	   		    
 		} else {
-		    this.rotateTurretTo(this.getRotation());
+		    if (this.targetEntity == null) { 
+			this.rotateTurretTo(this.getRotation());
+		    }
 		}
 	    }
 	

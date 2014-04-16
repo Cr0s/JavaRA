@@ -32,11 +32,17 @@ public abstract class Entity {
 
 	private static final int SELECTION_BOX_ADD = 5;
 	
-	public Entity (float posX, float posY, Team team, Player owner, float sizeWidth, float sizeHeight) {
+	public float sizeWidth, sizeHeight;
+	
+	public Entity (float posX, float posY, Team team, Player owner, float aSizeWidth, float aSizeHeight) {
 		this.posX = posX;
 		this.posY = posY;
 		
+		this.sizeWidth = aSizeWidth;
+		this.sizeHeight = aSizeWidth;
+		
 		this.boundingBox = new Rectangle(posX, posY, sizeWidth, sizeHeight);
+
 		
 		this.team = team;
 		this.owner = owner;

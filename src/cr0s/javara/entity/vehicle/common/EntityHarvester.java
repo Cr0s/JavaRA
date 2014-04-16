@@ -26,7 +26,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	private final int MAX_ROTATION = 32;	
 	private final int BUILD_ROTATION = 12;
 	
-	private final float MOVE_SPEED = 0.2f;
+	private final float MOVE_SPEED = 0.09f;
 	
 	private static final int TEXTURE_WIDTH = 48;
 	private static final int TEXTURE_HEIGHT = 48;
@@ -50,7 +50,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	@Override
 	public void updateEntity(int delta) {
-		boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	    boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 12, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 		
 		doRotationTick();
 		this.doMoveTick(delta);		
@@ -58,15 +58,19 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	@Override
 	public void renderEntity(Graphics g) {
-		if (Main.DEBUG_MODE) {
+		//if (Main.DEBUG_MODE) {
 			g.setLineWidth(1);
 			g.setColor(owner.playerColor);
-			//g.draw(boundingBox);
-			g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
-		}
+			g.draw(boundingBox);
+			//g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
+		//}
+		
+		float tx = posX - 12;
+		float ty = posY - 12;
+		g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		
 		texture.startUse();
-		texture.getSubImage(0, rotation).drawEmbedded(posX - (TEXTURE_WIDTH / 4), posY - (TEXTURE_HEIGHT / 4), TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		texture.getSubImage(0, rotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		texture.endUse();
 		
 		drawPath(g);

@@ -105,7 +105,7 @@ public class World implements TileBasedMap {
 		
 		// Set up blocking map parameters
 		if (e instanceof EntityVehicle) {
-		    this.blockingEntityMap[(int) Math.floor(((EntityVehicle)e).getPosX() / 24)][(int) Math.floor(((EntityVehicle)e).getPosY() / 24)] = 1;
+		    this.blockingEntityMap[(int) (((EntityVehicle) e).posX + 12) / 24][(int) (((EntityVehicle) e).posY + 12) / 24] = 1;
 		}
 	    }
 	}  	

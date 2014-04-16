@@ -119,12 +119,20 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    	this.goalX = aGoalX;
 	    	this.goalY = aGoalY;
 	    	
+	    	System.out.println("Generating path, moving from " + this.startX + "; " + this.startY + " to " + (int) this.goalX + "; " + (int) this.goalY);
+	    	
 	    	Step firstStep = this.currentPath.getStep(this.pathIndex);
 	    	this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
+	    } else {
+		this.isMovingToCell = false;
+		this.currentPath = null;
+		this.isMovingByPath = false;
+		this.pathIndex = 0;
 	    }
 	}
 	
 	public void moveToAdjacentTile(int tileX, int tileY) {
+	    System.out.println("Moving to adjacent tile from " + (int) this.getPosX() + "; " + (int) this.getPosY() + " to " + tileX + "; " + tileY);
 	    this.isMovingToCell = true;
 	    
 	    this.targetCellX = tileX;
@@ -139,44 +147,100 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    this.doRotationTick();
 	}
 	
+	private boolean isPathBlocked() {
+	    for (int i = this.pathIndex; i < this.currentPath.getLength(); i++) {
+		if (!world.isCellPassable(this.currentPath.getStep(i).getX(), this.currentPath.getStep(i).getY())) {
+		    System.out.println("Path is blocked!");
+		    return true;
+		}
+	    }
+	    
+	    return false;
+	}
+	
+	private boolean isTargetCellReached() {
+	   
+	    boolean isReached = (Math.floor(this.getPosX() / 24) == this.targetCellX) && (Math.floor(this.getPosY() / 24) == this.targetCellY * 1.0f);
+	    
+	    if (isReached) {
+		System.out.println("* Target reached.");
+	    } else {
+		System.out.println("Need one more move. " + Math.floor(this.getPosX() / 24) + " != " + this.targetCellX * 1.0f + "; " + Math.floor(this.getPosY() / 24) + " != " + this.targetCellY * 1.0f);
+	    }
+	    
+	    return isReached;
+	}
+	
+	private void switchToNextWaypointOrFinish() {
+	    if (this.isMovingByPath && this.currentPath != null && this.pathIndex < this.currentPath.getLength() - 1) {
+		this.pathIndex++;
+		Step nextStep = this.currentPath.getStep(this.pathIndex);
+		
+		System.out.println("Switching to next waypoint...");
+		
+		if (world.isCellPassable(nextStep.getX(), nextStep.getY())) {
+		    this.moveToAdjacentTile(nextStep.getX(), nextStep.getY());
+		} else {
+		    System.out.println("* Is not passable");
+		    finishMoving();
+		}
+	    } else {
+		finishMoving();
+	    }
+	}
+	
+	private boolean tryRepathIfPathBlocked() {
+	    if (this.isPathBlocked()) {
+		this.findPathAndMoveTo(this.goalX, this.goalY);
+		
+		return true;
+	    }
+	    
+	    return false;
+	}
+	
 	public void doMoveTick(int delta) {
-	    if (this.isMovingToCell && !this.isRotatingNow) {		
-		float nextX = this.getPosX() + this.moveX * delta * getMoveSpeed();
-		float nextY = this.getPosY() + this.moveY * delta * getMoveSpeed();
-
-		this.boundingBox.setCenterX(nextX);
-		this.boundingBox.setCenterY(nextY);
-		
-		this.posX = this.boundingBox.getMinX();
-		this.posY = this.boundingBox.getMinY();
-		
-		int nextCellX = (int) Math.floor(nextX / 24);
-		int nextCellY = (int) Math.floor(nextY / 24);
-
-		// Cell is reached?
-		if (nextCellX == this.targetCellX) {
-		    this.moveX = 0;
-		}
-
-		if (nextCellY == this.targetCellY) {
-		    this.moveY = 0;
-		}	
-		
-		if (this.moveX == 0 && this.moveY == 0) {
-		    this.pathIndex++;
-		    
-		    if (this.pathIndex < this.currentPath.getLength()) {
-			Step nextStep = this.currentPath.getStep(this.pathIndex);
-			
-			if (world.isCellPassable(nextStep.getX(), nextStep.getY())) {
-			    this.moveToAdjacentTile(nextStep.getX(), nextStep.getY());
-			} else {
-			    finishMoving();
-			}
-		    } else {
-			finishMoving();
-		    }
-		}
+	    doRotationTick();
+	    
+	    if (!this.isMovingToCell || this.isRotatingNow) {
+		return;
+	    }
+	    
+	    System.out.println("");
+	    
+	    // If path is blocked, trying to make a repath
+	    if (tryRepathIfPathBlocked()) { // Path is blocked, there is another path or no any path, so we need stop
+		return;
+	    }
+	    
+	    float targetCellXCenter = this.targetCellX * 24 + 12;
+	    float targetCellYCenter = this.targetCellY * 24 + 12;
+	    
+	    float nextX = this.getPosX() + this.moveX * delta * getMoveSpeed();
+	    float nextY = this.getPosY() + this.moveY * delta * getMoveSpeed();
+	    
+	    // Check cell boundaries
+	    if (-moveX * (targetCellXCenter - nextX) >= 1) {
+		System.out.println("NextX: " + nextX + " is > than " + targetCellXCenter + " (" + -moveX * (targetCellXCenter - nextX) + ")");
+		nextX = targetCellXCenter;
+		//nextX = targetCellX * 24;
+		//this.moveX = 0;
+	    }
+	    
+	    if (-moveY * (targetCellYCenter - nextY) >= 1) {
+		System.out.println("NextY: " + nextY + " is > than " + targetCellYCenter + " (" + -moveY * (targetCellYCenter - nextY) + ")");
+		//nextY = targetCellY * 24;
+		//this.moveY = 0;
+		nextY = targetCellYCenter;
+	    }    
+	    
+	    System.out.println("Moving from " + (int) this.getPosX() / 24 + "; " + (int) this.getPosY() / 24 + " to " + (int) nextX / 24 + "; " + (int) nextY / 24);
+	    
+	    if (isTargetCellReached()) {
+		switchToNextWaypointOrFinish();
+	    } else {
+		this.posX = nextX - (this.sizeWidth / 4);
+		this.posY = nextY - (this.sizeHeight / 4);
 	    }
 	}
 	
@@ -184,7 +248,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    if (this.currentPath != null) {
 		g.setColor(Color.green);
 		g.setLineWidth(1);
-		g.drawLine(this.getPosX() + 12, this.getPosY() + 12, this.goalX * 24 + 12, this.goalY * 24 + 12);
+		g.drawLine(this.getPosX(), this.getPosY(), this.currentPath.getStep(this.pathIndex).getX() * 24 + 12, this.currentPath.getStep(this.pathIndex).getY() * 24 + 12);
 		g.fillOval(this.goalX * 24 + 12 - 2, this.goalY * 24 + 12 - 2, 5, 5);
 		
 		for (int i = this.pathIndex; i < this.currentPath.getLength() - 1; i++) {
@@ -197,6 +261,13 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 		    g.drawLine(from.getX() * 24 + 12, from.getY() * 24 + 12, to.getX() * 24 + 12, to.getY() * 24 + 12);
 		}
 	    }
+	    
+	    g.setColor(Color.gray); 
+		for (int i = (int) (posX / 24 - 5); i < posX / 24 + 5; i++) {
+		    for (int j = (int) (posY / 24 - 5); j < posY / 24 + 5; j++) {
+			g.drawRect(i * 24, j * 24, 24, 24);
+		    }
+		}
 	}
 	
 	public void finishMoving() {
@@ -213,11 +284,11 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	}
 	
 	public float getPosX() {
-	    return this.boundingBox.getCenterX();
+	    return this.posX + (this.sizeWidth / 4);
 	}
 	
 	public float getPosY() {
-	    return this.boundingBox.getCenterY();
+	    return this.posY + (this.sizeHeight / 4);
 	}	
 	
 	@Override
