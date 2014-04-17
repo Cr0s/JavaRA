@@ -70,7 +70,7 @@ public class Main extends StateBasedGame {
 	}
 
 	/**
-	 * Entry point to the scroller example
+	 * Entry point.
 	 * 
 	 * @param argv
 	 *            The argument passed on the command line (if any)
@@ -172,12 +172,18 @@ public class Main extends StateBasedGame {
 		EntityHarvester harv = new EntityHarvester(24 * 43, 24 * 58, team, player);
 		harv.isVisible = true;
 		
-		EntityHeavyTank eht = new EntityHeavyTank(24 * 58, 28 * 50, team, player);
-		w.spawnEntityInWorld(eht);
-		EntityHeavyTank eht1 = new EntityHeavyTank(24 * 62, 28 * 50, team, player);
-		w.spawnEntityInWorld(eht1);
-		EntityHeavyTank eht3 = new EntityHeavyTank(24 * 66, 28 * 50, team, player);
-		w.spawnEntityInWorld(eht3);
+		for (int i = 0; i < 25; i++) {
+		    int x = r.nextInt(10) * ((r.nextBoolean()) ? -1 : 1);
+		    int y = r.nextInt(10) * ((r.nextBoolean()) ? -1 : 1);
+		    
+		    x = 24 * (10 + x);
+		    y = 24 * (42 + y);
+		    
+		    if (w.isCellPassable(x / 24, y / 24)) {
+			EntityHeavyTank eht = new EntityHeavyTank(x, y, team, player);
+			w.spawnEntityInWorld(eht);			
+		    }
+		}
 		
 		w.spawnEntityInWorld(harv);
 		w.spawnEntityInWorld(mcv);

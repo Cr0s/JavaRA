@@ -26,14 +26,17 @@ import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.entity.vehicle.EntityVehicle;
+import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.VehiclePathfinder;
+import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.TmpTexture;
@@ -46,6 +49,8 @@ public class World implements TileBasedMap {
     
     private VehiclePathfinder vp;
 
+    private ArrayList<Player> players = new ArrayList<>();
+    
     private ArrayList<Entity> entities = new ArrayList<>();
     private LinkedList<Entity> entitiesToAdd = new LinkedList<>();
 
@@ -58,6 +63,8 @@ public class World implements TileBasedMap {
     
     private int removeDeadTicks = 0;
     private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
+    
+    private ShroudRenderer sr;
     
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
@@ -73,9 +80,17 @@ public class World implements TileBasedMap {
 
 	this.camera = camera;
 	camera.map = map;
+	
+	this.sr = new ShroudRenderer(this);
     }
 
     public void update(int delta) {
+	this.sr.update(null);
+	
+	for (int i = 0; i < this.map.getHeight(); i++) {
+	    Arrays.fill(this.blockingEntityMap[i], 0);
+	}
+	
 	if (removeDeadTicks++ > REMOVE_DEAD_INTERVAL_TICKS) {
 	    ArrayList<Entity> list = new ArrayList<Entity>();
 	    for (Entity e : this.entities) {
@@ -90,13 +105,19 @@ public class World implements TileBasedMap {
 
 
 	for (Entity e : entitiesToAdd) {
+	    if (e instanceof EntityBuilding) {
+		EntityBuilding eb = (EntityBuilding) e;
+		
+		for (int by = 0; by < eb.getHeightInTiles(); by++) {
+		    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
+			this.blockingMap[(((int) eb.posX + 12) / 24) + bx][(((int) eb.posY + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
+		    }
+		}
+	    }
+	    
 	    this.entities.add(e);
 	}
 	entitiesToAdd.clear();          
-
-	for (int i = 0; i < this.map.getHeight(); i++) {
-	    Arrays.fill(this.blockingEntityMap[i], 0);
-	}
 	
 	// Update all entities
 	for (Entity e : this.entities) {
@@ -105,10 +126,12 @@ public class World implements TileBasedMap {
 		
 		// Set up blocking map parameters
 		if (e instanceof EntityVehicle) {
-		    this.blockingEntityMap[(int) (((EntityVehicle) e).posX + 12) / 24][(int) (((EntityVehicle) e).posY + 12) / 24] = 1;
+		    this.blockingEntityMap[(int) (((EntityVehicle) e).getCenterPosX()) / 24][(int) (((EntityVehicle) e).getCenterPosY()) / 24] = 1;
 		}
 	    }
 	}  	
+	
+	updatePlayersBases();
     }
 
     /**
@@ -130,19 +153,6 @@ public class World implements TileBasedMap {
 
 	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
-
-	// Debug: render blocked cells
-	//if (Main.DEBUG_MODE) {
-	    for (int y = 0; y < map.getHeight(); y++) {
-		for (int x = 0; x < map.getWidth(); x++) {
-		    if (!isCellPassable(x, y)) {
-			g.setColor(blockedColor);
-			g.fillRect(x * 24, y * 24, 24, 24);
-			g.setColor(pColor);
-		    }		
-		}
-	    }
-	//}
 	
 	// Make rendering passes
 	for (int i = 0; i < PASSES_COUNT; i++) {
@@ -157,8 +167,23 @@ public class World implements TileBasedMap {
 	    }
 	}	
 
+	// Debug: render blocked cells
+	if (Main.DEBUG_MODE) {
+	    for (int y = 0; y < map.getHeight(); y++) {
+		for (int x = 0; x < map.getWidth(); x++) {
+		    if (!isCellPassable(x, y)) {
+			g.setColor(blockedColor);
+			g.fillRect(x * 24, y * 24, 24, 24);
+			g.setColor(pColor);
+		    }		
+		}
+	    }
+	}	
+	
 	renderSelectionBoxes(g);
 	renderHpBars(g);
+	
+	sr.renderShrouds(g);
     }
 
     /**
@@ -235,18 +260,18 @@ public class World implements TileBasedMap {
      * @param boundingBox
      * @return list of entities selected
      */
-    public LinkedList<Entity> selectEntitiesInsideBox(Rectangle boundingBox) {
+    public LinkedList<Entity> selectMovableEntitiesInsideBox(Rectangle boundingBox) {
 	LinkedList<Entity> selectedEntities = new LinkedList<>();
 
 	for (Entity e : this.entities) {
-	    if (!e.isDead() && (e instanceof ISelectable)) {
+	    if (!e.isDead() && (e instanceof ISelectable) && (e instanceof IMovable)) {
 		if (boundingBox.intersects(e.boundingBox)) { 
-		    ((ISelectable)e).select();
+		    ((ISelectable) e).select();
 
 		    selectedEntities.add(e);
 		} else
 		{
-		    ((ISelectable)e).cancelSelect();
+		    ((ISelectable) e).cancelSelect();
 		}
 	    }
 	}
@@ -282,6 +307,12 @@ public class World implements TileBasedMap {
 	}
 
 	return null;
+    }
+    
+    private void updatePlayersBases() {
+	for (Player p : this.players) {
+	    p.getBase().update();
+	}
     }
     
     public void addBuildingTo(EntityBuilding b) {
@@ -341,5 +372,9 @@ public class World implements TileBasedMap {
     
     public VehiclePathfinder getVehiclePathfinder() {
 	return this.vp;
+    }
+    
+    public void addPlayer(Player p) {
+	this.players.add(p);
     }
 }

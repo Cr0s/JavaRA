@@ -9,6 +9,7 @@ import org.newdawn.slick.SpriteSheet;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
@@ -24,8 +25,14 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	public static final int WIDTH_TILES = 3;
 	public static final int HEIGHT_TILES = 3;
 	
+	private static final String FOOTPRINT = "xxx xxx xxx";
+	
+	private Alignment yardAlignment = Alignment.SOVIET;
+	
 	public EntityConstructionYard(int tileX, int tileY, Team team, Player player) {
-		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24);
+		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, FOOTPRINT);
+		
+		this.yardAlignment = player.getAlignment();
 		
 		setBibType(BibType.MIDDLE);
 		setProgressValue(-1);
@@ -98,5 +105,9 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	@Override
 	public float getWidthInTiles() {
 	    return this.tileWidth;
+	}
+	
+	public Alignment getAlignment() {
+	    return this.yardAlignment;
 	}
 }

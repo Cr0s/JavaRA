@@ -18,7 +18,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
     private Image currentFrameImage;
     
     public EntityBuildingProgress(EntityBuilding aTargetBuilding) {
-	super(aTargetBuilding.getTileX(), aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight());
+	super(aTargetBuilding.getTileX(), aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight(), aTargetBuilding.getFootprint());
     
 	this.targetBuilding = aTargetBuilding;
 	makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);

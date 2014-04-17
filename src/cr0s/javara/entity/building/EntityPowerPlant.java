@@ -13,7 +13,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityPowerPlant extends EntityBuilding implements ISelectable {
+public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer {
 
 	private SpriteSheet sheet;
 	
@@ -23,9 +23,11 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable {
 	
 	public static final int WIDTH_TILES = 2;
 	public static final int HEIGHT_TILES = 2;
+
+	private static final int POWER_PRODUCTION_LEVEL = 30;
 	
 	public EntityPowerPlant(int tileX, int tileY, Team team, Player player) {
-		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24);
+		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx");
 		
 		setBibType(BibType.SMALL);
 		setProgressValue(-1);
@@ -98,5 +100,10 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable {
 	@Override
 	public float getWidthInTiles() {
 	    return this.tileWidth;
+	}
+
+	@Override
+	public int getPowerProductionLevel() {
+	    return POWER_PRODUCTION_LEVEL;
 	}
 }

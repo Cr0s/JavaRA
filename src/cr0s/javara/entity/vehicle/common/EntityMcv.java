@@ -35,11 +35,15 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     private int rotationDirection = 1;
     private boolean isDeploying = false;
 
-    private final float MOVE_SPEED = 0.08f;
+    private final float MOVE_SPEED = 0.03f;
 
     public EntityMcv(float posX, float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
+	boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	boundingBox.setCenterX(this.getCenterPosX());
+	boundingBox.setCenterY(this.getCenterPosY());
+	
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	Random r = new Random();
 
@@ -51,8 +55,10 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
     @Override
     public void updateEntity(int delta) {
-	 boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 12, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-
+	boundingBox.setBounds(posX, posY - 6, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	boundingBox.setCenterX(this.getCenterPosX());
+	boundingBox.setCenterY(this.getCenterPosY());
+	
 	doRotationTick();
 	this.doMoveTick(delta);
 
@@ -71,21 +77,25 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
     @Override
     public void renderEntity(Graphics g) {
-	//if (Main.DEBUG_MODE) {
-	g.setLineWidth(1);
-	g.setColor(owner.playerColor);
-	g.draw(boundingBox);
-	//g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
-	//}
+	if (Main.DEBUG_MODE) {
+	    g.setLineWidth(1);
+	    g.setColor(owner.playerColor);
+	    g.draw(boundingBox);
+	    //g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
+	}
 
-	float tx = posX - 12;
-	float ty = posY - 12;
+	float tx = this.getTextureX();
+	float ty = this.getTextureY();
 
-	g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	//g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture.startUse();
 	texture.getSubImage(0, rotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	texture.endUse();
+	
+	//g.setColor(Color.white);
+	//g.fillOval(this.getCenterPosX(), this.getCenterPosY(), 5, 5);
+	//g.setColor(owner.playerColor);		
 
 	drawPath(g);
     }
@@ -137,5 +147,15 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     @Override
     public float getMoveSpeed() {
 	return MOVE_SPEED;
+    }
+
+    @Override
+    public float getTextureX() {
+	return posX - (TEXTURE_WIDTH / 2) + 18;
+    }
+
+    @Override
+    public float getTextureY() {
+	return posY - (TEXTURE_HEIGHT / 2) + 12; 
     }
 }

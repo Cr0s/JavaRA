@@ -21,10 +21,15 @@ public class Player {
 	
 	public LinkedList<Entity> selectedEntities = new LinkedList<>();
 	
+	private Base base;
+	private Team team;
+	
 	public Player(String name, Alignment side, Color color) {
 		this.name = name;
 		this.side = side;
 		this.playerColor = color;
+		
+		this.base = new Base(team, this);
 	}
 	
 	public void postMoveOrder(float destX, float destY) {
@@ -37,5 +42,14 @@ public class Player {
 	
 	public Alignment getAlignment() {
 	    return this.side;
+	}
+
+	public Base getBase() {
+	    return this.base;
+	}
+	
+	public void setTeam(Team t) {
+	    t.addPlayer(this);
+	    this.team = t;
 	}
 }

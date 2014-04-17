@@ -78,14 +78,14 @@ public class Controller {
 			newOffsetY = camera.getOffsetY() + (float) Math.floor(dy * SCROLL_SPEED * delta);
 			
 			// Clamp offset by map size
-			if (newOffsetX > 0) {
-				newOffsetX = 0;
+			if (newOffsetX > camera.map.getBounds().getMinX()) {
+				newOffsetX = camera.map.getBounds().getMinX();
 			} else if (mapWidthPixels + newOffsetX < gc.getWidth()) {
 				newOffsetX = -(mapWidthPixels - gc.getWidth());
 			}
 			
-			if (newOffsetY > 0) {
-				newOffsetY = 0;
+			if (newOffsetY > camera.map.getBounds().getMinY()) {
+				newOffsetY = camera.map.getBounds().getMinY();
 			} else if (mapHeightPixels + newOffsetY < gc.getHeight()) {
 				newOffsetY = -(mapHeightPixels - gc.getHeight());
 			}

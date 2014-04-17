@@ -43,7 +43,10 @@ public class TileMap {
     private final int GRASS_ID_BIG = 0xFFFF; // 65635
 
     private World world;
-
+    
+    private Rectangle bounds;
+    private static final int MAP_OFFSET_TILES = 5;
+    
     public TileMap(World aWorld, String mapName) {
 	this.world = aWorld;
 
@@ -120,6 +123,8 @@ public class TileMap {
 	    this.width = mapHeader.getShort();
 	    this.height = mapHeader.getShort();
 
+	    this.bounds = new Rectangle(this.MAP_OFFSET_TILES * 24, this.MAP_OFFSET_TILES * 24, (this.width - this.MAP_OFFSET_TILES) * 24, (this.height - this.MAP_OFFSET_TILES) * 24);
+	    
 	    this.mapTiles = new TileReference[width][height];
 
 	    System.out.println("Map size: " + this.width + " x " + this.height);
@@ -267,5 +272,9 @@ public class TileMap {
     
     public TileSet getTileSet() {
 	return this.tileSet;
+    }
+    
+    public Rectangle getBounds() {
+	return this.bounds;
     }
 }

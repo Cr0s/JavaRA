@@ -2,6 +2,7 @@ package cr0s.javara.main;
 
 import java.util.LinkedList;
 
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -88,7 +89,6 @@ public class StateGameMap extends BasicGameState {
 			    }
 			} else {
 			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-			    Main.getInstance().getPlayer().selectedEntities.clear();
 			}
 			return;
 		    }
@@ -108,7 +108,6 @@ public class StateGameMap extends BasicGameState {
 		
 		if (!this.isAnyMovableEntitySelected) {
 		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-		    Main.getInstance().getPlayer().selectedEntities.clear();
 		} else {
 		    setGotoCursorIfCellPassable(x, y);
 		}
@@ -141,7 +140,6 @@ public class StateGameMap extends BasicGameState {
 			    }
 			} else {
 			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-			    Main.getInstance().getPlayer().selectedEntities.clear();
 			}
 		    } else {
 			Main.getInstance().getPlayer().selectedEntities.clear();
@@ -153,6 +151,7 @@ public class StateGameMap extends BasicGameState {
 		    
 		    if (e != null) { 
 			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
+			
 			if (this.isAnyMovableEntitySelected) {
 			    if (this.mouseOverEntity == e && (e instanceof IDeployable) && (e.isSelected)) {
 				if (((IDeployable) e).canDeploy()) { 
@@ -193,7 +192,7 @@ public class StateGameMap extends BasicGameState {
 		this.selectionRectVisible = false;
 		
 		if (this.selectionRect.getWidth() * this.selectionRect.getHeight() > 4) {
-		    LinkedList<Entity> entities = Main.getInstance().getWorld().selectEntitiesInsideBox(this.selectionRect);
+		    LinkedList<Entity> entities = Main.getInstance().getWorld().selectMovableEntitiesInsideBox(this.selectionRect);
 		    
 		    Main.getInstance().getPlayer().selectedEntities.addAll(entities);
 		    
@@ -314,14 +313,12 @@ public class StateGameMap extends BasicGameState {
 	}
 
 	@Override
-	public void enter(final GameContainer arg0, final StateBasedGame arg1)
+	public void enter(final GameContainer c, final StateBasedGame sbg)
 			throws SlickException {
-	    
 	}
 
 	@Override
 	public final int getID() {
-		// TODO Auto-generated method stub
 		return this.STATE_ID;
 	}
 
@@ -335,8 +332,6 @@ public class StateGameMap extends BasicGameState {
 	@Override
 	public void leave(final GameContainer arg0, final StateBasedGame arg1)
 			throws SlickException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

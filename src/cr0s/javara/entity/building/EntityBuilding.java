@@ -5,6 +5,7 @@ import org.newdawn.slick.Graphics;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.render.map.TileSet;
 
 /**
  * Abstract class for any buildings in game.
@@ -63,6 +64,12 @@ public abstract class EntityBuilding extends Entity {
 	private int progressValue, maxProgress;
 	
 	/**
+	 * Building's footprint.
+	 */
+	private String footprint;
+	private int[][] blockingCells;
+	
+	/**
 	 * Creates new building.
 	 * @param aTileX tiled map grid-aligned location of building by X-axis 
 	 * @param aTileY tiled map grid-aligned location of building by Y-axis 
@@ -75,7 +82,8 @@ public abstract class EntityBuilding extends Entity {
                 		final Team aTeam, 
                 		final Player aPlayer, 
                 		final float aSizeWidth, 
-                		final float aSizeHeight) {
+                		final float aSizeHeight, 
+                		String aFootprint) {
 	    
 		super(aTileX, aTileY, aTeam, aPlayer, aSizeWidth, aSizeHeight);
 		
@@ -87,6 +95,11 @@ public abstract class EntityBuilding extends Entity {
 		
 		this.tileWidth = (int) aSizeWidth / 24;
 		this.tileHeight = (int) aSizeHeight / 24;
+		
+		this.footprint = aFootprint;
+		
+		this.blockingCells = new int[this.tileWidth][this.tileHeight];
+		generateCellsFromFootprint(aFootprint, this.blockingCells);
 	}
 
 	@Override
@@ -187,10 +200,6 @@ public abstract class EntityBuilding extends Entity {
 	    return this.height;
 	}
 	
-	public void drawBib() {
-	    
-	}
-	
 	public abstract float getHeightInTiles();
 	public abstract float getWidthInTiles();	
 	
@@ -200,5 +209,49 @@ public abstract class EntityBuilding extends Entity {
 	
 	public BibType getBibType() {
 	    return this.bibType;
+	}
+
+	public String getFootprint() {
+	    return this.footprint;
+	}
+	
+	/**
+	 * Generate 2D cells blocking description from OpenRA footprint format string.
+	 * @param footprint footprint format string
+	 * @param fc 2D array of cells
+	 */
+	private void generateCellsFromFootprint(String footprint, int[][] fc) {
+	    int length = footprint.length();
+	    int x = 0, y = 0;
+
+	    for (int i = 0; i < length; i++) {
+		char c = footprint.charAt(i);
+
+		switch (c) {
+		case '_':
+		    fc[x][y] = TileSet.SURFACE_CLEAR_ID;
+		    x++;
+		    break;
+
+		case 'x':
+		    fc[x][y] = -1;
+		    x++;
+		    break;
+
+		case ' ':
+		    x = 0;
+		    y++;
+		    break;
+
+		default:
+		    fc[x][y] = 0;
+		    x++;
+		    break;
+		}
+	    }
+	}
+
+	public int[][] getBlockingCells() {
+	    return this.blockingCells;
 	}
 }

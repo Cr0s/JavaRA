@@ -13,7 +13,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityProc extends EntityBuilding implements ISelectable {
+public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer {
 
 	private SpriteSheet sheet;
 	
@@ -23,9 +23,11 @@ public class EntityProc extends EntityBuilding implements ISelectable {
 	
 	public static final int WIDTH_TILES = 3;
 	public static final int HEIGHT_TILES = 3;
+
+	private static final int POWER_CONSUMPTION_LEVEL = 20;
 	
 	public EntityProc(int tileX, int tileY, Team team, Player player) {
-		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24);
+		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x__");
 		
 		setBibType(BibType.MIDDLE);
 		setProgressValue(-1);
@@ -98,5 +100,10 @@ public class EntityProc extends EntityBuilding implements ISelectable {
 	@Override
 	public float getWidthInTiles() {
 	    return this.tileWidth;
+	}
+
+	@Override
+	public int getConsumptionLevel() {
+	    return this.POWER_CONSUMPTION_LEVEL;
 	}
 }
