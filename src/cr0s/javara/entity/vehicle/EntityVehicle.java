@@ -10,11 +10,12 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
+import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.util.RotationUtil;
 
-public abstract class EntityVehicle extends Entity implements IMovable, Mover {
+public abstract class EntityVehicle extends Entity implements IMovable, Mover, IShroudRevealer {
 	public int tileX, tileY;
 	
 	public boolean isRotatingNow = false;
@@ -125,7 +126,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    	this.goalX = aGoalX;
 	    	this.goalY = aGoalY;
 	    	
-	    	System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
+	    	//System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
 	    	
 	    	Step firstStep = this.currentPath.getStep(this.pathIndex);
 	    	this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
@@ -145,7 +146,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    // Center unit by current cell
 	    setPositionByCenter(((int)Math.floor(this.getCenterPosX() / 24) * 24) + 12, ((int)Math.floor(this.getCenterPosY() / 24) * 24) + 12);
 	    
-	    System.out.println("Moving to adjacent tile from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + tileX * 24 + "; " + tileY * 24);
+	   // System.out.println("Moving to adjacent tile from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + tileX * 24 + "; " + tileY * 24);
 	    this.isMovingToCell = true;
 	    
 	    this.targetCellX = tileX;
@@ -154,7 +155,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    this.moveX = (tileX - (int) this.getCenterPosX() / 24);
 	    this.moveY = (tileY - (int) this.getCenterPosY() / 24);
 	    
-	    System.out.println("Move: " + moveX + " " + moveY);
+	    //System.out.println("Move: " + moveX + " " + moveY);
 	    
 	    int rot = RotationUtil.getRotationFromXY(0, 0, moveX, moveY);
 	    this.rotateTo(rot);	    
@@ -165,7 +166,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	private boolean isPathBlocked() {
 	    for (int i = this.pathIndex; i < this.currentPath.getLength(); i++) {
 		if (!world.isCellPassable(this.currentPath.getStep(i).getX(), this.currentPath.getStep(i).getY())) {
-		    System.out.println("Path is blocked!");
+		    //System.out.println("Path is blocked!");
 		    return true;
 		}
 	    }
@@ -178,9 +179,9 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    boolean isReached = (Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) <= 3) && (Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) <= 3);
 	     
 	    if (isReached) {
-		System.out.println("* Target reached. (" + Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) + "; " + Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) + ")");
+		//System.out.println("* Target reached. (" + Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) + "; " + Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) + ")");
 	    } else {
-		System.out.println("Need one more move. " + (int) this.getCenterPosX() + " != " + this.targetCellX * 24 + "; " + (int) this.getCenterPosY() + " != " + this.targetCellY * 24);
+		//System.out.println("Need one more move. " + (int) this.getCenterPosX() + " != " + this.targetCellX * 24 + "; " + (int) this.getCenterPosY() + " != " + this.targetCellY * 24);
 	    }
 	    
 	    return isReached;
@@ -191,12 +192,12 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 		this.pathIndex++;
 		Step nextStep = this.currentPath.getStep(this.pathIndex);
 		
-		System.out.println("Switching to next waypoint...");
+		//System.out.println("Switching to next waypoint...");
 		
 		if (world.isCellPassable(nextStep.getX(), nextStep.getY())) {
 		    this.moveToAdjacentTile(nextStep.getX(), nextStep.getY());
 		} else {
-		    System.out.println("* Is not passable");
+		    //System.out.println("* Is not passable");
 		    finishMoving();
 		}
 	    } else {
@@ -242,7 +243,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 		return;
 	    }
 	    
-	    System.out.println("");
+	    //System.out.println("");
 
 	    
 	    float targetCellXCenter = this.targetCellX * 24 + 12;
@@ -269,16 +270,16 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover {
 	    
 	    // Check cell boundaries
 	    if (-moveX * (targetCellXCenter - nextX) >= 1) {
-		System.out.println("NextX: " + nextX + " is > than " + targetCellXCenter + " (" + -moveX * (targetCellXCenter - nextX) + ")");
+		//System.out.println("NextX: " + nextX + " is > than " + targetCellXCenter + " (" + -moveX * (targetCellXCenter - nextX) + ")");
 		this.setCenterX(targetCellXCenter);
 	    }
 	    
 	    if (-moveY * (targetCellYCenter - nextY) >= 1) {
-		System.out.println("NextY: " + nextY + " is > than " + targetCellYCenter + " (" + -moveY * (targetCellYCenter - nextY) + ")");
+		//System.out.println("NextY: " + nextY + " is > than " + targetCellYCenter + " (" + -moveY * (targetCellYCenter - nextY) + ")");
 		this.setCenterY(targetCellYCenter);
 	    }
 	    
-	    System.out.println("Moving from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + (int) nextX + "; " + (int) nextY);
+	    //System.out.println("Moving from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + (int) nextX + "; " + (int) nextY);
 	    
 	    if (isTargetCellReached()) {
 		this.setPositionByCenter(targetCellXCenter, targetCellYCenter); // correct position

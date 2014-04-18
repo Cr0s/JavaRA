@@ -9,6 +9,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.gameplay.Player;
+import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.viewport.Camera;
 
 public class Controller {
@@ -71,21 +72,24 @@ public class Controller {
 		float newOffsetY = 0;
 		
 		if (camera.map != null) {
-			int mapWidthPixels = camera.map.getWidth() * 24;
-			int mapHeightPixels = camera.map.getHeight() * 24;
+			int mapWidthPixels = (int) camera.map.getBounds().getWidth() + (TileMap.MAP_OFFSET_TILES * 24) + (TileMap.ALLOWED_DARKNESS_SHIFT_XMAX * 24);
+			int mapHeightPixels = (int) camera.map.getBounds().getHeight() + (TileMap.MAP_OFFSET_TILES * 24) + (TileMap.ALLOWED_DARKNESS_SHIFT * 24);
 			
 			newOffsetX = camera.getOffsetX() + (float) Math.floor(dx * SCROLL_SPEED * delta);
 			newOffsetY = camera.getOffsetY() + (float) Math.floor(dy * SCROLL_SPEED * delta);
 			
+			float lowerBoundX = camera.map.getBounds().getMinX() - (2 * TileMap.MAP_OFFSET_TILES * 24) + (TileMap.ALLOWED_DARKNESS_SHIFT * 24);
+			float lowerBoundY = camera.map.getBounds().getMinY() - (2 * TileMap.MAP_OFFSET_TILES * 24) + (TileMap.ALLOWED_DARKNESS_SHIFT * 24);
+			
 			// Clamp offset by map size
-			if (newOffsetX > camera.map.getBounds().getMinX()) {
-				newOffsetX = camera.map.getBounds().getMinX();
+			if (newOffsetX > lowerBoundX) {
+				newOffsetX = lowerBoundX;
 			} else if (mapWidthPixels + newOffsetX < gc.getWidth()) {
 				newOffsetX = -(mapWidthPixels - gc.getWidth());
 			}
 			
-			if (newOffsetY > camera.map.getBounds().getMinY()) {
-				newOffsetY = camera.map.getBounds().getMinY();
+			if (newOffsetY > lowerBoundY) {
+				newOffsetY = lowerBoundY;
 			} else if (mapHeightPixels + newOffsetY < gc.getHeight()) {
 				newOffsetY = -(mapHeightPixels - gc.getHeight());
 			}

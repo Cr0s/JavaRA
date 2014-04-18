@@ -29,6 +29,8 @@ import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.render.Controller;
 import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileMap;
+import cr0s.javara.render.shrouds.Shroud;
+import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.ui.GameSideBar;
@@ -56,6 +58,7 @@ public class Main extends StateBasedGame {
 	private CursorType currentCursor = CursorType.CURSOR_POINTER;
 	
 	private GameSideBar gsb;
+	private ShroudRenderer observerShroudRenderer;
 	
 	public Main() {
 		super("Java RA");
@@ -144,8 +147,14 @@ public class Main extends StateBasedGame {
 		Random r = new Random(System.currentTimeMillis());
 		
 		team = new Team();
-		player = new Player("anus", Alignment.SOVIET, Color.red);//new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+		player = new Player("Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 
+		this.observerShroudRenderer = new ShroudRenderer(w);
+		
+		Shroud s = new Shroud(w, player);
+		//player.setShroud(null);
+		player.setShroud(s);
+		
 		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
 		
 		// Create testing base
@@ -240,5 +249,9 @@ public class Main extends StateBasedGame {
 	
 	public GameSideBar getSideBar() {
 	    return this.gsb;
+	}
+	
+	public ShroudRenderer getObserverShroudRenderer() {
+	    return this.observerShroudRenderer;
 	}
 }

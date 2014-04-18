@@ -87,13 +87,43 @@ public class ShpTexture {
 
 	return imgbuf;
     }
+    
+    private ImageBuffer remapShpShadowFrame(int index) {
+	Color shadowColors[] = new Color[] {
+		new Color(0, 0, 0, 0), Color.green,
+		Color.blue, Color.yellow,
+		Color.black,
+		new Color(0, 0, 0, 160),
+		new Color(0, 0, 0, 128),
+		new Color(0, 0, 0, 64),
+	};
+	
+	
+	ByteBuffer bb = shp.getImage(index);
+	ImageBuffer imgbuf = new ImageBuffer(shp.width(), shp.height());
+	for (int y = 0; y < shp.height(); y++) {
+	    for (int x = 0; x < shp.width(); x++) {
+		int colorValue = bb.get() & 0xFF;
 
+		imgbuf.setRGBA(x, y, shadowColors[colorValue % 8].getRed(), shadowColors[colorValue % 8].getGreen(), shadowColors[colorValue % 8].getBlue(), shadowColors[colorValue % 8].getAlpha());
+	    }
+	}
+
+	bb.rewind();
+
+	return imgbuf;
+    }
+    
+
+    public Image getAsCombinedImage(Color remapColor) {
+	return getAsCombinedImage(remapColor, false);
+    }
     /**
      * Gets combined image by height of all .SHP frames
      * @param remapColor
      * @return
      */
-    public Image getAsCombinedImage(Color remapColor) {
+    public Image getAsCombinedImage(Color remapColor, boolean isShadowSprite) {
 	int combinedHeight = this.height * this.numImages;
 	int combinedWidth = this.width;
 
@@ -107,7 +137,13 @@ public class ShpTexture {
 	ImageBuffer imgBuf = new ImageBuffer(combinedWidth, combinedHeight);
 
 	for (int i = 0; i < this.numImages; i++) {
-	    ImageBuffer frameBuf = remapShpFrame(i, remapColor);
+	    ImageBuffer frameBuf = null;
+	    if (!isShadowSprite) { 
+		frameBuf = remapShpFrame(i, remapColor); 
+	    } else {
+		frameBuf = remapShpShadowFrame(i);
+	    }
+	    
 	    Image frame = frameBuf.getImage();
 
 	    byte[] rgba = frameBuf.getRGBA();

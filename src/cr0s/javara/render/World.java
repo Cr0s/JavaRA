@@ -28,6 +28,7 @@ import org.newdawn.slick.util.pathfinding.TileBasedMap;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
@@ -36,6 +37,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.VehiclePathfinder;
+import cr0s.javara.render.shrouds.Shroud;
 import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
@@ -64,8 +66,6 @@ public class World implements TileBasedMap {
     private int removeDeadTicks = 0;
     private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
     
-    private ShroudRenderer sr;
-    
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
 
@@ -80,12 +80,15 @@ public class World implements TileBasedMap {
 
 	this.camera = camera;
 	camera.map = map;
-	
-	this.sr = new ShroudRenderer(this);
+
     }
 
     public void update(int delta) {
-	this.sr.update(null);
+	if (Main.getInstance().getPlayer().getShroud() != null) {
+	    Main.getInstance().getPlayer().getShroud().getRenderer().update(Main.getInstance().getPlayer().getShroud());
+	} else {
+	    Main.getInstance().getObserverShroudRenderer().update(null);
+	}
 	
 	for (int i = 0; i < this.map.getHeight(); i++) {
 	    Arrays.fill(this.blockingEntityMap[i], 0);
@@ -128,6 +131,13 @@ public class World implements TileBasedMap {
 		if (e instanceof EntityVehicle) {
 		    this.blockingEntityMap[(int) (((EntityVehicle) e).getCenterPosX()) / 24][(int) (((EntityVehicle) e).getCenterPosY()) / 24] = 1;
 		}
+		
+		// Reveal shroud
+		if (e instanceof IShroudRevealer) {
+		    if (e.owner.getShroud() != null) {
+			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX()/ 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer)e).getRevealingRange());
+		    }
+		}
 	    }
 	}  	
 	
@@ -167,6 +177,8 @@ public class World implements TileBasedMap {
 	    }
 	}	
 
+	map.renderMapEntities(container, g, camera);
+	
 	// Debug: render blocked cells
 	if (Main.DEBUG_MODE) {
 	    for (int y = 0; y < map.getHeight(); y++) {
@@ -183,7 +195,11 @@ public class World implements TileBasedMap {
 	renderSelectionBoxes(g);
 	renderHpBars(g);
 	
-	sr.renderShrouds(g);
+	if (Main.getInstance().getPlayer().getShroud() != null) {
+	    Main.getInstance().getPlayer().getShroud().getRenderer().renderShrouds(g);
+	} else {
+	    Main.getInstance().getObserverShroudRenderer().renderShrouds(g);
+	}
     }
 
     /**
@@ -324,7 +340,15 @@ public class World implements TileBasedMap {
     }
     
     public boolean isCellPassable(int x, int y) {
-	if (x > this.map.getWidth() || y > this.map.getHeight()) {
+	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
+	    return false;
+	}
+	
+	if (x < 0 || y < 0) {
+	    return false;
+	}
+	
+	if (!this.map.isInMap(x * 24, y * 24)) {
 	    return false;
 	}
 	
@@ -336,7 +360,15 @@ public class World implements TileBasedMap {
     }
     
     public boolean isCellBuildable(int x, int y) {
-	if (x > this.map.getWidth() || y > this.map.getHeight()) {
+	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
+	    return false;
+	}
+	
+	if (x < 0 || y < 0) {
+	    return false;
+	}
+	
+	if (!this.map.isInMap(x * 24, y * 24)) {
 	    return false;
 	}
 	

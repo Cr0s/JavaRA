@@ -4,10 +4,11 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityBuildingProgress extends EntityBuilding implements ISelectable {
+public class EntityBuildingProgress extends EntityBuilding implements ISelectable, IShroudRevealer {
 
     private EntityBuilding targetBuilding;
     private ShpTexture makeTexture;
@@ -85,6 +86,15 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
     @Override
     public float getWidthInTiles() {
 	return this.tileWidth;
+    }
+
+    @Override
+    public int getRevealingRange() {
+	if (this.targetBuilding instanceof IShroudRevealer) {
+	    return ((IShroudRevealer)targetBuilding).getRevealingRange();
+	} else {
+	    return 0;
+	}
     }
 
 }

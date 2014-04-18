@@ -7,13 +7,14 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityBarracks extends EntityBuilding implements ISelectable, IPowerConsumer {
+public class EntityBarracks extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer {
 
 	private SpriteSheet sheet;
 	
@@ -28,6 +29,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	public static final int HEIGHT_TILES = 2;
 
 	private static final int POWER_CONSUMPTION_LEVEL = 10;
+	private static final int SHROUD_REVEALING_RANGE = 10;
 	
 	public EntityBarracks(int tileX, int tileY, Team team, Player player) {
 		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx");
@@ -117,5 +119,10 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	@Override
 	public int getConsumptionLevel() {
 	    return this.POWER_CONSUMPTION_LEVEL;
+	}
+
+	@Override
+	public int getRevealingRange() {
+	    return this.SHROUD_REVEALING_RANGE;
 	}
 }

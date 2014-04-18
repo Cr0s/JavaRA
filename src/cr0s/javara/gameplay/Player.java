@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.render.shrouds.Shroud;
 
 public class Player {
 	public String name;
@@ -23,6 +24,8 @@ public class Player {
 	
 	private Base base;
 	private Team team;
+	
+	private Shroud playerShroud;
 	
 	public Player(String name, Alignment side, Color color) {
 		this.name = name;
@@ -51,5 +54,13 @@ public class Player {
 	public void setTeam(Team t) {
 	    t.addPlayer(this);
 	    this.team = t;
+	}
+	
+	public Shroud getShroud() {
+	    return this.playerShroud;
+	}
+	
+	public void setShroud(Shroud s) {
+	    this.playerShroud = s;
 	}
 }

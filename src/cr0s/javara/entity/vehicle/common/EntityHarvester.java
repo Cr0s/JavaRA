@@ -30,6 +30,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
     private static final int TEXTURE_WIDTH = 48;
     private static final int TEXTURE_HEIGHT = 48;
+    private static final int SHROUD_REVEALING_RANGE = 5;
 
     private int updateTicks = 0;
 
@@ -115,5 +116,10 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
     @Override
     public float getTextureY() {
 	return posY - (TEXTURE_HEIGHT / 2) + 12; 
+    }
+
+    @Override
+    public int getRevealingRange() {
+	return this.SHROUD_REVEALING_RANGE;
     }
 }

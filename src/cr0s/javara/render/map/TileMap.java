@@ -45,7 +45,11 @@ public class TileMap {
     private World world;
     
     private Rectangle bounds;
-    private static final int MAP_OFFSET_TILES = 5;
+    
+    // Viewport and darkness shifts in tiles
+    public static final int MAP_OFFSET_TILES = 16;
+    public static final int ALLOWED_DARKNESS_SHIFT = 3;
+    public static final int ALLOWED_DARKNESS_SHIFT_XMAX = 7; // this needed to be able put sidebar inside darkness if viewport is on right edge of map
     
     public TileMap(World aWorld, String mapName) {
 	this.world = aWorld;
@@ -123,7 +127,7 @@ public class TileMap {
 	    this.width = mapHeader.getShort();
 	    this.height = mapHeader.getShort();
 
-	    this.bounds = new Rectangle(this.MAP_OFFSET_TILES * 24, this.MAP_OFFSET_TILES * 24, (this.width - this.MAP_OFFSET_TILES) * 24, (this.height - this.MAP_OFFSET_TILES) * 24);
+	    this.bounds = new Rectangle(this.MAP_OFFSET_TILES * 24, this.MAP_OFFSET_TILES * 24, (this.width - 2*this.MAP_OFFSET_TILES) * 24, (this.height - 2*this.MAP_OFFSET_TILES) * 24);
 	    
 	    this.mapTiles = new TileReference[width][height];
 
@@ -165,8 +169,7 @@ public class TileMap {
     }
 
     public void render(GameContainer c, Graphics g, Camera camera) {
-	Color pColor = g.getColor();
-
+	Color pColor = g.getColor();	
 	this.theater.getSpriteSheet().startUse();
 
 	Color blockedColor = new Color(255, 0, 0, 32);
@@ -228,6 +231,8 @@ public class TileMap {
 	    this.theater.getSpriteSheet()
 		    .getSubImage(sX, sY, t.width, t.height)
 		    .drawEmbedded(x * 24, y * 24, t.width, t.height);
+	    
+	   // TODO: check perfomance of this: this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, sY / 24);
 	}
 
 	this.theater.getSpriteSheet().endUse();
@@ -276,5 +281,49 @@ public class TileMap {
     
     public Rectangle getBounds() {
 	return this.bounds;
+    }
+
+    public void renderMapEntities(GameContainer c, Graphics g, Camera camera) {
+	this.theater.getSpriteSheet().startUse();
+	
+	// Draw map entities
+	for (MapEntity me : this.mapEntities) {
+	    int x = me.getX();
+	    int y = me.getY();
+
+	    // Don't draw invisible entities
+	    if (x < (int) -camera.offsetX / 24 - 2
+		    || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 2) {
+		continue;
+	    }
+
+	    if (y < (int) -camera.offsetY / 24 - 2
+		    || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 2) {
+		continue;
+	    }
+
+	    ShpTexture t = me.getTexture();
+
+	    Point sheetPoint = this.theater.getShpTexturePoint(t.getTextureName());
+
+	    int sX = (int) sheetPoint.getX();
+	    int sY = (int) sheetPoint.getY();
+
+	    this.theater.getSpriteSheet()
+		    .getSubImage(sX, sY, t.width, t.height)
+		    .drawEmbedded(x * 24, y * 24, t.width, t.height);
+	}
+
+	this.theater.getSpriteSheet().endUse();
+    }
+    
+    public boolean isInMap(float x, float y) {
+	return this.bounds.contains(x, y);
+	/*return (
+		(x >= this.bounds.getMinX()) 
+			&& (x <= this.bounds.getMaxX())
+		&& (y >= this.bounds.getMinY() 
+			&& (y <= this.bounds.getMaxY()))
+	);*/
     }
 }
