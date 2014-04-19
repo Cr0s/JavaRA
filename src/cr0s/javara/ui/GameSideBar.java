@@ -84,7 +84,7 @@ public class GameSideBar {
 
     public void render(Graphics g) {
 	Color pColor = g.getColor();
-	g.setColor(BG_COLOR);
+	g.setColor(BG_COLOR.multiply(this.getBackgroundColor()));
 	g.fill(this.sidebarBounds);
 	drawSideBarButtons(g);
 	g.setColor(pColor);

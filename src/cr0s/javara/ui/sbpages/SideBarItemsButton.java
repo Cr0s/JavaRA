@@ -35,7 +35,7 @@ public abstract class SideBarItemsButton {
     public void renderDisabled(Graphics g, Color filterColor) {
 	this.buttonImg.draw(position.getX(), position.getY(), filterColor);
 	Color pColor = g.getColor();
-	g.setColor(disabledColor);
+	g.setColor(disabledColor.multiply(filterColor));
 	g.fillRect(position.getX(), position.getY(), 64, 48);
 	g.setColor(pColor);
     }
