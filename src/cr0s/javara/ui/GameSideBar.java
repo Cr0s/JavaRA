@@ -24,7 +24,7 @@ public class GameSideBar {
 
     private Rectangle sidebarBounds;
     
-    private static final int BAR_HEIGHT = 480;
+    private static final int BAR_HEIGHT = 482;
     private static final int BAR_WIDTH = 130;
 
     private static final int BAR_SPACING_W = 25;
@@ -78,7 +78,7 @@ public class GameSideBar {
     
     public void initSidebarPages() {
 	if (this.sideBarPages.isEmpty()) {
-	    this.sideBarPages.put(PAGE_BUILDING_SOVIET, new PageBuildingSoviet(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W, BAR_SPACING_H)));
+	    this.sideBarPages.put(PAGE_BUILDING_SOVIET, new PageBuildingSoviet(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
 	}
     }
 
