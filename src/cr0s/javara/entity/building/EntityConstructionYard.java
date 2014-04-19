@@ -42,7 +42,7 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	setMaxHp(100);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 10;
+	this.buildingSpeed = 100;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }

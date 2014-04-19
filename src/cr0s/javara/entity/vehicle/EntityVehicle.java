@@ -129,7 +129,9 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    	//System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
 	    	
 	    	Step firstStep = this.currentPath.getStep(this.pathIndex);
-	    	this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
+	    	if (!this.isMovingToCell) {
+	    	    this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
+	    	}
 	    	
 	    	return true;
 	    } else {

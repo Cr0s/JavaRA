@@ -61,7 +61,7 @@ public class ResourceManager {
     
     public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();
-    private HashMap<String, ShpTexture> conquerTextureSources = new HashMap<>();
+    private HashMap<String, ShpTexture> commonTextureSources = new HashMap<>();
     private HashMap<String, ShpTexture> shpTextureSources = new HashMap<>();
     private HashMap<String, TmpTexture> templatesTexureSources = new HashMap<>();
     private HashMap<String, PalFile> palettes = new HashMap<>();
@@ -131,12 +131,12 @@ public class ResourceManager {
 	}
     }
 
-    public ShpTexture getConquerTexture(String name) {
-	MixFile mix = mixes.get("conquer.mix");
+    public ShpTexture getSidebarTexture(String name) {
+	MixFile mix = mixes.get("interface.mix");
 
 	// Check texture sources cache
-	if (conquerTextureSources.containsKey(name)) {
-	    return conquerTextureSources.get(name);
+	if (commonTextureSources.containsKey(name)) {
+	    return commonTextureSources.get(name);
 	}
 
 	if (mix != null) {
@@ -147,7 +147,33 @@ public class ResourceManager {
 
 		ShpFileCnc shp = new ShpFileCnc(name, rbc);
 		ShpTexture shpTexture = new ShpTexture(shp);
-		conquerTextureSources.put(name, shpTexture);
+		commonTextureSources.put(name, shpTexture);
+		return shpTexture;
+	    } else {
+		return null;
+	    }
+	}
+
+	return null;
+    }    
+    
+    public ShpTexture getConquerTexture(String name) {
+	MixFile mix = mixes.get("conquer.mix");
+
+	// Check texture sources cache
+	if (commonTextureSources.containsKey(name)) {
+	    return commonTextureSources.get(name);
+	}
+
+	if (mix != null) {
+	    MixRecord rec = mix.getEntry(name);
+
+	    if (rec != null) {
+		ReadableByteChannel rbc = mix.getEntryData(rec);
+
+		ShpFileCnc shp = new ShpFileCnc(name, rbc);
+		ShpTexture shpTexture = new ShpTexture(shp);
+		commonTextureSources.put(name, shpTexture);
 		return shpTexture;
 	    } else {
 		return null;

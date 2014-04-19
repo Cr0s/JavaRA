@@ -946,6 +946,31 @@ Actors:
         LocationY: 108
         Owner: Neutral
 
+Spawns:
+    spawn0:
+        LocationX: 29        
+        LocationY: 88
+        Owner: Neutral
+    spawn1:
+        LocationX: 57        
+        LocationY: 101
+        Owner: Neutral
+    spawn2:
+        LocationX: 99        
+        LocationY: 72
+        Owner: Neutral
+    spawn3:
+        LocationX: 69        
+        LocationY: 26
+        Owner: Neutral
+    spawn4:
+        LocationX: 98        
+        LocationY: 40
+        Owner: Neutral
+    spawn5:
+        LocationX: 28        
+        LocationY: 56
+        Owner: Neutral    
 Smudges:
 
 Rules:

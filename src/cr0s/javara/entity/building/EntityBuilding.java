@@ -229,12 +229,12 @@ public abstract class EntityBuilding extends Entity {
 
 		switch (c) {
 		case '_':
-		    fc[x][y] = TileSet.SURFACE_CLEAR_ID;
+		    fc[x][y] = TileSet.SURFACE_BUILDING_CLEAR_ID;
 		    x++;
 		    break;
 
 		case 'x':
-		    fc[x][y] = -1;
+		    fc[x][y] = TileSet.SURFACE_ROUGH_ID;
 		    x++;
 		    break;
 

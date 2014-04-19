@@ -11,6 +11,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.MouseListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -34,7 +35,6 @@ import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.ui.GameSideBar;
-import cr0s.javara.util.Point;
 import cr0s.javara.vehicle.tank.EntityHeavyTank;
 
 public class Main extends StateBasedGame {
@@ -86,7 +86,7 @@ public class Main extends StateBasedGame {
 			container.setMinimumLogicUpdateInterval(20);
 			//container.setShowFPS(false);
 			container.setSmoothDeltas(true);
-			//container.setVSync(true);
+			container.setVSync(true);
 			container.setTargetFrameRate(75);
 			container.setClearEachFrame(false);
 			container.start();
@@ -147,55 +147,15 @@ public class Main extends StateBasedGame {
 		Random r = new Random(System.currentTimeMillis());
 		
 		team = new Team();
-		player = new Player("Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+		player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 
-		this.observerShroudRenderer = new ShroudRenderer(w);
+		w.addPlayer(player);
 		
-		Shroud s = new Shroud(w, player);
-		//player.setShroud(null);
-		player.setShroud(s);
-		
+		Point playerSpawn = player.getPlayerSpawnPoint();
+		this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
+
 		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
-		
-		// Create testing base
-		EntityPowerPlant e1 = new EntityPowerPlant(24 * 49, 24 * 53, team, player);
-		e1.setHp(r.nextInt(e1.getMaxHp()));
-		
-		EntityPowerPlant e2 = new EntityPowerPlant(24 * 46, 24 * 53, team, player);
-		e2.setHp(r.nextInt(e2.getMaxHp()));
-
-		EntityBarracks b1 = new EntityBarracks(24 * 48, 24 * 57, team, player);
-		b1.setHp(r.nextInt(b1.getMaxHp()));		
-
-		EntityProc p1 = new EntityProc(24 * 42, 24 * 56, team, player);
-		p1.setHp(r.nextInt(p1.getMaxHp()));		
-		
-		w.addBuildingTo(p1);
-		w.addBuildingTo(b1);
-		w.addBuildingTo(e1);
-		w.addBuildingTo(e2);
-		
-		EntityMcv mcv = new EntityMcv(24 * 54, 28 * 50, team, player);
-		mcv.isVisible = true;
-		
-		EntityHarvester harv = new EntityHarvester(24 * 43, 24 * 58, team, player);
-		harv.isVisible = true;
-		
-		for (int i = 0; i < 25; i++) {
-		    int x = r.nextInt(10) * ((r.nextBoolean()) ? -1 : 1);
-		    int y = r.nextInt(10) * ((r.nextBoolean()) ? -1 : 1);
-		    
-		    x = 24 * (10 + x);
-		    y = 24 * (42 + y);
-		    
-		    if (w.isCellPassable(x / 24, y / 24)) {
-			EntityHeavyTank eht = new EntityHeavyTank(x, y, team, player);
-			w.spawnEntityInWorld(eht);			
-		    }
-		}
-		
-		w.spawnEntityInWorld(harv);
-		w.spawnEntityInWorld(mcv);
+		this.gsb.initSidebarPages();
 	}
 	
 	

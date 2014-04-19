@@ -13,8 +13,8 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
     private EntityBuilding targetBuilding;
     private ShpTexture makeTexture;
 
-    private final int FRAME_DELAY_TICKS = 10; // In ticks, will be multiplied by 1/buildSpeed
-    private int updateTicks = 0;
+    private final int FRAME_DELAY_TICKS = 1; // In ticks, will be multiplied by 1/buildSpeed
+    private int updateTicks = 2;
     
     private Image currentFrameImage;
     
@@ -36,7 +36,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 
     @Override
     public void updateEntity(int delta) {
-	if (updateTicks++ < FRAME_DELAY_TICKS * (1.0f / Math.max(1, targetBuilding.buildingSpeed))) { 
+	if (updateTicks++ < FRAME_DELAY_TICKS * (100.0f / Math.max(1, targetBuilding.buildingSpeed))) { 
 	    return;
 	}
 	
@@ -47,6 +47,8 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	
 	if (this.getProgressValue() == this.getMaxProgress()) {
 	    setDead();
+	    
+	    this.owner.getBase().addBuilding(this.targetBuilding);
 	    
 	    this.targetBuilding.isVisible = true;
 	    world.spawnEntityInWorld(this.targetBuilding);

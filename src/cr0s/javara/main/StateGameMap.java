@@ -2,23 +2,19 @@ package cr0s.javara.main;
 
 import java.util.LinkedList;
 
-import org.lwjgl.input.Mouse;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.opengl.CursorLoader;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
-import cr0s.javara.resources.ResourceManager;
-import cr0s.javara.ui.GameSideBar;
-import cr0s.javara.util.Point;
 import cr0s.javara.entity.ISelectable;
 
 public class StateGameMap extends BasicGameState {
@@ -45,8 +41,8 @@ public class StateGameMap extends BasicGameState {
 		    this.selectionRectVisible = true;
 		}
 		
-		float startX = this.pressStart.x;
-		float startY = this.pressStart.y;
+		float startX = this.pressStart.getX();
+		float startY = this.pressStart.getY();
 		
 		float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
 		float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
@@ -118,6 +114,11 @@ public class StateGameMap extends BasicGameState {
 	public final void mouseClicked(final int button, final int x, final int y, final int clickCount) {
 	    	Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
 		
+	    	if (Main.getInstance().getSideBar().isMouseInsideBar()) {
+	    	    Main.getInstance().getSideBar().mouseClicked(button, x, y);
+	    	    return;
+	    	}
+	    	
 		if (button == 0) { 
 		    Main.getInstance().getWorld().cancelAllSelection();
 		    
@@ -178,7 +179,7 @@ public class StateGameMap extends BasicGameState {
 	@Override
 	public final void mousePressed(final int button, final int x, final int y) {
 	    	if (button == 0) { 
-	    	    this.pressStart.changePos(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
+	    	    this.pressStart.setLocation(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
 	    	}
 	    	
 		Main.getInstance().getController().mousePressed(button, x, y);

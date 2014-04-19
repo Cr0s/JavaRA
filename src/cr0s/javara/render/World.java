@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Animation;
@@ -36,12 +37,15 @@ import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileMap;
+import cr0s.javara.render.map.TileSet;
 import cr0s.javara.render.map.VehiclePathfinder;
 import cr0s.javara.render.shrouds.Shroud;
 import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.TmpTexture;
+
+import org.newdawn.slick.geom.Point;
 
 public class World implements TileBasedMap {
     private TileMap map;
@@ -354,6 +358,7 @@ public class World implements TileBasedMap {
 	
 	return (blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
+		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BUILDING_CLEAR_ID
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROUGH_ID);
@@ -383,6 +388,7 @@ public class World implements TileBasedMap {
 	return !this.isCellPassable(x, y);
     }
 
+    // TODO: add lower costs to roads and higher to beaches, roughs
     @Override
     public float getCost(PathFindingContext ctx, int x, int y) {
 	return 1;
@@ -406,7 +412,38 @@ public class World implements TileBasedMap {
 	return this.vp;
     }
     
+    public void occupyRandomSpawnForPlayer(Player p) {
+	ArrayList<Point> spawns = this.map.getSpawnPoints();
+	Random r = new Random(System.currentTimeMillis());
+	
+	if (spawns.size() > 0) {
+	    int randomSpawnIndex = r.nextInt(spawns.size());
+	    Point spawnPoint = spawns.get(randomSpawnIndex);
+	    
+	    spawns.remove(randomSpawnIndex);
+	    
+	    p.setSpawn((int) spawnPoint.getX(), (int) spawnPoint.getY());
+	}
+    }
+    
     public void addPlayer(Player p) {
 	this.players.add(p);
+	
+	occupyRandomSpawnForPlayer(p);
+	p.spawn();
+    }
+    
+    public boolean isPossibleToBuildHere(int x, int y, EntityBuilding eb) {
+	int[][] blockingCells = eb.getBlockingCells();
+	
+	for (int bX = 0; bX < eb.getWidthInTiles(); bX++) {
+	    for (int bY = 0; bY < eb.getHeight(); bY++) {
+		if (blockingCells[bX][bY] != TileSet.SURFACE_BUILDING_CLEAR_ID && !isCellBuildable(x + bX, y + bY)) {
+		    return false;
+		}
+	    }
+	}
+
+	return true;
     }
 }

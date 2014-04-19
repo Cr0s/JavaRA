@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
@@ -46,6 +47,8 @@ public class TileMap {
     
     private Rectangle bounds;
     
+    private ArrayList<Point> spawns;
+    
     // Viewport and darkness shifts in tiles
     public static final int MAP_OFFSET_TILES = 16;
     public static final int ALLOWED_DARKNESS_SHIFT = 3;
@@ -62,6 +65,20 @@ public class TileMap {
 
 	    Yaml mapYaml = new Yaml();
 	    Map<String, Object> mapYamlMap = (Map) mapYaml.load(input);	    
+	    
+	    this.spawns = new ArrayList<>();
+	    Map<String, Object> spawnsMap = (Map) mapYamlMap.get("Spawns");
+	    for (Object v : spawnsMap.values()) {
+		Map<String, Object> actor = (Map) v;
+
+		int x = (Integer) actor.get("LocationX");
+		int y = (Integer) actor.get("LocationY");
+
+		System.out.println("[MAP] Added spawn: (" + x + "; " + y + ")");
+		
+		this.spawns.add(new Point(x, y));
+	    }
+	    
 	    
 	    TileSet tileYamlSet = new TileSet(
 		    (String) mapYamlMap.get("Tileset"));
@@ -82,7 +99,7 @@ public class TileMap {
 		
 		String footprint = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Footprint");
 		String dimensions = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Dimensions");
-		System.out.println("id: " + id + "(" + dimensions + "): " + footprint);
+		System.out.println("[MAP] Loaded Actor. ID: " + id + "(" + dimensions + "): " + footprint);
 		int x = (Integer) actor.get("LocationX");
 		int y = (Integer) actor.get("LocationY");
 
@@ -325,5 +342,9 @@ public class TileMap {
 		&& (y >= this.bounds.getMinY() 
 			&& (y <= this.bounds.getMaxY()))
 	);*/
+    }
+    
+    public ArrayList<Point> getSpawnPoints() {
+	return this.spawns;
     }
 }

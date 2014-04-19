@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
@@ -35,7 +36,12 @@ public class Base {
     public boolean isAlliedTechPresent = false;
     
     public boolean isRadarDomePresent = false;
+    public boolean isPowerPlantPresent = false;
+    public boolean isFlameTowerPresent = false;
+    
     private boolean isProcPresent = false;
+
+    public boolean isAnySuperPowerPresent;    
     
     private boolean isLowPower = false;
     
@@ -89,6 +95,8 @@ public class Base {
 		this.isBarracksPresent = true;
 	    } else if (b instanceof EntityProc) {
 		this.isProcPresent = true;
+	    } else if (b instanceof EntityPowerPlant) {
+		this.isPowerPlantPresent = true;
 	    }
 	    
 	    

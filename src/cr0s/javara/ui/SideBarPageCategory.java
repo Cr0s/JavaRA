@@ -5,7 +5,7 @@ package cr0s.javara.ui;
  * @author Cr0s
  *
  */
-public enum SideBarCategory {
+public enum SideBarPageCategory {
     BUILDING_SOVIET,
     BUILDING_ALLIED,
     VEHICLES,
