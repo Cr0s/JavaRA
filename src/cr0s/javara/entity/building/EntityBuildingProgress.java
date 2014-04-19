@@ -99,4 +99,8 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	}
     }
 
+    @Override
+    public Image getTexture() {
+	return this.targetBuilding.getTexture();
+    }  
 }

@@ -115,6 +115,7 @@ public class World implements TileBasedMap {
 	    if (e instanceof EntityBuilding) {
 		EntityBuilding eb = (EntityBuilding) e;
 		
+		System.out.println("[World] Adding building: " + e.toString());
 		for (int by = 0; by < eb.getHeightInTiles(); by++) {
 		    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
 			this.blockingMap[(((int) eb.posX + 12) / 24) + bx][(((int) eb.posY + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
@@ -146,6 +147,8 @@ public class World implements TileBasedMap {
 	}  	
 	
 	updatePlayersBases();
+	
+	Main.getInstance().getBuildingOverlay().update(delta);
     }
 
     /**
@@ -167,15 +170,18 @@ public class World implements TileBasedMap {
 
 	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
+
+	// Make rendering passes for bibs (bibs always must drawn on zero pass)
+	for (Entity e : this.entities) {
+	    if ((e instanceof EntityBuilding) && !e.isDead() && e.isVisible && e.shouldRenderedInPass(0) && camera.isEntityInsideViewport(e)) { 
+		renderEntityBib((EntityBuilding) e);
+	    }
+	}	
 	
-	// Make rendering passes
+	// Make rendering passes for buildings
 	for (int i = 0; i < PASSES_COUNT; i++) {
 	    for (Entity e : this.entities) {
 		if (!e.isDead() && e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
-		    if (e instanceof EntityBuilding) {
-			renderEntityBib((EntityBuilding) e);
-		    }
-		    
 		    e.renderEntity(g);
 		}
 	    }
@@ -204,6 +210,8 @@ public class World implements TileBasedMap {
 	} else {
 	    Main.getInstance().getObserverShroudRenderer().renderShrouds(g);
 	}
+	
+	Main.getInstance().getBuildingOverlay().render(g);
     }
 
     /**
@@ -239,7 +247,7 @@ public class World implements TileBasedMap {
 	    for (int bibX = 0; bibX < bibCount; bibX++) {
 		int index = bibCount * bibY + bibX;	
 		
-		bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + (b.getHeight() / 2 + 12) + 24 * bibY, 24, 24);
+		bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + 24 * (b.getHeightInTiles() / 2) + 24 * bibY, 24, 24);
 	    }
 	}
 	    

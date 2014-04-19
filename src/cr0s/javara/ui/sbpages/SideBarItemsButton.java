@@ -17,9 +17,16 @@ public abstract class SideBarItemsButton {
     private boolean isVisible;
     private Color disabledColor = new Color(0, 0, 0, 200);
     
-    public SideBarItemsButton(String description, String textureName, Point pagePos, int posX, int posY, boolean aIsVisible) {
-	this.position = new Point(pagePos.getX() + posX * 64, pagePos.getY() + posY * 48);
+    public int posX, posY;
+    
+    private String description;
+    
+    public SideBarItemsButton(String aDescription, String textureName, Point pagePos, int aPosX, int aPosY, boolean aIsVisible) {
+	this.position = new Point(pagePos.getX() + aPosX * 64, pagePos.getY() + aPosY * 48);
+	this.posX = aPosX;
+	this.posY = aPosY;
 	
+	this.description = aDescription;
 	this.isVisible = aIsVisible;
 	
 	if (!textureName.isEmpty()) {
@@ -47,5 +54,9 @@ public abstract class SideBarItemsButton {
     
     public boolean isVisible() {
 	return this.isVisible;
+    }
+
+    public String getDescription() {
+	return this.description;
     }
 }

@@ -15,22 +15,19 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
 public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
-
-    private SpriteSheet sheet;
-
     private Image normal, corrupted;
     private final String TEXTURE_NAME = "powr.shp";
     private final String MAKE_TEXTURE_NAME = "powrmake.shp";
 
     public static final int WIDTH_TILES = 2;
-    public static final int HEIGHT_TILES = 2;
+    public static final int HEIGHT_TILES = 3;
 
     private static final int POWER_PRODUCTION_LEVEL = 30;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
 
     public EntityPowerPlant(int tileX, int tileY, Team team, Player player) {
-	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx");
+	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
@@ -38,7 +35,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	setMaxHp(50);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 5;
+	this.buildingSpeed = 20;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
@@ -114,4 +111,9 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
+    
+    @Override
+    public Image getTexture() {
+	return normal;
+    }        
 }

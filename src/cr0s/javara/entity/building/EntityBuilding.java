@@ -1,6 +1,8 @@
 package cr0s.javara.entity.building;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.gameplay.Player;
@@ -229,10 +231,15 @@ public abstract class EntityBuilding extends Entity {
 
 		switch (c) {
 		case '_':
-		    fc[x][y] = TileSet.SURFACE_BUILDING_CLEAR_ID;
+		    fc[x][y] = TileSet.SURFACE_CLEAR_ID;
 		    x++;
 		    break;
 
+		case '~':
+		    fc[x][y] = TileSet.SURFACE_BUILDING_CLEAR_ID;
+		    x++;
+		    break;		    
+		    
 		case 'x':
 		    fc[x][y] = TileSet.SURFACE_ROUGH_ID;
 		    x++;
@@ -253,5 +260,45 @@ public abstract class EntityBuilding extends Entity {
 
 	public int[][] getBlockingCells() {
 	    return this.blockingCells;
+	}
+	
+	public abstract Image getTexture();
+	
+	public void changeCellPos(int newCellX, int newCellY) {
+	    this.tileX = newCellX * 24;
+	    this.tileY = newCellY * 24;
+
+	    this.posX = this.tileX;
+	    this.posY = this.tileY;
+	    
+	    // Refresh bounding box
+	    this.boundingBox.setBounds(posX, posY, sizeWidth, sizeHeight);
+	}
+	
+	@Override
+	public String toString() {
+	    return String.format("Building [%s, (%s, %s), (%s, %s), visible: %s, dead: %s]", this.getClass().getName(), this.getTileX(), this.getTileY(), this.posX, this.posY, this.isVisible, this.isDead());
+	}
+	
+	public int getTextureWidth() {
+	    return this.getTexture().getWidth();
+	}
+	public int getTextureHeight() {
+	    return this.getTexture().getHeight();
+	}
+	
+	public static EntityBuilding newInstance(EntityBuilding b) {
+	    // public EntityBarracks(int tileX, int tileY, Team team, Player player)
+	    if (b instanceof EntityBarracks) {
+		return new EntityBarracks(b.getTileX(), b.getTileY(), b.team, b.owner);
+	    } else if (b instanceof EntityConstructionYard) {
+		return new EntityConstructionYard(b.getTileX(), b.getTileY(), b.team, b.owner);
+	    } else if (b instanceof EntityPowerPlant) {
+		return new EntityPowerPlant(b.getTileX(), b.getTileY(), b.team, b.owner);
+	    } else if (b instanceof EntityProc) {
+		return new EntityProc(b.getTileX(), b.getTileY(), b.team, b.owner);
+	    } else {
+		return null;
+	    }
 	}
 }

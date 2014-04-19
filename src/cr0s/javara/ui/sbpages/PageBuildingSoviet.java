@@ -4,6 +4,11 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.building.EntityBarracks;
+import cr0s.javara.entity.building.EntityPowerPlant;
+import cr0s.javara.entity.building.EntityProc;
+import cr0s.javara.main.Main;
+
 public class PageBuildingSoviet extends SideBarPage {
     
     public PageBuildingSoviet(Point pos) {
@@ -32,10 +37,10 @@ public class PageBuildingSoviet extends SideBarPage {
 	addButton(new BuildingSidebarButton("Ore Silo", "siloicon.shp", this.getPosition(), 1, 6, false, null));
 	
 	addButton(new BuildingSidebarButton("Advanced Power Plant", "apwricon.shp", this.getPosition(), 0, 7, false, null));
-	addButton(new BuildingSidebarButton("Ore Refinery", "procicon.shp", this.getPosition(), 1, 7, true, null));
+	addButton(new BuildingSidebarButton("Ore Refinery", "procicon.shp", this.getPosition(), 1, 7, true, new EntityProc(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	
-	addButton(new BuildingSidebarButton("Power Plant", "powricon.shp", this.getPosition(), 0, 8, true, null));
-	addButton(new BuildingSidebarButton("Barracks", "barricon.shp", this.getPosition(), 1, 8, true, null));
+	addButton(new BuildingSidebarButton("Power Plant", "powricon.shp", this.getPosition(), 0, 8, true, new EntityPowerPlant(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
+	addButton(new BuildingSidebarButton("Barracks", "barricon.shp", this.getPosition(), 1, 8, true, new EntityBarracks(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	
 	addButton(new BuildingSidebarButton("Wired Fence", "fencicon.shp", this.getPosition(), 0, 9, true, null));
 	addButton(new BuildingSidebarButton("Concrete Wall", "brikicon.shp", this.getPosition(), 1, 9, true, null));
@@ -53,8 +58,13 @@ public class PageBuildingSoviet extends SideBarPage {
     }
 
     @Override
-    public void mouseClick(float x, float y) {
+    public void buttonClicked(SideBarItemsButton button) {
+	System.out.println("[PageBuildingSoviet] Button clicked: " + button.getDescription());
+	BuildingSidebarButton bsb = ((BuildingSidebarButton)button);
 	
+	if (bsb.getTargetBuilding() != null) {
+	    Main.getInstance().getBuildingOverlay().setBuildingMode(bsb.getTargetBuilding());
+	}
     }
 
 }

@@ -26,13 +26,16 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	private final String MAKE_TEXTURE_NAME = "barrmake.shp";
 	
 	public static final int WIDTH_TILES = 2;
-	public static final int HEIGHT_TILES = 2;
+	public static final int HEIGHT_TILES = 3;
 
+	private static final int TEXTURE_WIDTH = 48;
+	private static final int TEXTURE_HEIGHT = 48;
+	
 	private static final int POWER_CONSUMPTION_LEVEL = 10;
 	private static final int SHROUD_REVEALING_RANGE = 10;
 	
 	public EntityBarracks(int tileX, int tileY, Team team, Player player) {
-		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx");
+		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 		
 		setBibType(BibType.SMALL);
 		setProgressValue(-1);
@@ -48,7 +51,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 
 	private void initTextures() {
 		ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-		sheet = new SpriteSheet(tex.getAsCombinedImage(owner.playerColor), 48, 48);
+		sheet = new SpriteSheet(tex.getAsCombinedImage(owner.playerColor), tex.getAsImage(0, owner.playerColor).getWidth(), tex.getAsImage(0, owner.playerColor).getHeight());
 	}
 	
 	@Override
@@ -65,7 +68,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 		}
 		
 		sheet.startUse();
-		sheet.getSubImage(0, corruptionShift + animIndex).drawEmbedded(posX, posY, this.getWidth(), this.getHeight());
+		sheet.getSubImage(0, corruptionShift + animIndex).drawEmbedded(posX, posY, this.getTextureWidth(), this.getTextureHeight());
 		sheet.endUse();
 		
 		// Draw bounding box if debug mode is on
@@ -124,5 +127,10 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	@Override
 	public int getRevealingRange() {
 	    return this.SHROUD_REVEALING_RANGE;
+	}
+	
+	@Override
+	public Image getTexture() {
+	    return sheet.getSubImage(0, 0);
 	}
 }

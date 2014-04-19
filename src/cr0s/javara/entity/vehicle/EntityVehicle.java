@@ -177,16 +177,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	}
 	
 	private boolean isTargetCellReached() {
-	   
-	    boolean isReached = (Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) <= 3) && (Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) <= 3);
-	     
-	    if (isReached) {
-		//System.out.println("* Target reached. (" + Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) + "; " + Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) + ")");
-	    } else {
-		//System.out.println("Need one more move. " + (int) this.getCenterPosX() + " != " + this.targetCellX * 24 + "; " + (int) this.getCenterPosY() + " != " + this.targetCellY * 24);
-	    }
-	    
-	    return isReached;
+	    return (Math.abs(this.getCenterPosX() - (this.targetCellX * 24 + 12)) <= 3) && (Math.abs(this.getCenterPosY() - (this.targetCellY * 24 + 12)) <= 3);
 	}
 	
 	private void switchToNextWaypointOrFinish() {
@@ -194,12 +185,9 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 		this.pathIndex++;
 		Step nextStep = this.currentPath.getStep(this.pathIndex);
 		
-		//System.out.println("Switching to next waypoint...");
-		
 		if (world.isCellPassable(nextStep.getX(), nextStep.getY())) {
 		    this.moveToAdjacentTile(nextStep.getX(), nextStep.getY());
 		} else {
-		    //System.out.println("* Is not passable");
 		    finishMoving();
 		}
 	    } else {
@@ -245,9 +233,6 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 		return;
 	    }
 	    
-	    //System.out.println("");
-
-	    
 	    float targetCellXCenter = this.targetCellX * 24 + 12;
 	    float targetCellYCenter = this.targetCellY * 24 + 12;
 	    
@@ -272,19 +257,15 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    
 	    // Check cell boundaries
 	    if (-moveX * (targetCellXCenter - nextX) >= 1) {
-		//System.out.println("NextX: " + nextX + " is > than " + targetCellXCenter + " (" + -moveX * (targetCellXCenter - nextX) + ")");
 		this.setCenterX(targetCellXCenter);
 	    }
 	    
 	    if (-moveY * (targetCellYCenter - nextY) >= 1) {
-		//System.out.println("NextY: " + nextY + " is > than " + targetCellYCenter + " (" + -moveY * (targetCellYCenter - nextY) + ")");
 		this.setCenterY(targetCellYCenter);
 	    }
 	    
-	    //System.out.println("Moving from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + (int) nextX + "; " + (int) nextY);
-	    
 	    if (isTargetCellReached()) {
-		this.setPositionByCenter(targetCellXCenter, targetCellYCenter); // correct position
+		this.setPositionByCenter(targetCellXCenter, targetCellYCenter); // correct position to center
 		
 		if (this.isMovingByPath) {
 		    switchToNextWaypointOrFinish();

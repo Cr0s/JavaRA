@@ -198,7 +198,7 @@ public class GameSideBar {
     public void mouseClicked(int button, int x, int y) {
 	// Transform absolute mouse coordinates to sidebar-relative
 	int barX = Main.getInstance().getContainer().getWidth() - x - BAR_SPACING_W;
-	int barY = Main.getInstance().getContainer().getHeight() - y - BAR_SPACING_H;
+	int barY = y - BAR_SPACING_H;
 	
 	// Transform click coordinates to button coordinates
 	int buttonX, buttonY;
@@ -216,8 +216,10 @@ public class GameSideBar {
 		return;
 	    }
 	    
-	    buttonX = barX / 64;
+	    buttonX = 1- (barX / 64);
 	    buttonY = barY / 48;
+	    
+	    this.currentPage.mouseClick(buttonX, buttonY);
 	}
 	
 	System.out.println("[" + barX + "; " + barY + "] Button-" + button + " clicked: " + buttonX + " " + buttonY);

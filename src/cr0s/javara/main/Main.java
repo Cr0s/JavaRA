@@ -24,6 +24,7 @@ import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.gameplay.BuildingOverlay;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -38,180 +39,188 @@ import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.vehicle.tank.EntityHeavyTank;
 
 public class Main extends StateBasedGame {
-	public ResourceManager rm;
-	
-	private StateMainMenu menu;
-	private StateGameMap gameMap;
+    public ResourceManager rm;
 
-	private static Main instance;
-	
-	private World w;
-	private Camera camera;
-	private Controller controller;
+    private StateMainMenu menu;
+    private StateGameMap gameMap;
 
-	private Team team;
+    private static Main instance;
 
-	private Player player;
-	
-	public static boolean DEBUG_MODE = false;
-	
-	private CursorType currentCursor = CursorType.CURSOR_POINTER;
-	
-	private GameSideBar gsb;
-	private ShroudRenderer observerShroudRenderer;
-	
-	public Main() {
-		super("Java RA");
-	}
+    private World w;
+    private Camera camera;
+    private Controller controller;
 
-	public static Main getInstance() {
-		if (instance == null) {
-			instance = new Main();
-		}
-		
-		return instance;
+    private Team team;
+    private Player player;
+
+    private BuildingOverlay bo;
+
+    public static boolean DEBUG_MODE = false;
+
+    private CursorType currentCursor = CursorType.CURSOR_POINTER;
+
+    private GameSideBar gsb;
+    private ShroudRenderer observerShroudRenderer;
+
+    public Main() {
+	super("Java RA");
+    }
+
+    public static Main getInstance() {
+	if (instance == null) {
+	    instance = new Main();
 	}
 
-	/**
-	 * Entry point.
-	 * 
-	 * @param argv
-	 *            The argument passed on the command line (if any)
-	 */
-	public static void main(String[] argv) {
-		try {
-			AppGameContainer container = new AppGameContainer(Main.getInstance(), 800,
-					600, false);
-			
-			container.setMinimumLogicUpdateInterval(20);
-			//container.setShowFPS(false);
-			container.setSmoothDeltas(true);
-			container.setVSync(true);
-			container.setTargetFrameRate(75);
-			container.setClearEachFrame(false);
-			container.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	return instance;
+    }
+
+    /**
+     * Entry point.
+     * 
+     * @param argv
+     *            The argument passed on the command line (if any)
+     */
+    public static void main(String[] argv) {
+	try {
+	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 800,
+		    600, false);
+
+	    container.setMinimumLogicUpdateInterval(20);
+	    //container.setShowFPS(false);
+	    container.setSmoothDeltas(true);
+	    container.setVSync(true);
+	    container.setTargetFrameRate(75);
+	    container.setClearEachFrame(false);
+	    container.start();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private void loadCursors() {
+
+    }
+
+    @Override
+    public void initStatesList(GameContainer arg0) throws SlickException {
+	this.addState(new StateMainMenu());		
+	this.addState(new StateGameMap(arg0));
+	this.addState(new StatePauseMenu());
+
+	//this.getContainer().getInput().addMouseListener(this.getState(0));
+	//this.getContainer().getInput().addMouseListener(this.getState(1));		
+    }
+
+    public Camera getCamera() {
+	return camera;
+    }
+
+    public Controller getController() {
+	return controller;
+    }
+
+    public World getWorld() {
+	return w;
+    }
+
+    public void setWorld(World w) {
+	this.w = w;
+    }
+
+    public void startNewGame(String mapName) {	
+	rm = ResourceManager.getInstance();
+	rm.loadBibs();
+
+	camera = new Camera();
+	try {
+	    camera.init(this.getContainer());
+	} catch (SlickException e1) {
+	    e1.printStackTrace();
 	}
 
-	private void loadCursors() {
-	    
-	}
-	
-	@Override
-	public void initStatesList(GameContainer arg0) throws SlickException {
-		this.addState(new StateMainMenu());		
-		this.addState(new StateGameMap(arg0));
-		this.addState(new StatePauseMenu());
-		
-		//this.getContainer().getInput().addMouseListener(this.getState(0));
-		//this.getContainer().getInput().addMouseListener(this.getState(1));		
-	}
-	
-	public Camera getCamera() {
-		return camera;
-	}
-	
-	public Controller getController() {
-		return controller;
-	}
-	
-	public World getWorld() {
-		return w;
-	}
-	
-	public void setWorld(World w) {
-		this.w = w;
-	}
-	
-	public void startNewGame(String mapName) {	
-		rm = ResourceManager.getInstance();
-		rm.loadBibs();
-		
-		camera = new Camera();
-		try {
-			camera.init(this.getContainer());
-		} catch (SlickException e1) {
-			e1.printStackTrace();
-		}
+	controller = new Controller(null, camera, this.getContainer().getInput());	
+	w = new World("haos-ridges",
+		this.getContainer(), camera);		
 
-		controller = new Controller(null, camera, this.getContainer().getInput());	
-		w = new World("haos-ridges",
-				this.getContainer(), camera);		
-		
-		initGame();
-	}
-	
-	public void initGame() {
-		Random r = new Random(System.currentTimeMillis());
-		
-		team = new Team();
-		player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+	initGame();
+    }
 
-		w.addPlayer(player);
-		
-		Point playerSpawn = player.getPlayerSpawnPoint();
-		this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
+    public void initGame() {
+	Random r = new Random(System.currentTimeMillis());
 
-		this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
-		this.gsb.initSidebarPages();
-	}
-	
-	
-	public Player getPlayer() {
-	    return this.player;
-	}
-	
-	public Team getTeam() {
-	    return this.team;
-	}
-	
-	public CursorType getCursor() {
-	    return this.currentCursor;
-	}
-	
-	public void setCursorType(CursorType cursor) {
-	    try {
-		switch (cursor) {
-		case CURSOR_POINTER:
-		    this.getContainer().setMouseCursor(ResourceManager.getInstance().pointerCursor, 0, 0);
-		    break;
-		    
-		case CURSOR_SELECT:
-		    getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
-		    break;
-		    
-		case CURSOR_GOTO:
-		    getContainer().setAnimatedMouseCursor(ResourceManager.GOTO_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50});
-		    break;
-		    
-		case CURSOR_NO_GOTO:
-		    this.getContainer().setMouseCursor(ResourceManager.NO_GOTO_CURSOR, 16, 16);
-		    break;
-		    
-		case CURSOR_DEPLOY:
-		    getContainer().setAnimatedMouseCursor(ResourceManager.DEPLOY_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 });
-		    break;
-		    
-		case CURSOR_NO_DEPLOY:
-		    this.getContainer().setMouseCursor(ResourceManager.NO_DEPLOY_CURSOR, 16, 16);
-		    break;
-		    
-		default:
-		    break;
-		}
-	    } catch (Exception e) {
-		e.printStackTrace();
+	team = new Team();
+	player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+
+	bo = new BuildingOverlay(player, w);
+
+	w.addPlayer(player);
+
+	Point playerSpawn = player.getPlayerSpawnPoint();
+	this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
+
+	this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
+	this.gsb.initSidebarPages();
+    }
+
+
+    public Player getPlayer() {
+	return this.player;
+    }
+
+    public Team getTeam() {
+	return this.team;
+    }
+
+    public CursorType getCursor() {
+	return this.currentCursor;
+    }
+
+    public void setCursorType(CursorType cursor) {
+	try {
+	    switch (cursor) {
+	    case CURSOR_POINTER:
+		this.getContainer().setMouseCursor(ResourceManager.getInstance().pointerCursor, 0, 0);
+		break;
+
+	    case CURSOR_SELECT:
+		getContainer().setAnimatedMouseCursor(ResourceManager.SELECT_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50});
+		break;
+
+	    case CURSOR_GOTO:
+		getContainer().setAnimatedMouseCursor(ResourceManager.GOTO_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50});
+		break;
+
+	    case CURSOR_NO_GOTO:
+		this.getContainer().setMouseCursor(ResourceManager.NO_GOTO_CURSOR, 16, 16);
+		break;
+
+	    case CURSOR_DEPLOY:
+		getContainer().setAnimatedMouseCursor(ResourceManager.DEPLOY_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 });
+		break;
+
+	    case CURSOR_NO_DEPLOY:
+		this.getContainer().setMouseCursor(ResourceManager.NO_DEPLOY_CURSOR, 16, 16);
+		break;
+
+	    default:
+		break;
 	    }
-	    this.currentCursor = cursor;
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
-	
-	public GameSideBar getSideBar() {
-	    return this.gsb;
-	}
-	
-	public ShroudRenderer getObserverShroudRenderer() {
-	    return this.observerShroudRenderer;
-	}
+	this.currentCursor = cursor;
+    }
+
+    public GameSideBar getSideBar() {
+	return this.gsb;
+    }
+
+    public ShroudRenderer getObserverShroudRenderer() {
+	return this.observerShroudRenderer;
+    }
+
+    public BuildingOverlay getBuildingOverlay() {
+	return this.bo;
+    }
+  
 }

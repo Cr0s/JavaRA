@@ -1,6 +1,7 @@
 package cr0s.javara.ui.sbpages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -34,14 +35,26 @@ public abstract class SideBarPage {
     }
     public abstract void update(int delta);
     
-    public abstract void mouseClick(float x, float y);
+    public void mouseClick(int x, int y) {
+	System.out.println("[SBP] Button pos: " + x + "; " + y);
+	
+	for (SideBarItemsButton btn : this.buttons) {
+	    if (btn.posX == x && btn.posY == y) {
+		System.out.println("[SBP] Found button: " + btn.getDescription());
+		if (btn.isVisible()) {
+		    buttonClicked(btn);
+		    return;
+		}
+	    }
+	}
+    }
     
     public SideBarItemsButton getCurrentButton() {
 	return this.currentButton;
     }
     
     protected void addButton(SideBarItemsButton button) {
-	this.buttons.add(button);
+	this.buttons.add( button);
     }
     
     public boolean isCurrentButtonReady() {
@@ -51,4 +64,6 @@ public abstract class SideBarPage {
     public Point getPosition() {
 	return this.position;
     }
+    
+    public abstract void buttonClicked(SideBarItemsButton button);
 }

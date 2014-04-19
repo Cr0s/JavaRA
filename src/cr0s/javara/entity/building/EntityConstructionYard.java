@@ -24,10 +24,10 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
     private final String MAKE_TEXTURE_NAME = "factmake.shp";
 
     public static final int WIDTH_TILES = 3;
-    public static final int HEIGHT_TILES = 3;
+    public static final int HEIGHT_TILES = 4;
     private static final int SHROUD_REVEALING_RANGE = 10;
 
-    private static final String FOOTPRINT = "xxx xxx xxx";
+    private static final String FOOTPRINT = "xxx xxx xxx ~~~";
 
     private Alignment yardAlignment = Alignment.SOVIET;
 
@@ -117,4 +117,13 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
+    
+    @Override
+    public Image getTexture() {
+	if (sheet == null) {
+	    return null;
+	}
+	
+	return sheet.getSubImage(0, 0);
+    }    
 }

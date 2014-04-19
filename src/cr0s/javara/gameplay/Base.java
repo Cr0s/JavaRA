@@ -10,12 +10,17 @@ import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.main.Main;
+import cr0s.javara.render.map.TileSet;
 /**
  * Describes player's base.
  * @author Cr0s
  */
 public class Base {
     private ArrayList<EntityBuilding> buildings = new ArrayList<>();
+    
+    public static final int BUILDING_CY_RANGE = 20;
+    public static final int BUILDING_NEAREST_BUILDING_DISTANCE = 5;
     
     public boolean isSovietCYPresent = false;
     public boolean isAlliedCYPresent = false;
@@ -123,5 +128,75 @@ public class Base {
     
     public void removeBuilding(EntityBuilding building) {
 	this.buildings.remove(building);
+    }
+
+    public boolean isPossibleToBuildHere(int cellX, int cellY, EntityBuilding targetBuilding) {
+	for (int bX = 0; bX < targetBuilding.getWidthInTiles(); bX++) {
+	    for (int bY = 0; bY < targetBuilding.getHeightInTiles(); bY++) {
+		if (targetBuilding.getBlockingCells()[bX][bY] != TileSet.SURFACE_CLEAR_ID) {
+		    if (!Main.getInstance().getWorld().isCellBuildable(cellX + bX , cellY + bY)) {
+			return false;
+		    }
+		}
+	    }
+	}
+	
+	return true;
+    }
+    
+    
+    
+    public boolean tryToBuild(int cellX, int cellY,
+	    EntityBuilding targetBuilding) {
+	if (!isPossibleToBuildHere(cellX, cellY, targetBuilding)) {
+	    return false;
+	}
+	
+	if (!this.isAlliedCYPresent && !this.isSovietCYPresent) {
+	    return false;
+	}
+	
+	if (checkBuildingDistance(cellX, cellY)) {
+	    EntityBuilding b = EntityBuilding.newInstance(targetBuilding);
+	    b.changeCellPos(cellX, cellY);
+	    
+	    Main.getInstance().getWorld().addBuildingTo(b);
+	    
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    public boolean checkBuildingDistance(int cellX, int cellY) {
+	// Find minimal distance to all construction yards
+	int minDistanceToCYSq = 0;
+	int minDistanceToOtherBuildingsSq = 0;
+	
+	for (EntityBuilding eb : this.buildings) {
+		int dx = eb.getTileX() / 24 - cellX;
+		int dy = eb.getTileY() / 24 - cellY;
+		int distanceSq = dx * dx + dy * dy;
+		
+	    if (eb instanceof EntityConstructionYard) {
+		if (minDistanceToCYSq == 0 || distanceSq < minDistanceToCYSq) {
+		    minDistanceToCYSq = distanceSq;
+		}
+	    } else {
+		if (minDistanceToOtherBuildingsSq == 0 || distanceSq < minDistanceToOtherBuildingsSq) {
+		    minDistanceToOtherBuildingsSq = distanceSq;
+		}		
+	    }
+	}
+	
+	if (minDistanceToOtherBuildingsSq == 0) {
+	    minDistanceToOtherBuildingsSq = minDistanceToCYSq;
+	}
+	
+	return (minDistanceToCYSq <= (this.BUILDING_CY_RANGE * this.BUILDING_CY_RANGE) && minDistanceToOtherBuildingsSq <= (this.BUILDING_NEAREST_BUILDING_DISTANCE * this.BUILDING_NEAREST_BUILDING_DISTANCE));
+    }
+    
+    public ArrayList<EntityBuilding> getBuildings() {
+	return this.buildings;
     }
 }

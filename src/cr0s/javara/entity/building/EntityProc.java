@@ -23,14 +23,14 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     private final String MAKE_TEXTURE_NAME = "procmake.shp";
 
     public static final int WIDTH_TILES = 3;
-    public static final int HEIGHT_TILES = 3;
+    public static final int HEIGHT_TILES = 4;
 
     private static final int POWER_CONSUMPTION_LEVEL = 20;
 
     private static final int SHROUD_REVEALING_RANGE = 9;
 
     public EntityProc(int tileX, int tileY, Team team, Player player) {
-	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x__");
+	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
 
 	setBibType(BibType.MIDDLE);
 	setProgressValue(-1);
@@ -114,4 +114,9 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
+    
+    @Override
+    public Image getTexture() {
+	return normal;
+    }        
 }

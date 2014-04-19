@@ -119,6 +119,12 @@ public class StateGameMap extends BasicGameState {
 	    	    return;
 	    	}
 	    	
+	    	if (Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
+	    	    Main.getInstance().getBuildingOverlay().mouseClick(button);
+	    	    
+	    	    return;
+	    	}
+	    	
 		if (button == 0) { 
 		    Main.getInstance().getWorld().cancelAllSelection();
 		    
