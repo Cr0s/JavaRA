@@ -34,7 +34,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	private static final int POWER_CONSUMPTION_LEVEL = 10;
 	private static final int SHROUD_REVEALING_RANGE = 10;
 	
-	public EntityBarracks(int tileX, int tileY, Team team, Player player) {
+	public EntityBarracks(Integer tileX, Integer tileY, Team team, Player player) {
 		super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 		
 		setBibType(BibType.SMALL);
@@ -43,7 +43,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 		setMaxHp(50);
 		setHp(getMaxHp());
 		
-		this.buildingSpeed = 6;
+		this.buildingSpeed = 35;
 		this.makeTextureName = MAKE_TEXTURE_NAME;
 		
 		initTextures();

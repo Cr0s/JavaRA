@@ -59,4 +59,8 @@ public abstract class SideBarItemsButton {
     public String getDescription() {
 	return this.description;
     }
+    
+    public Image getTexture() {
+	return this.buttonImg;
+    }
 }

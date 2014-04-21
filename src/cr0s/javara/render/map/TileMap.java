@@ -54,6 +54,8 @@ public class TileMap {
     public static final int ALLOWED_DARKNESS_SHIFT = 3;
     public static final int ALLOWED_DARKNESS_SHIFT_XMAX = 7; // this needed to be able put sidebar inside darkness if viewport is on right edge of map
     
+    private Color blockedColor = new Color(255, 0, 0, 32);
+    
     public TileMap(World aWorld, String mapName) {
 	this.world = aWorld;
 
@@ -189,8 +191,6 @@ public class TileMap {
 	Color pColor = g.getColor();	
 	this.theater.getSpriteSheet().startUse();
 
-	Color blockedColor = new Color(255, 0, 0, 32);
-
 	// Draw tiles layer
 	for (int y = 0; y < this.height; y++) {
 	    for (int x = 0; x < this.width; x++) {
@@ -221,7 +221,7 @@ public class TileMap {
 		}
 	    }
 	}
-
+	
 	// Draw map entities
 	for (MapEntity me : this.mapEntities) {
 	    int x = me.getX();
@@ -252,7 +252,7 @@ public class TileMap {
 	   // TODO: check perfomance of this: this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, sY / 24);
 	}
 
-	this.theater.getSpriteSheet().endUse();
+	this.theater.getSpriteSheet().endUse();	
     }
 
     public LinkedList<MapEntity> getMapEntities() {

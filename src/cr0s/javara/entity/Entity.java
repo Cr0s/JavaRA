@@ -5,6 +5,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.render.World;
@@ -129,7 +130,19 @@ public abstract class Entity {
 		g.setColor(Color.magenta);
 		g.drawLine(cornerXUpLeft + 1, cornerYUpLeft - 2, cornerXUpLeft + 1 + barWidthProgress, cornerYUpRight - 2);			
 	    }
+	    
+	   if (this instanceof EntityWarFactory) {
+	       if (((EntityBuilding)this).isPrimary()) {
+		   drawPrimarySign(g);
+	       }
+	   }
 	}	
+	
+	public void drawPrimarySign(Graphics g) {
+	    g.setColor(Color.white);
+	    final String s = "Primary";
+	    g.drawString(s, this.boundingBox.getCenterX() - (g.getFont().getWidth(s) / 2), this.boundingBox.getMaxY() - g.getFont().getLineHeight() - 2);
+	}
 	
 	public Color getHpColor() {
 	    float part = this.getHp() / (float) Math.max(1, this.getMaxHp());

@@ -60,7 +60,7 @@ public class World implements TileBasedMap {
     private ArrayList<Entity> entities = new ArrayList<>();
     private LinkedList<Entity> entitiesToAdd = new LinkedList<>();
 
-    private final int PASSES_COUNT = 2;
+    private final int PASSES_COUNT = 3;
 
     public int[][] blockingMap;
     public int[][] blockingEntityMap;
@@ -118,7 +118,7 @@ public class World implements TileBasedMap {
 		System.out.println("[World] Adding building: " + e.toString());
 		for (int by = 0; by < eb.getHeightInTiles(); by++) {
 		    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
-			this.blockingMap[(((int) eb.posX + 12) / 24) + bx][(((int) eb.posY + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
+			this.blockingMap[((eb.getTileX() + 12) / 24) + bx][((eb.getTileY() + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
 		    }
 		}
 	    }
@@ -247,7 +247,7 @@ public class World implements TileBasedMap {
 	    for (int bibX = 0; bibX < bibCount; bibX++) {
 		int index = bibCount * bibY + bibX;	
 		
-		bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + 24 * (b.getHeightInTiles() / 2) + 24 * bibY, 24, 24);
+		bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + 24 * (b.getHeightInTiles() / 2) + 24 * bibY - 12, 24, 24);
 	    }
 	}
 	    
@@ -315,7 +315,28 @@ public class World implements TileBasedMap {
 	}	    
     }
 
+    /**
+     * Returns entity in point. This can building entity or vehicle, infantry.
+     * @param x point X
+     * @param y point Y
+     * @return Entity, if found or null, if not
+     */
     public Entity getEntityInPoint(float x, float y) {
+	return getEntityInPoint(x, y, false);
+    }
+    
+    
+    /**
+     * Returns only non-building entity, located in point.
+     * @param x point X
+     * @param y point Y
+     * @return Entity or null
+     */
+    public Entity getEntityNonBuildingInPoint(float x, float y) {
+	return getEntityInPoint(x, y, true);
+    }
+    
+    private Entity getEntityInPoint(float x, float y, boolean onlyNonBuildings) {
 	// First check non-buildings entities
 	for (Entity e : this.entities) {
 	    if (!e.isDead() && e instanceof ISelectable && !(e instanceof EntityBuilding)) {
@@ -326,10 +347,12 @@ public class World implements TileBasedMap {
 	}
 
 	// Check buildings
-	for (Entity e : this.entities) {
-	    if (!e.isDead() && e instanceof ISelectable && (e instanceof EntityBuilding)) {
-		if (e.boundingBox.contains(x, y)) {
-		    return e;
+	if (!onlyNonBuildings) {
+	    for (Entity e : this.entities) {
+		if (!e.isDead() && e instanceof ISelectable && (e instanceof EntityBuilding)) {
+		    if (e.boundingBox.contains(x, y)) {
+			return e;
+		    }
 		}
 	    }
 	}

@@ -159,16 +159,14 @@ public class StateGameMap extends BasicGameState {
 		    if (e != null) { 
 			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
 			
-			if (this.isAnyMovableEntitySelected) {
-			    if (this.mouseOverEntity == e && (e instanceof IDeployable) && (e.isSelected)) {
-				if (((IDeployable) e).canDeploy()) { 
-				    ((IDeployable) e).deploy();
-				    
-				    this.isAnyMovableEntitySelected = false;
-				    this.mouseOverEntity = null;
-				    
-				    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-				}
+			if (this.mouseOverEntity == e && (e instanceof IDeployable) && (e.isSelected)) {
+			    if (((IDeployable) e).canDeploy()) { 
+				((IDeployable) e).deploy();
+
+				this.isAnyMovableEntitySelected = false;
+				this.mouseOverEntity = null;
+
+				Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 			    }
 			}
 		    } else {

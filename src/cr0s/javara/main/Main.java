@@ -148,6 +148,8 @@ public class Main extends StateBasedGame {
     public void initGame() {
 	Random r = new Random(System.currentTimeMillis());
 
+	this.observerShroudRenderer = new ShroudRenderer(w);
+	
 	team = new Team();
 	player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 
@@ -176,6 +178,10 @@ public class Main extends StateBasedGame {
     }
 
     public void setCursorType(CursorType cursor) {
+	if (this.currentCursor == cursor) {
+	    return;
+	}
+	
 	try {
 	    switch (cursor) {
 	    case CURSOR_POINTER:

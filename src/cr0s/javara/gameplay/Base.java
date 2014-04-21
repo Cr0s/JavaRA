@@ -7,69 +7,131 @@ import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
+import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
+import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileSet;
+import cr0s.javara.ui.sbpages.vehicle.VehicleSidebarButton;
 /**
  * Describes player's base.
  * @author Cr0s
  */
 public class Base {
     private ArrayList<EntityBuilding> buildings = new ArrayList<>();
-    
+
     public static final int BUILDING_CY_RANGE = 20;
     public static final int BUILDING_NEAREST_BUILDING_DISTANCE = 5;
-    
+
     public boolean isSovietCYPresent = false;
     public boolean isAlliedCYPresent = false;
-    
+
     public boolean isBarracksPresent = false;
     public boolean isTentPresent = false;
-    public boolean isWarFactoryPresent = false;
+
+    public boolean isSovietWarFactoryPresent = false;
+    public boolean isAlliedWarFactoryPresent = false;
+
     public boolean isSubPenPresent = false;
     public boolean isShipYardPresent = false;
     public boolean isHelipadPresent = false;
     public boolean isAirLinePresent = false;
-    
+
     public boolean isChronoSpherePresent = false;
     public boolean isNukeSiloPresent = false;
     public boolean isIronCurtainPresent = false;
-    
+
     public boolean isSovietTechPresent = false;
     public boolean isAlliedTechPresent = false;
-    
+
     public boolean isRadarDomePresent = false;
     public boolean isPowerPlantPresent = false;
     public boolean isFlameTowerPresent = false;
-    
+
     private boolean isProcPresent = false;
 
     public boolean isAnySuperPowerPresent;    
-    
+
     private boolean isLowPower = false;
-    
+
     private int powerLevel = 0;
     private int powerConsumptionLevel = 0;
-    
+
     private int currentOreValue = 0;
     private int maxOreValue = 0;
+
+    private VehicleSidebarButton currentVehicleBuilding;
+    private int currentVehicleProgress;
+    public static final int VEHICLE_MAX_PROGRESS = 48;
+    private boolean isCurrentVehicleReady;
+    private boolean isCurrentVehicleHold;
+    private int currentVehicleProgressTicks;
+    
+    public static final int WAIT_BEFORE_DEPLOY_VEHICLE = 5;
+    private int waitDeployVehicleTicks;
     
     public Base(Team team, Player owner) {
-	
+
     }
-    
+
     public void update() {
 	updateBuildings();
+	updateCurrentVehicleBuilding();
+    }
+
+    public VehicleSidebarButton getCurrentVehicleButton() {
+	return this.currentVehicleBuilding;
     }
     
+    public boolean isCurrentVehicleBuilding() {
+	return (this.currentVehicleBuilding != null);
+    }
+    
+    public boolean isCurrentVehicleHold() {
+	return this.isCurrentVehicleHold;
+    }
+    
+    public boolean isCurrentVehicleReady() {
+	return this.isCurrentVehicleReady;
+    }
+    
+    public int getCurrentVehicleProgress() {
+	return this.currentVehicleProgress;
+    }
+    
+    
+    public void startBuildVehicle(VehicleSidebarButton v) {
+	this.currentVehicleProgress = 0;
+	this.currentVehicleBuilding = v;
+    }
+    
+    private void updateCurrentVehicleBuilding() {
+	if (this.currentVehicleBuilding != null) {
+	    if (!this.isCurrentVehicleHold && !this.isCurrentVehicleReady && this.currentVehicleProgressTicks++ > 80 - currentVehicleBuilding.getTargetVehicle().getBuildingSpeed()) {
+		this.currentVehicleProgressTicks = 0;
+		this.currentVehicleProgress++;
+	    }
+	    
+	    if (this.currentVehicleProgress == VEHICLE_MAX_PROGRESS) {
+		this.isCurrentVehicleReady = true;
+	    }
+	    
+	    if (this.isCurrentVehicleReady && this.waitDeployVehicleTicks++ > this.WAIT_BEFORE_DEPLOY_VEHICLE) {
+		this.waitDeployVehicleTicks = 0;
+		
+		this.deployBuildedVehicle(this.currentVehicleBuilding.getTargetVehicle());
+		cancelCurrentVehicle(false);
+	    }
+	}
+    }
+
     private void updateBuildings() {
-	isSovietCYPresent = false;
-	isAlliedCYPresent = false;
+	isSovietCYPresent = isAlliedCYPresent = false;
 	isBarracksPresent = false;
 	isTentPresent = false;
-	isWarFactoryPresent = false;
+	isSovietWarFactoryPresent = isAlliedWarFactoryPresent = false;
 	isSubPenPresent = false;
 	isShipYardPresent = false;
 	isHelipadPresent = false;
@@ -81,7 +143,7 @@ public class Base {
 	isAlliedTechPresent = false;
 	isRadarDomePresent = false;
 	isProcPresent = false;
-	    
+
 	for (EntityBuilding b : this.buildings) {
 	    // Update power levels
 	    if (b instanceof IPowerConsumer) {
@@ -89,7 +151,7 @@ public class Base {
 	    } else if (b instanceof IPowerProducer) {
 		this.powerLevel += ((IPowerProducer)b).getPowerProductionLevel();
 	    }	    
-	    
+
 	    if (b instanceof EntityConstructionYard) {
 		if (((EntityConstructionYard)b).getAlignment() == Alignment.ALLIED) {
 		    this.isAlliedCYPresent = true;
@@ -98,34 +160,40 @@ public class Base {
 		}
 	    } else if (b instanceof EntityBarracks) {
 		this.isBarracksPresent = true;
+	    } else if (b instanceof EntityWarFactory) {
+		if (((EntityWarFactory)b).getAlignment() == Alignment.ALLIED) {
+		    this.isAlliedWarFactoryPresent = true;
+		} else if (((EntityWarFactory)b).getAlignment() == Alignment.SOVIET) {
+		    this.isSovietWarFactoryPresent = true;
+		}
 	    } else if (b instanceof EntityProc) {
 		this.isProcPresent = true;
 	    } else if (b instanceof EntityPowerPlant) {
 		this.isPowerPlantPresent = true;
 	    }
-	    
-	    
+
+
 	}
-	
+
 	this.isLowPower = (this.powerConsumptionLevel > this.powerLevel);
     }
-     
+
     public boolean isLowPower() {
 	return this.isLowPower();
     }
-    
+
     public int getPowerLevel() {
 	return this.powerLevel;
     }
-    
+
     public int getConsumptionLevel() {
 	return this.powerConsumptionLevel;
     }
-    
+
     public void addBuilding(EntityBuilding building) {
 	this.buildings.add(building);
     }
-    
+
     public void removeBuilding(EntityBuilding building) {
 	this.buildings.remove(building);
     }
@@ -140,28 +208,32 @@ public class Base {
 		}
 	    }
 	}
-	
+
 	return true;
     }
-    
-    
-    
+
+
+
     public boolean tryToBuild(int cellX, int cellY,
 	    EntityBuilding targetBuilding) {
 	if (!isPossibleToBuildHere(cellX, cellY, targetBuilding)) {
 	    return false;
 	}
-	
+
 	if (!this.isAlliedCYPresent && !this.isSovietCYPresent) {
 	    return false;
 	}
-	
+
 	if (checkBuildingDistance(cellX, cellY)) {
 	    EntityBuilding b = EntityBuilding.newInstance(targetBuilding);
 	    b.changeCellPos(cellX, cellY);
+
+	    if (b instanceof EntityWarFactory) {
+		b.setPrimary(!isMoreThanOneWarFactory());
+	    }
 	    
 	    Main.getInstance().getWorld().addBuildingTo(b);
-	    
+
 	    return true;
 	} else {
 	    return false;
@@ -172,31 +244,74 @@ public class Base {
 	// Find minimal distance to all construction yards
 	int minDistanceToCYSq = 0;
 	int minDistanceToOtherBuildingsSq = 0;
-	
+
 	for (EntityBuilding eb : this.buildings) {
-		int dx = eb.getTileX() / 24 - cellX;
-		int dy = eb.getTileY() / 24 - cellY;
-		int distanceSq = dx * dx + dy * dy;
-		
+	    int dx = eb.getTileX() / 24 - cellX;
+	    int dy = eb.getTileY() / 24 - cellY;
+	    int distanceSq = dx * dx + dy * dy;
+
 	    if (eb instanceof EntityConstructionYard) {
 		if (minDistanceToCYSq == 0 || distanceSq < minDistanceToCYSq) {
 		    minDistanceToCYSq = distanceSq;
 		}
-	    } else {
-		if (minDistanceToOtherBuildingsSq == 0 || distanceSq < minDistanceToOtherBuildingsSq) {
-		    minDistanceToOtherBuildingsSq = distanceSq;
-		}		
+	    }
+
+	    if (minDistanceToOtherBuildingsSq == 0 || distanceSq < minDistanceToOtherBuildingsSq) {
+		minDistanceToOtherBuildingsSq = distanceSq;
 	    }
 	}
-	
-	if (minDistanceToOtherBuildingsSq == 0) {
-	    minDistanceToOtherBuildingsSq = minDistanceToCYSq;
-	}
-	
+
 	return (minDistanceToCYSq <= (this.BUILDING_CY_RANGE * this.BUILDING_CY_RANGE) && minDistanceToOtherBuildingsSq <= (this.BUILDING_NEAREST_BUILDING_DISTANCE * this.BUILDING_NEAREST_BUILDING_DISTANCE));
     }
-    
+
     public ArrayList<EntityBuilding> getBuildings() {
 	return this.buildings;
+    }
+
+    public void deployBuildedVehicle(EntityVehicle v) {
+	// Find primary war factory
+	for (EntityBuilding b : this.buildings) {
+	    if (b instanceof EntityWarFactory) {
+		if (b.isPrimary()) {
+		    ((EntityWarFactory)b).deployEntity(EntityVehicle.newInstance(v));
+		}
+	    }
+	}
+    }
+
+    public void setPrimaryWarFactory(EntityWarFactory entityWarFactory) {
+	for (EntityBuilding eb : this.buildings) {
+	    if (eb instanceof EntityWarFactory) {
+		eb.setPrimary(eb == entityWarFactory);
+	    }
+	}
+    }
+
+    public boolean isMoreThanOneWarFactory() {
+	int count = 0;
+
+	for (EntityBuilding eb : this.buildings) {
+	    if (eb instanceof EntityWarFactory) {
+		count++;
+		if (count > 1) {
+		    return true;
+		}
+	    }
+	}	
+
+	return false;
+    }
+
+    public void setCurrentVehicleHold(boolean hold) {
+	this.isCurrentVehicleHold = hold;
+    }
+
+    public void cancelCurrentVehicle(boolean moneyBack) {
+	// TODO: finish moneyback
+	this.currentVehicleBuilding = null;
+	this.isCurrentVehicleHold = false;
+	this.isCurrentVehicleReady = false;
+	this.currentVehicleProgress = 0;
+	this.currentVehicleProgressTicks = 0;
     }
 }

@@ -6,6 +6,7 @@ import org.newdawn.slick.geom.Circle;
 
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileSet;
@@ -51,6 +52,12 @@ public class BuildingOverlay {
 	    }
 
 	    g.setColor(pColor);
+	    
+	    // War Factory workaround: WF texture consist from two textures: bottom and top, we need draw both to get full image of WF
+	    if (this.targetBuilding instanceof EntityWarFactory) { 
+		((EntityWarFactory)this.targetBuilding).getBottomTexture().draw(cellX * 24, cellY * 24, filterColor);
+	    }
+	    
 	    this.targetBuilding.getTexture().draw(cellX * 24, cellY * 24, filterColor);	    
 	}
     }

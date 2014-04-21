@@ -10,47 +10,40 @@ import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
-import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityConstructionYard extends EntityBuilding implements ISelectable, IShroudRevealer {
-
-    private SpriteSheet sheet;
-
+public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
     private Image normal, corrupted;
-    private final String TEXTURE_NAME = "fact.shp";
-    private final String MAKE_TEXTURE_NAME = "factmake.shp";
+    private final String TEXTURE_NAME = "apwr.shp";
+    private final String MAKE_TEXTURE_NAME = "apwrmake.shp";
 
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
-    private static final int SHROUD_REVEALING_RANGE = 10;
 
-    private static final String FOOTPRINT = "xxx xxx xxx ~~~";
+    private static final int POWER_PRODUCTION_LEVEL = 30;
 
-    private Alignment yardAlignment = Alignment.SOVIET;
+    private static final int SHROUD_REVEALING_RANGE = 7;
 
-    public EntityConstructionYard(Integer tileX, Integer tileY, Team team, Player player) {
-	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, FOOTPRINT);
-
-	this.yardAlignment = player.getAlignment();
+    public EntityAdvPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
+	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xxx xxx xxx ~~~");
 
 	setBibType(BibType.MIDDLE);
 	setProgressValue(-1);
 
-	setMaxHp(100);
+	setMaxHp(70);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 100;
+	this.buildingSpeed = 35;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
 
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-	corrupted = tex.getAsImage(51, owner.playerColor);
 	normal = tex.getAsImage(0, owner.playerColor);	
+	corrupted = tex.getAsImage(1, owner.playerColor);
     }
 
     @Override
@@ -109,8 +102,9 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	return this.tileWidth;
     }
 
-    public Alignment getAlignment() {
-	return this.yardAlignment;
+    @Override
+    public int getPowerProductionLevel() {
+	return POWER_PRODUCTION_LEVEL;
     }
 
     @Override
@@ -120,10 +114,6 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
     
     @Override
     public Image getTexture() {
-	if (sheet == null) {
-	    return null;
-	}
-	
-	return sheet.getSubImage(0, 0);
-    }    
+	return normal;
+    }        
 }

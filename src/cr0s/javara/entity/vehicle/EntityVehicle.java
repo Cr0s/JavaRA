@@ -1,5 +1,7 @@
 package cr0s.javara.entity.vehicle;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
@@ -13,6 +15,7 @@ import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.main.Main;
 import cr0s.javara.util.RotationUtil;
 
 public abstract class EntityVehicle extends Entity implements IMovable, Mover, IShroudRevealer {
@@ -41,6 +44,8 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	private static final int REPATH_RANGE = 3;
 	
 	private int moveWaitTicks = 0;
+
+	protected int buildingSpeed;
 	
 	public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
 		super(posX, posY, team, player, sizeWidth, sizeHeight);
@@ -117,21 +122,8 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    Path path = world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
 	    this.startX = (int) this.getCenterPosX() / 24;
 	    this.startY = (int) this.getCenterPosY() / 24;
-	    if (path != null) {
-		this.currentPath = path;
-		
-		this.isMovingByPath = true;
-	    	this.pathIndex = 1;
-	    	
-	    	this.goalX = aGoalX;
-	    	this.goalY = aGoalY;
-	    	
-	    	//System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
-	    	
-	    	Step firstStep = this.currentPath.getStep(this.pathIndex);
-	    	if (!this.isMovingToCell) {
-	    	    this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
-	    	}
+	    if (path != null) {		
+		startMovingByPath(path);
 	    	
 	    	return true;
 	    } else {
@@ -144,11 +136,28 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    return false;
 	}
 	
+	public void startMovingByPath(Path p) {
+	    this.currentPath = p;
+	    
+	    this.isMovingByPath = true;
+	    this.pathIndex = 1;
+
+	    this.goalX = p.getX(p.getLength() - 1);
+	    this.goalY = p.getY(p.getLength() - 1);
+
+	    //System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
+
+	    Step firstStep = this.currentPath.getStep(this.pathIndex);
+	    if (!this.isMovingToCell) {
+		this.moveToAdjacentTile(firstStep.getX(), firstStep.getY());
+	    }	    
+	}
+	
 	public void moveToAdjacentTile(int tileX, int tileY) {
 	    // Center unit by current cell
 	    setPositionByCenter(((int)Math.floor(this.getCenterPosX() / 24) * 24) + 12, ((int)Math.floor(this.getCenterPosY() / 24) * 24) + 12);
 	    
-	   // System.out.println("Moving to adjacent tile from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + tileX * 24 + "; " + tileY * 24);
+	    //System.out.println("Moving to adjacent tile from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + tileX * 24 + "; " + tileY * 24);
 	    this.isMovingToCell = true;
 	    
 	    this.targetCellX = tileX;
@@ -265,6 +274,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    }
 	    
 	    if (isTargetCellReached()) {
+		//System.out.println("Reached");
 		this.setPositionByCenter(targetCellXCenter, targetCellYCenter); // correct position to center
 		
 		if (this.isMovingByPath) {
@@ -276,6 +286,10 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	}
 	
 	protected void drawPath(Graphics g) {
+	    if (!Main.DEBUG_MODE) {
+		return;
+	    }
+	    
 	    if (this.currentPath != null) {
 		g.setColor(Color.green);
 		g.setLineWidth(1);
@@ -353,4 +367,24 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	
 	public abstract float getTextureX();
 	public abstract float getTextureY();
+	
+	public static EntityVehicle newInstance(EntityVehicle b) {
+		Constructor ctor;
+		try {
+		    ctor = (b.getClass()).getDeclaredConstructor(Float.class, Float.class, Team.class, Player.class);
+		    ctor.setAccessible(true);
+		    EntityVehicle newEntityVehicle = ((EntityVehicle)ctor.newInstance(b.posX, b.posY, b.team, b.owner));
+		    
+		    return newEntityVehicle;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+			| IllegalArgumentException | InvocationTargetException e) {
+		    e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public int getBuildingSpeed() {
+	    return this.buildingSpeed;
+	}	
 }

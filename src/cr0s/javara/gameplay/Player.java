@@ -82,7 +82,7 @@ public class Player {
     }
 
     public void spawn() {
-	EntityMcv mcv = new EntityMcv(24 * this.spawnX, 28 * this.spawnY, team, this);
+	EntityMcv mcv = new EntityMcv(24.0f * this.spawnX, 28.0f * this.spawnY, team, this);
 	mcv.isVisible = true;
 	
 	this.world.spawnEntityInWorld(mcv);

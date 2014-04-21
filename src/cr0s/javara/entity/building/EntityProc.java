@@ -29,7 +29,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     private static final int SHROUD_REVEALING_RANGE = 9;
 
-    public EntityProc(int tileX, int tileY, Team team, Player player) {
+    public EntityProc(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
 
 	setBibType(BibType.MIDDLE);
@@ -38,7 +38,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	setMaxHp(100);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 10;
+	this.buildingSpeed = 20;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }

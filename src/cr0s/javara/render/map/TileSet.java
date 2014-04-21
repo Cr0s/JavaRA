@@ -29,6 +29,7 @@ public class TileSet {
     public static final int SURFACE_RIVER_ID = 11;
     public static final int SURFACE_ROUGH_ID = 14;
     public static final int SURFACE_BUILDING_CLEAR_ID = 15;
+    public static final int SURFACE_BUILDING = 2;
     
     static {
 	renameMap.put("Clear", SURFACE_CLEAR_ID);

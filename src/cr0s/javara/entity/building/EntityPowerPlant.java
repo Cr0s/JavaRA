@@ -26,7 +26,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 
     private static final int SHROUD_REVEALING_RANGE = 7;
 
-    public EntityPowerPlant(int tileX, int tileY, Team team, Player player) {
+    public EntityPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
 	setBibType(BibType.SMALL);
@@ -35,7 +35,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	setMaxHp(50);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 20;
+	this.buildingSpeed = 50;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }

@@ -37,7 +37,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
     private int rotationDirection = 1;
     private boolean isHarvesting = false; // TODO: make harvesting animation
 
-    public EntityHarvester(float posX, float posY, Team team, Player player) {
+    public EntityHarvester(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	boundingBox.setBounds(posX + 6, posY - 6, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
@@ -46,6 +46,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 
 	this.setHp(50);
 	this.setMaxHp(50);
+	
+	this.buildingSpeed = 50;
 
 	setRotation(12);
     }
@@ -94,8 +96,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
     }
 
     @Override
-    public void moveTo(int tileX, int tileY) {
-	this.findPathAndMoveTo(tileX / 24, tileY / 24);
+    public boolean moveTo(int tileX, int tileY) {
+	return this.findPathAndMoveTo(tileX / 24, tileY / 24);
     }
 
     @Override

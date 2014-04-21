@@ -1,20 +1,23 @@
-package cr0s.javara.ui.sbpages;
+package cr0s.javara.ui.sbpages.building;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.building.EntityAdvPowerPlant;
 import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
+import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.main.Main;
+import cr0s.javara.ui.sbpages.SideBarItemsButton;
+import cr0s.javara.ui.sbpages.SideBarPage;
 
 public class PageBuildingSoviet extends SideBarPage {
     
     public PageBuildingSoviet(Point pos) {
 	super(pos);
 	
-	//String description, String textureName, Point pagePos, int posX, int posY, boolean aIsVisible
 	addButton(new BuildingSidebarButton("SAM Site", "samicon.shp", this.getPosition(), 0, 0, false, null));
 	addButton(new BuildingSidebarButton("Atom Bomb Silo", "msloicon.shp", this.getPosition(), 1, 0, false, null));
 	
@@ -33,10 +36,10 @@ public class PageBuildingSoviet extends SideBarPage {
 	addButton(new BuildingSidebarButton("Sub Pen", "spenicon.shp", this.getPosition(), 0, 5, false, null));
 	addButton(new BuildingSidebarButton("Service Depot", "fixicon.shp", this.getPosition(), 1, 5, false, null));
 	
-	addButton(new BuildingSidebarButton("War Factory", "weapicon.shp", this.getPosition(), 0, 6, false, null));
+	addButton(new BuildingSidebarButton("War Factory", "weapicon.shp", this.getPosition(), 0, 6, true, new EntityWarFactory(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	addButton(new BuildingSidebarButton("Ore Silo", "siloicon.shp", this.getPosition(), 1, 6, false, null));
 	
-	addButton(new BuildingSidebarButton("Advanced Power Plant", "apwricon.shp", this.getPosition(), 0, 7, false, null));
+	addButton(new BuildingSidebarButton("Advanced Power Plant", "apwricon.shp", this.getPosition(), 0, 7, true, new EntityAdvPowerPlant(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	addButton(new BuildingSidebarButton("Ore Refinery", "procicon.shp", this.getPosition(), 1, 7, true, new EntityProc(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	
 	addButton(new BuildingSidebarButton("Power Plant", "powricon.shp", this.getPosition(), 0, 8, true, new EntityPowerPlant(0, 0, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));

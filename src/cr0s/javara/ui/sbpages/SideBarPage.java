@@ -40,8 +40,8 @@ public abstract class SideBarPage {
 	
 	for (SideBarItemsButton btn : this.buttons) {
 	    if (btn.posX == x && btn.posY == y) {
-		System.out.println("[SBP] Found button: " + btn.getDescription());
 		if (btn.isVisible()) {
+		    System.out.println("[SBP] Found button: " + btn.getDescription());
 		    buttonClicked(btn);
 		    return;
 		}

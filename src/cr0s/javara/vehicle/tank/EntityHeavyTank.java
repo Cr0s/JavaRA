@@ -47,7 +47,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
     private final float SHIFT = 12;
 
-    public EntityHeavyTank(float posX, float posY, Team team, Player player) {
+    public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -57,6 +57,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
 	this.setHp(20);
 	this.setMaxHp(20);
+	
+	this.buildingSpeed = 60;
     }
 
     @Override
@@ -187,9 +189,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     }
 
     @Override
-    public void moveTo(int tileX, int tileY) {
-	// this.moveToAdjacentTile(((int) this.posX + 24) / 24, ((int) this.posY + 24) / 24);
-	this.findPathAndMoveTo(tileX / 24, tileY / 24);
+    public boolean moveTo(int tileX, int tileY) {
+	return this.findPathAndMoveTo(tileX / 24, tileY / 24);
     }
 
     @Override

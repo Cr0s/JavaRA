@@ -38,7 +38,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
     private final float MOVE_SPEED = 0.03f;
 
-    public EntityMcv(float posX, float posY, Team team, Player player) {
+    public EntityMcv(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	boundingBox.setBounds(posX, posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
@@ -50,8 +50,10 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
 	this.setHp(50);
 	this.setMaxHp(50);
-
-	this.rotation = r.nextInt(32);
+	
+	this.setRotation(16);
+	
+	this.buildingSpeed = 35;
     }
 
     @Override
@@ -136,8 +138,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     }
 
     @Override
-    public void moveTo(int tileX, int tileY) {
-	this.findPathAndMoveTo(tileX / 24, tileY / 24);
+    public boolean moveTo(int tileX, int tileY) {
+	return this.findPathAndMoveTo(tileX / 24, tileY / 24);
     }
 
     @Override

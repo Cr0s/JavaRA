@@ -1,5 +1,8 @@
 package cr0s.javara.entity.building;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
@@ -241,7 +244,7 @@ public abstract class EntityBuilding extends Entity {
 		    break;		    
 		    
 		case 'x':
-		    fc[x][y] = TileSet.SURFACE_ROUGH_ID;
+		    fc[x][y] = TileSet.SURFACE_BUILDING;
 		    x++;
 		    break;
 
@@ -289,16 +292,18 @@ public abstract class EntityBuilding extends Entity {
 	
 	public static EntityBuilding newInstance(EntityBuilding b) {
 	    // public EntityBarracks(int tileX, int tileY, Team team, Player player)
-	    if (b instanceof EntityBarracks) {
-		return new EntityBarracks(b.getTileX(), b.getTileY(), b.team, b.owner);
-	    } else if (b instanceof EntityConstructionYard) {
-		return new EntityConstructionYard(b.getTileX(), b.getTileY(), b.team, b.owner);
-	    } else if (b instanceof EntityPowerPlant) {
-		return new EntityPowerPlant(b.getTileX(), b.getTileY(), b.team, b.owner);
-	    } else if (b instanceof EntityProc) {
-		return new EntityProc(b.getTileX(), b.getTileY(), b.team, b.owner);
-	    } else {
+		Constructor ctor;
+		try {
+		    ctor = (b.getClass()).getDeclaredConstructor(Integer.class, Integer.class, Team.class, Player.class);
+		    ctor.setAccessible(true);
+		    EntityBuilding newEntityBuilding = ((EntityBuilding)ctor.newInstance(b.getTileX(), b.getTileY(), b.team, b.owner));
+		    
+		    return newEntityBuilding;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+			| IllegalArgumentException | InvocationTargetException e) {
+		    e.printStackTrace();
+		}
+
 		return null;
-	    }
 	}
 }

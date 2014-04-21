@@ -15,7 +15,8 @@ import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
-import cr0s.javara.ui.sbpages.PageBuildingSoviet;
+import cr0s.javara.ui.sbpages.building.PageBuildingSoviet;
+import cr0s.javara.ui.sbpages.vehicle.PageVehicle;
 import cr0s.javara.ui.sbpages.SideBarPage;
 
 public class GameSideBar {
@@ -48,8 +49,11 @@ public class GameSideBar {
     private SideBarPage currentPage;
     private String currentPageName;
     
-    private static final String START_PAGE_NAME = "start";
-    private static final String PAGE_BUILDING_SOVIET = "sovbuild";
+    public static final String START_PAGE_NAME = "start";
+    public static final String PAGE_BUILDING_SOVIET = "sovbuild";
+    public static final String PAGE_VEHICLE = "vehicle";
+    
+    private Color progressHideColor = new Color(0, 0, 0, 128);
     
     public GameSideBar(Team aTeam, Player aPlayer) {
 	try {
@@ -79,6 +83,7 @@ public class GameSideBar {
     public void initSidebarPages() {
 	if (this.sideBarPages.isEmpty()) {
 	    this.sideBarPages.put(PAGE_BUILDING_SOVIET, new PageBuildingSoviet(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
+	    this.sideBarPages.put(PAGE_VEHICLE, new PageVehicle(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
 	}
     }
 
@@ -133,11 +138,37 @@ public class GameSideBar {
 	    int y = MENU_START_Y;
 
 	    for (int j = 0; j < 2; j++) {
-		this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[i][j ] ? 1 : 0, 2 * i + j).draw(x + (64 * j), y + (i * 48), filterColor);
+		// Is this Vehicles button with progress?
+		if (i == 1 && j == 0 && this.player.getBase().isCurrentVehicleBuilding()) {
+		    drawCurrentVehicleProgress(g, x + (64 * j), y + (i * 48), filterColor);
+		} else { // Default case
+		    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[i][j] ? 1 : 0, 2 * i + j).draw(x + (64 * j), y + (i * 48), filterColor);
+		}
 	    }
 	}	
     }
     
+    private void drawCurrentVehicleProgress(Graphics g, int x, int y, Color filterColor) {
+	// Draw unit image first
+	player.getBase().getCurrentVehicleButton().getTexture().draw(x, y, filterColor);
+	
+	// Draw progress rect
+	Color pColor = g.getColor();
+	
+	g.setColor(this.progressHideColor.multiply(filterColor));
+	g.fillRect(x, y, 64, 48 - player.getBase().getCurrentVehicleProgress());
+	
+	g.setColor(Color.white.multiply(filterColor));
+	// Draw status
+	if (player.getBase().isCurrentVehicleReady()) {
+	    g.drawString("ready", x + 1, y + 46 - g.getFont().getLineHeight());
+	} else if (player.getBase().isCurrentVehicleHold()) {
+	    g.drawString("on hold", x + 1, y + 46 - g.getFont().getLineHeight());
+	}
+	
+	g.setColor(pColor);
+    }
+
     public void update(int delta) {
 	Base base = this.player.getBase();
 	
@@ -148,7 +179,7 @@ public class GameSideBar {
 	this.sideBarCategoriesOpened[0][0] = base.isAlliedCYPresent;
 	
 	// War Factory
-	this.sideBarCategoriesOpened[1][0] = base.isWarFactoryPresent;
+	this.sideBarCategoriesOpened[1][0] = base.isAlliedWarFactoryPresent || base.isSovietWarFactoryPresent;
 	
 	// Barracks/Tent
 	this.sideBarCategoriesOpened[1][1] = base.isBarracksPresent || base.isTentPresent;
@@ -182,15 +213,47 @@ public class GameSideBar {
 	}
     }
     
-    public void startPageClick(int buttonX, int buttonY) {
-	switch (buttonX) {
-	case 0: // Construction Yard clicked
-	    if (buttonY == 0) { // 
-		if (this.player.getAlignment() == Alignment.SOVIET) {
-		    if (this.sideBarCategoriesOpened[0][1]) {
-			switchPage(PAGE_BUILDING_SOVIET);
+    public void startPageClick(int button, int buttonX, int buttonY) {
+	if (button == 0) { // left click
+	    switch (buttonX) {
+	    case 0: // Left side clicked
+		switch (buttonY) {
+		case 0: // 
+		    if (this.player.getAlignment() == Alignment.SOVIET) {
+			// TODO: add allied building page
+			if (this.sideBarCategoriesOpened[0][1]) {
+			    switchPage(PAGE_BUILDING_SOVIET);
+			}
+		    }
+		    break;
+
+		case 1:
+		    if (!player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleHold()) {
+			if (this.sideBarCategoriesOpened[1][0]) {
+			    switchPage(PAGE_VEHICLE);
+			}
+		    } else if (player.getBase().isCurrentVehicleHold()) { // continue holded building
+			player.getBase().setCurrentVehicleHold(false);
+		    } else {
+			// TODO: unable to comply, building in progress
 		    }
 		}
+	    }
+	} else if (button == 1) { // right click
+	    switch (buttonX) {
+	    	case 0: // left side clicked
+	    	    switch (buttonY) {
+	    	    	case 1: // second line (War Factory | Infantry) clicked
+	    	    	    if (player.getBase().isCurrentVehicleBuilding()) {
+	    	    		if (!player.getBase().isCurrentVehicleHold() && !player.getBase().isCurrentVehicleReady()) {
+	    	    		    player.getBase().setCurrentVehicleHold(true);
+	    	    		} else if (player.getBase().isCurrentVehicleReady() || player.getBase().isCurrentVehicleHold()) {
+	    	    		    player.getBase().cancelCurrentVehicle(true);
+	    	    		}
+	    	    	    }
+	    	    	break;  
+	    	    }
+	    	break;
 	    }
 	}
     }
@@ -207,9 +270,7 @@ public class GameSideBar {
 	    buttonX = 1 - (barX / 64);
 	    buttonY = (y - MENU_START_Y) / 48;
 	    
-	    if (button == 0) {
-		startPageClick(buttonX, buttonY);
-	    }
+	    startPageClick(button, buttonX, buttonY);
 	} else {
 	    if (button == 1) {
 		switchPage("start");
@@ -225,7 +286,7 @@ public class GameSideBar {
 	System.out.println("[" + barX + "; " + barY + "] Button-" + button + " clicked: " + buttonX + " " + buttonY);
     }
     
-    private void switchPage(String pageName) {
+    public void switchPage(String pageName) {
 	this.currentPage = this.sideBarPages.get(pageName);
 	this.currentPageName = pageName;
     }

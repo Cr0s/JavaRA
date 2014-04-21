@@ -22,6 +22,9 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	super(aTargetBuilding.getTileX(), aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight(), aTargetBuilding.getFootprint());
     
 	this.targetBuilding = aTargetBuilding;
+	this.targetBuilding.posX = this.posX;
+	this.targetBuilding.posY = this.posY;
+	
 	makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);
 	this.currentFrameImage = makeTexture.getAsImage(0, this.owner.playerColor);
 	
@@ -36,7 +39,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 
     @Override
     public void updateEntity(int delta) {
-	if (updateTicks++ < FRAME_DELAY_TICKS * (100.0f / Math.max(1, targetBuilding.buildingSpeed))) { 
+	if (updateTicks++ < FRAME_DELAY_TICKS * (100 - Math.max(1, targetBuilding.buildingSpeed))) { 
 	    return;
 	}
 	
@@ -93,7 +96,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
     @Override
     public int getRevealingRange() {
 	if (this.targetBuilding instanceof IShroudRevealer) {
-	    return ((IShroudRevealer)targetBuilding).getRevealingRange();
+	    return ((IShroudRevealer)targetBuilding).getRevealingRange() / 2;
 	} else {
 	    return 0;
 	}
