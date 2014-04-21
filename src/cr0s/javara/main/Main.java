@@ -24,6 +24,7 @@ import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.BuildingOverlay;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -36,7 +37,6 @@ import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.ui.GameSideBar;
-import cr0s.javara.vehicle.tank.EntityHeavyTank;
 
 public class Main extends StateBasedGame {
     public ResourceManager rm;
@@ -88,8 +88,8 @@ public class Main extends StateBasedGame {
 	    container.setMinimumLogicUpdateInterval(20);
 	    //container.setShowFPS(false);
 	    container.setSmoothDeltas(true);
-	    container.setVSync(true);
-	    container.setTargetFrameRate(75);
+	   // container.setVSync(true);
+	    //container.setTargetFrameRate(75);
 	    container.setClearEachFrame(false);
 	    container.start();
 	} catch (Exception e) {

@@ -1,4 +1,4 @@
-package cr0s.javara.vehicle.tank;
+package cr0s.javara.entity.vehicle.tank;
 
 import java.util.Random;
 

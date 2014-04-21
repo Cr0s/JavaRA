@@ -4,12 +4,12 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.main.Main;
 import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.ui.sbpages.SideBarPage;
 import cr0s.javara.ui.sbpages.building.BuildingSidebarButton;
-import cr0s.javara.vehicle.tank.EntityHeavyTank;
 
 public class PageVehicle extends SideBarPage {
 
