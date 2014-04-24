@@ -33,7 +33,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
     private static final int SHROUD_REVEALING_RANGE = 10;
-    private static final int ANIMATION_FRAME_DELAY = 25; // in ticks
+    private static final int ANIMATION_FRAME_DELAY = 5; // in ticks
     private static final int ANIMATION_LENGTH = 3;
     private static final int DEPLOY_TRY_INTERVAL = 50;
     
