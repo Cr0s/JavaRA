@@ -44,6 +44,19 @@ public class Shroud {
 	}
     }
     
+
+    public boolean isAreaShrouded(int centerX, int centerY, int width, int height) {
+	for (int x = centerX - (width / 2); x <= centerX + (width / 2); x++) {
+	    for (int y = centerY - (height / 2); y <= centerY + (height / 2); y++) {
+		if (this.explorationMap[x][y]) {
+		    return false;
+		}
+	    }
+	}
+	
+	return true;
+    }    
+    
     public ShroudRenderer getRenderer() {
 	return this.sr;
     }

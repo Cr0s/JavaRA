@@ -67,7 +67,7 @@ public class Player {
     public Shroud getShroud() {
 	return this.playerShroud;
     }
-
+    
     public void setShroud(Shroud s) {
 	this.playerShroud = s;
     }

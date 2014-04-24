@@ -205,6 +205,11 @@ public class TileMap {
 				/ 24 + 1) {
 		    continue;
 		}
+		
+		// Don't render tile, if it shrouded and surrounding tiles shrouded too
+		if (Main.getInstance().getPlayer().getShroud().isAreaShrouded(x, y, 2, 2)) {
+		    continue;
+		}
 
 		if ((int) this.mapTiles[x][y].getTile() != 0) {
 		    Point sheetPoint = theater
