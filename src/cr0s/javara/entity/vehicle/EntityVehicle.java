@@ -246,7 +246,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	    float targetCellYCenter = this.targetCellY * 24 + 12;
 	    
 	    if (!world.isCellPassable((int) targetCellXCenter / 24, (int) targetCellYCenter / 24)) {
-		this.moveWaitTicks = 20;
+		this.moveWaitTicks = 50;
 		return;
 	    }
 	    
