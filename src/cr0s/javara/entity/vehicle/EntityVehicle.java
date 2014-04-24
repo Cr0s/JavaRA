@@ -221,7 +221,7 @@ public abstract class EntityVehicle extends Entity implements IMovable, Mover, I
 	
 	public void setGoalXYToFreeCellInRange(int gX, int gY, int range) {
 	    int numAttempts = range * range;
-	    Random r = new Random();
+	    Random r = new Random(System.currentTimeMillis());
 	    
 	    for (int i = 0; i < numAttempts; i++) {
 		int newX = gX - (range / 2) + r.nextInt(range / 2);
