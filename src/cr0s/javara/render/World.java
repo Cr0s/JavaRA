@@ -308,6 +308,8 @@ public class World implements TileBasedMap {
     }
 
     public void cancelAllSelection() {
+	Main.getInstance().getPlayer().selectedEntities.clear();
+	
 	for (Entity e : this.entities) {
 	    if (e instanceof ISelectable) {
 		((ISelectable) e).cancelSelect();
