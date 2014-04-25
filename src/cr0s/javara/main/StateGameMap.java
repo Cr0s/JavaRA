@@ -25,6 +25,7 @@ public class StateGameMap extends BasicGameState {
 	private Point pressStart = new Point(0, 0);
 	private boolean selectionRectVisible = true;
 	private Rectangle selectionRect = new Rectangle(0, 0, 0, 0);
+	private Color selectionFillColor = new Color(0, 0, 0, 64);
 	
 	private boolean isAnyMovableEntitySelected = false;
 	
@@ -348,6 +349,9 @@ public class StateGameMap extends BasicGameState {
 		    g.setLineWidth(2);
 		    g.setColor(Color.white);
 		    g.draw(selectionRect);
+		    
+		    g.setColor(this.selectionFillColor);
+		    g.fillRect(selectionRect.getMinX() + 2, selectionRect.getMinY() + 2, selectionRect.getWidth() - 2, selectionRect.getHeight() - 2);
 		}
 				
 		Main.getInstance().getCamera().renderFinish(container, g);
