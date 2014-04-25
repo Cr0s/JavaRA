@@ -60,7 +60,6 @@ public class Theater {
 	    if (t != null) {
 		Integer[] surfacesArray = new Integer[t.getWidthInTiles() * t.getHeightInTiles()];
 
-		System.out.println("Generating surface for: " + t.name + " (" + t.numImages + ", " + t.getWidthInTiles() + ", " + t.getHeightInTiles() + ")");
 		for (Integer v : tileSet.tilesSurfaces.get(id).keySet()) {
 		    if (v >= surfacesArray.length) {
 			continue;
@@ -88,13 +87,23 @@ public class Theater {
 	for (MapEntity e : map.getMapEntities()) {
 	    // Add only new textures
 	    if (!addedTextures.contains(e.getTexture().getTextureName())) {
-		System.out.println("Adding: " + e.getTexture().getTextureName());
 		putTextureInSheet(ib, e.getTexture());
 
 		addedTextures.add(e.getTexture().getTextureName());
 	    }
 	}
 
+	// Add resources textures
+	/*putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem01.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem02.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem03.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem04.tem"));
+	
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold01.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold02.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold03.tem"));
+	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold04.tem"));*/
+	
 	this.spriteSheet = new SpriteSheet(ib.getImage(), 24, 24);
     }
 

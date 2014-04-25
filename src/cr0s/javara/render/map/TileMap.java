@@ -26,6 +26,7 @@ import org.yaml.snakeyaml.Yaml;
 import redhorizon.utilities.BufferUtility;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
+import cr0s.javara.render.map.ResourcesLayer.ResourceCell;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
@@ -38,24 +39,25 @@ public class TileMap {
     private TileSet tileSet;
 
     private TileReference[][] mapTiles;
+    private ResourcesLayer resourcesLayer;
     private LinkedList<MapEntity> mapEntities;
 
     private final int GRASS_ID = 0xFF; // 255
     private final int GRASS_ID_BIG = 0xFFFF; // 65635
 
     private World world;
-    
+
     private Rectangle bounds;
-    
+
     private ArrayList<Point> spawns;
-    
+
     // Viewport and darkness shifts in tiles
     public static final int MAP_OFFSET_TILES = 16;
     public static final int ALLOWED_DARKNESS_SHIFT = 3;
     public static final int ALLOWED_DARKNESS_SHIFT_XMAX = 7; // this needed to be able put sidebar inside darkness if viewport is on right edge of map
-    
+
     private Color blockedColor = new Color(255, 0, 0, 32);
-    
+
     public TileMap(World aWorld, String mapName) {
 	this.world = aWorld;
 
@@ -67,7 +69,7 @@ public class TileMap {
 
 	    Yaml mapYaml = new Yaml();
 	    Map<String, Object> mapYamlMap = (Map) mapYaml.load(input);	    
-	    
+
 	    this.spawns = new ArrayList<>();
 	    Map<String, Object> spawnsMap = (Map) mapYamlMap.get("Spawns");
 	    for (Object v : spawnsMap.values()) {
@@ -77,11 +79,11 @@ public class TileMap {
 		int y = (Integer) actor.get("LocationY");
 
 		System.out.println("[MAP] Added spawn: (" + x + "; " + y + ")");
-		
+
 		this.spawns.add(new Point(x, y));
 	    }
-	    
-	    
+
+
 	    TileSet tileYamlSet = new TileSet(
 		    (String) mapYamlMap.get("Tileset"));
 	    this.tileSet = tileYamlSet;
@@ -91,14 +93,14 @@ public class TileMap {
 
 	    Yaml treesYaml = new Yaml();
 	    Map<String, Object> treesYamlMap = (Map) mapYaml.load(input);	    
-	    
+
 	    this.mapEntities = new LinkedList<MapEntity>();
 	    Map<String, Object> entitiesMap = (Map) mapYamlMap.get("Actors");
 	    for (Object v : entitiesMap.values()) {
 		Map<String, Object> actor = (Map) v;
 
 		String id = (String) actor.get("Name");
-		
+
 		String footprint = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Footprint");
 		String dimensions = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Dimensions");
 		System.out.println("[MAP] Loaded Actor. ID: " + id + "(" + dimensions + "): " + footprint);
@@ -129,7 +131,7 @@ public class TileMap {
 	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
 		.get(ResourceManager.MAPS_FOLDER + mapName
 			+ System.getProperty("file.separator") + "map.bin")
-		.toString(), "r")) {
+			.toString(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 
 	    // Read one byte and pair of two shorts: map height and width
@@ -147,7 +149,7 @@ public class TileMap {
 	    this.height = mapHeader.getShort();
 
 	    this.bounds = new Rectangle(this.MAP_OFFSET_TILES * 24, this.MAP_OFFSET_TILES * 24, (this.width - 2*this.MAP_OFFSET_TILES) * 24, (this.height - 2*this.MAP_OFFSET_TILES) * 24);
-	    
+
 	    this.mapTiles = new TileReference[width][height];
 
 	    System.out.println("Map size: " + this.width + " x " + this.height);
@@ -173,6 +175,21 @@ public class TileMap {
 		}
 	    }
 
+	    this.resourcesLayer = new ResourcesLayer(this);
+	    for (int x = 0; x < this.width; x++) {
+		for (int y = 0; y < this.height; y++) {
+		    byte tile = mapBytes.get();
+		    byte index = mapBytes.get();
+
+
+		    if (tile != 0) {
+			this.resourcesLayer.resources[x][y] = this.resourcesLayer.new ResourceCell(tile, index);
+		    }
+		}
+	    }	   
+
+	    this.resourcesLayer.setInitialDensity();
+
 	} catch (IOException e) {
 	    e.printStackTrace();
 	} finally {
@@ -196,18 +213,18 @@ public class TileMap {
 	    for (int x = 0; x < this.width; x++) {
 		if (x < (int) -camera.offsetX / 24 - 1
 			|| x > (int) -camera.offsetX / 24 + (int) c.getWidth()
-				/ 24 + 1) {
+			/ 24 + 1) {
 		    continue;
 		}
 
 		if (y < (int) -camera.offsetY / 24 - 1
 			|| y > (int) -camera.offsetY / 24 + (int) c.getHeight()
-				/ 24 + 1) {
+			/ 24 + 1) {
 		    continue;
 		}
-		
+
 		// Don't render tile, if it shrouded and surrounding tiles shrouded too
-		if (Main.getInstance().getPlayer().getShroud().isAreaShrouded(x, y, 2, 2)) {
+		if (Main.getInstance().getPlayer().getShroud() != null && Main.getInstance().getPlayer().getShroud().isAreaShrouded(x, y, 2, 2)) {
 		    continue;
 		}
 
@@ -226,38 +243,13 @@ public class TileMap {
 		}
 	    }
 	}
-	
-	// Draw map entities
-	for (MapEntity me : this.mapEntities) {
-	    int x = me.getX();
-	    int y = me.getY();
 
-	    // Don't draw invisible entities
-	    if (x < (int) -camera.offsetX / 24 - 2
-		    || x > (int) -camera.offsetX / 24 + (int) c.getWidth() / 24 + 2) {
-		continue;
-	    }
-
-	    if (y < (int) -camera.offsetY / 24 - 2
-		    || y > (int) -camera.offsetY / 24 + (int) c.getHeight() / 24 + 2) {
-		continue;
-	    }
-
-	    ShpTexture t = me.getTexture();
-
-	    Point sheetPoint = this.theater.getShpTexturePoint(t.getTextureName());
-
-	    int sX = (int) sheetPoint.getX();
-	    int sY = (int) sheetPoint.getY();
-
-	    this.theater.getSpriteSheet()
-		    .getSubImage(sX, sY, t.width, t.height)
-		    .drawEmbedded(x * 24, y * 24, t.width, t.height);
-	    
-	   // TODO: check perfomance of this: this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, sY / 24);
-	}
+	renderMapEntities(c, g, this.world.getCamera());
 
 	this.theater.getSpriteSheet().endUse();	
+
+	this.resourcesLayer.render(g);
+	//this.theater.getSpriteSheet().draw(24 * 20, 24 * 20);
     }
 
     public LinkedList<MapEntity> getMapEntities() {
@@ -271,20 +263,20 @@ public class TileMap {
 		int index = (int) ((byte) this.mapTiles[x][y].getIndex() & 0xFF);
 
 		Integer[] surfaces = this.theater.tilesSurfaces.get(id);
-		
+
 		if (surfaces != null && index >= surfaces.length) {
 		    continue;
 		}
-		
+
 		if (surfaces != null) {
 		    blockingMap[x][y] = surfaces[index];
 		} 
 	    }
 	}
-	
+
 	fillWithMapEntities(blockingMap);
     }
-    
+
     private void fillWithMapEntities(int[][] blockingMap) {
 	for (MapEntity me : this.mapEntities) {
 	    for (int cX = 0; cX < me.getWidth(); cX++) {
@@ -296,18 +288,16 @@ public class TileMap {
 	    }
 	}
     }
-    
+
     public TileSet getTileSet() {
 	return this.tileSet;
     }
-    
+
     public Rectangle getBounds() {
 	return this.bounds;
     }
 
     public void renderMapEntities(GameContainer c, Graphics g, Camera camera) {
-	this.theater.getSpriteSheet().startUse();
-	
 	// Draw map entities
 	for (MapEntity me : this.mapEntities) {
 	    int x = me.getX();
@@ -332,13 +322,13 @@ public class TileMap {
 	    int sY = (int) sheetPoint.getY();
 
 	    this.theater.getSpriteSheet()
-		    .getSubImage(sX, sY, t.width, t.height)
-		    .drawEmbedded(x * 24, y * 24, t.width, t.height);
-	}
+	    .getSubImage(sX, sY, t.width, t.height)
+	    .drawEmbedded(x * 24, y * 24, t.width, t.height);
 
-	this.theater.getSpriteSheet().endUse();
+	    // TODO: check perfomance of this: this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, sY / 24);
+	}
     }
-    
+
     public boolean isInMap(float x, float y) {
 	return this.bounds.contains(x, y);
 	/*return (
@@ -348,8 +338,12 @@ public class TileMap {
 			&& (y <= this.bounds.getMaxY()))
 	);*/
     }
-    
+
     public ArrayList<Point> getSpawnPoints() {
 	return this.spawns;
+    }
+
+    public Theater getTheater() {
+	return this.theater;
     }
 }

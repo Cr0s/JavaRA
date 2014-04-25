@@ -40,7 +40,7 @@ public class Player {
 
 	this.world = w;
 	this.base = new Base(team, this);
-	this.playerShroud = new Shroud(w, this);
+	this.playerShroud = null;//new Shroud(w, this);
     }
 
     public void postMoveOrder(float destX, float destY) {
