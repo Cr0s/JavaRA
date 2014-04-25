@@ -192,6 +192,10 @@ public class Base {
 
     public void addBuilding(EntityBuilding building) {
 	this.buildings.add(building);
+	
+	if (building instanceof EntityWarFactory) {
+	    building.setPrimary(!isMoreThanOneWarFactory());
+	}
     }
 
     public void removeBuilding(EntityBuilding building) {
@@ -227,10 +231,6 @@ public class Base {
 	if (checkBuildingDistance(cellX, cellY)) {
 	    EntityBuilding b = EntityBuilding.newInstance(targetBuilding);
 	    b.changeCellPos(cellX, cellY);
-
-	    if (b instanceof EntityWarFactory) {
-		b.setPrimary(!isMoreThanOneWarFactory());
-	    }
 	    
 	    Main.getInstance().getWorld().addBuildingTo(b);
 
