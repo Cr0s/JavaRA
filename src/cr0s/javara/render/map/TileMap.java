@@ -245,13 +245,8 @@ public class TileMap {
 		}
 	    }
 	}
-	
-	//this.resourcesLayer.render(g);
-	renderMapEntities(c, g, this.world.getCamera());
 
 	this.theater.getSpriteSheet().endUse();	
-
-	
 	//this.theater.getSpriteSheet().draw(24 * 20, 24 * 20);
     }
 
@@ -301,6 +296,7 @@ public class TileMap {
     }
 
     public void renderMapEntities(GameContainer c, Graphics g, Camera camera) {
+	this.theater.getSpriteSheet().startUse();
 	// Draw map entities
 	for (MapEntity me : this.mapEntities) {
 	    int x = me.getX();
@@ -327,9 +323,9 @@ public class TileMap {
 	    this.theater.getSpriteSheet()
 	    .getSubImage(sX, sY, t.width, t.height)
 	    .drawEmbedded(x * 24, y * 24, t.width, t.height);
-
-	    // TODO: check perfomance of this: this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, sY / 24);
 	}
+	
+	this.theater.getSpriteSheet().endUse();	
     }
 
     public boolean isInMap(float x, float y) {
