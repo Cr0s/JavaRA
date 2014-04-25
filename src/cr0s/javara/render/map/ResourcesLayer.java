@@ -79,7 +79,7 @@ public class ResourcesLayer {
 	}
     }
 
-    public void render(Graphics g) {
+    public void renderAll(Graphics g) {
 	// Draw tiles layer
 	for (int y = 0; y < this.map.getHeight(); y++) {
 	    for (int x = 0; x < this.map.getWidth(); x++) {
@@ -101,19 +101,32 @@ public class ResourcesLayer {
 
 		if (this.resources[x][y] != null) {
 		    byte index = (byte) (this.resources[x][y].getFrameIndex() & 0xFF);
-		    /*System.out.println("Rendering: " + this.resources[x][y].getSpriteName() + " | index: " + index);
+		    
+		    Point sheetPoint = map.getTheater().getShpTexturePoint(this.resources[x][y].getSpriteName());
 		    
 		    int sX = (int) sheetPoint.getX();
 		    int sY = (int) sheetPoint.getY();
 
 		    if (sX != -1 && sY != -1) {
 			this.map.getTheater().getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, (sY / 24) + index);
-		    }*/
-		    
-		    // TODO: add common sprite sheet for this to increase FPS
-		    ResourceManager.getInstance().getTemplateShpTexture(map.getTileSet().getSetName(), this.resources[x][y].getSpriteName()).getAsImage(index, null).draw(x * 24, y * 24);		    
+		    }		    
 		}
 	    }
+	}	
+    }
+    
+    public void renderCell(int x, int y) {
+	if (this.resources[x][y] != null) {
+	    byte index = (byte) (this.resources[x][y].getFrameIndex() & 0xFF);
+	    
+	    Point sheetPoint = map.getTheater().getShpTexturePoint(this.resources[x][y].getSpriteName());
+	    
+	    int sX = (int) sheetPoint.getX();
+	    int sY = (int) sheetPoint.getY();
+
+	    if (sX != -1 && sY != -1) {
+		this.map.getTheater().getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, (sY / 24) + index);
+	    }		    
 	}	
     }
 }

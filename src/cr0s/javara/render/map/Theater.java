@@ -82,8 +82,19 @@ public class Theater {
 	    putTextureInSheet(ib, t);
 	}
 
+	// Add resources textures
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem01.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem02.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem03.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem04.tem"));
+	
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold01.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold02.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold03.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold04.tem"));	
+	
+	// Add map entities textures
 	HashSet<String> addedTextures = new HashSet<>();
-
 	for (MapEntity e : map.getMapEntities()) {
 	    // Add only new textures
 	    if (!addedTextures.contains(e.getTexture().getTextureName())) {
@@ -92,17 +103,6 @@ public class Theater {
 		addedTextures.add(e.getTexture().getTextureName());
 	    }
 	}
-
-	// Add resources textures
-	/*putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem01.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem02.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem03.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem04.tem"));
-	
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold01.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold02.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold03.tem"));
-	putTextureInSheet(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold04.tem"));*/
 	
 	this.spriteSheet = new SpriteSheet(ib.getImage(), 24, 24);
     }
@@ -235,6 +235,51 @@ public class Theater {
 	currentSheetX += texture.width;
     }
 
+    private void putShpTextureInSheetDissected(ImageBuffer sheet, ShpTexture texture) {
+	if (texture == null) {
+	    return;
+	}
+
+	if (texture.height * texture.numImages > maximumYOffset) {
+	    this.maximumYOffset = texture.height * texture.numImages;
+	}
+
+	// Overflowed, lets move down and reset to left side
+	if (currentSheetX + texture.width > SHEET_SIZE) {
+	    currentSheetY += maximumYOffset;
+	    currentSheetX = 0;
+	}
+
+	this.shpTexturesPoints.put(texture.getTextureName(), new Point(currentSheetX, currentSheetY));
+
+	for (int i = 0; i < texture.numImages; i++) {
+	    Image img = texture.getAsImage(i, null);
+
+	    int deployX = currentSheetX;
+	    int deployY = currentSheetY + (i * img.getHeight());
+
+	    // Copy texture into sheet
+	    for (int y = 0; y < img.getHeight(); y++) {
+		for (int x = 0; x < img.getWidth(); x++) {
+		    Color c = img.getColor(x, y);
+
+		    int r, g, b, a;
+		    r = c.getRed();
+		    g = c.getGreen();
+		    b = c.getBlue();
+		    a = c.getAlpha();
+
+		    sheet.setRGBA(deployX + x, deployY + y, r, g, b, a);
+		}
+	    }
+	}
+
+	Rectangle r = new Rectangle(currentSheetX, currentSheetY, texture.width, texture.height * texture.numImages);
+	this.texturesBounds.add(r);
+
+	currentSheetX += texture.width;
+    }
+    
     public SpriteSheet getSpriteSheet() {
 	return this.spriteSheet;
     }

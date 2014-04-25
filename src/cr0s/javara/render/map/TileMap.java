@@ -240,15 +240,18 @@ public class TileMap {
 		    if (sX != -1 && sY != -1) {
 			this.theater.getSpriteSheet().renderInUse(x * 24, y * 24, sX / 24, (sY / 24) + index);
 		    }
+		    
+		    this.resourcesLayer.renderCell(x, y);
 		}
 	    }
 	}
-
+	
+	//this.resourcesLayer.render(g);
 	renderMapEntities(c, g, this.world.getCamera());
 
 	this.theater.getSpriteSheet().endUse();	
 
-	this.resourcesLayer.render(g);
+	
 	//this.theater.getSpriteSheet().draw(24 * 20, 24 * 20);
     }
 
