@@ -479,4 +479,8 @@ public class World implements TileBasedMap {
 
 	return true;
     }
+
+    public ArrayList<Entity> getEntitiesList() {
+	return this.entities;
+    }
 }

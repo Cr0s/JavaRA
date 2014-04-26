@@ -14,6 +14,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.render.map.MinimapRenderer;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.ui.sbpages.building.PageBuildingSoviet;
 import cr0s.javara.ui.sbpages.vehicle.PageVehicle;
@@ -55,6 +56,13 @@ public class GameSideBar {
     
     private Color progressHideColor = new Color(0, 0, 0, 128);
     
+    private Rectangle currentViewportRect = new Rectangle(0, 0, 0, 0);
+    private Rectangle radarRect = new Rectangle(0, 0, 0, 0);
+    private float previewScale;
+    private Point previewOrigin;
+    
+    private MinimapRenderer minimap;
+    
     public GameSideBar(Team aTeam, Player aPlayer) {
 	try {
 	    this.menuCategoriesSheet = new SpriteSheet(ResourceManager.SIDEBAR_CATEGORIES_SHEET, 64, 48);
@@ -72,10 +80,12 @@ public class GameSideBar {
 	this.sidebarBounds = new Rectangle(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W, BAR_SPACING_H, BAR_WIDTH, BAR_HEIGHT);
 
 	
-	
 	this.sideBarCategoriesOpened = new boolean[6][2];
 	this.sideBarCategoriesOpened[0][1] = true;
 	this.sideBarCategoriesOpened[1][1] = true;
+	
+	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
+	this.minimap = new MinimapRenderer(Main.getInstance().getWorld(), (int) this.radarRect.getWidth(), (int) this.radarRect.getHeight());
 	
 	switchPage(START_PAGE_NAME);
     }
@@ -98,9 +108,20 @@ public class GameSideBar {
 
     public void drawRadar(Graphics g) {
 	g.setColor(Color.black.multiply(getBackgroundColor()));
-	g.fillRect(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
+	//g.fill(radarRect);
+	
+	this.minimap.getImage().draw(this.radarRect.getMinX(), this.radarRect.getMinY());
+	
+	drawCurrentViewportRect(g);
     }
 
+    public void drawCurrentViewportRect(Graphics g) {
+	g.setColor(Color.white.multiply(this.getBackgroundColor()));
+	
+	g.setLineWidth(1);
+	g.draw(this.currentViewportRect);
+    }
+    
     public void drawSideBarButtons(Graphics g) {
 	int sX = Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1;
 	int sY = MENU_START_Y;
@@ -170,9 +191,23 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
-	Base base = this.player.getBase();
+	this.minimap.updateMinimap(this.getBackgroundColor());
+	
+	// Update radar rect
+	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
+	
+	// Update current viewport rect
+	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
+	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	
+	previewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
+	
+	Point vpPoint = this.cellToMinimapPixel(new Point(-Main.getInstance().getCamera().getOffsetX() / 24, -Main.getInstance().getCamera().getOffsetY() / 24));
+	this.currentViewportRect.setBounds(this.radarRect.getMinX(), this.radarRect.getMinY(), 2 * previewScale * Main.getInstance().getWorld().getMap().getWidth(), 2 * previewScale * Main.getInstance().getWorld().getMap().getHeight());
+	this.currentViewportRect.setLocation(vpPoint.getMinX(), vpPoint.getMinY());	
 	
 	// Update buttons presents
+	Base base = this.player.getBase();
+	
 	
 	// Construction yards
 	this.sideBarCategoriesOpened[0][1] = base.isSovietCYPresent;
@@ -290,4 +325,21 @@ public class GameSideBar {
 	this.currentPage = this.sideBarPages.get(pageName);
 	this.currentPageName = pageName;
     }
+    
+
+    public Point cellToMinimapPixel(Point p)
+    {
+	Point viewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
+	Point mapOrigin = new Point(Main.getInstance().getWorld().getMap().getBounds().getMinX() / 24, Main.getInstance().getWorld().getMap().getBounds().getMinY() / 24);
+
+	return new Point(viewOrigin.getMinX() + this.radarRect.getWidth() / 24 * previewScale * (p.getX()- mapOrigin.getMinX()), viewOrigin.getMinY() + this.radarRect.getHeight() / 24 * previewScale * (p.getMinY() - mapOrigin.getMinY()));
+    }
+
+    public Point minimapPixelToCell(Point p)
+    {
+	Point viewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
+	Point mapOrigin = new Point(Main.getInstance().getWorld().getMap().getBounds().getMinX(), Main.getInstance().getWorld().getMap().getBounds().getMinY());
+	
+	return new Point(mapOrigin.getMinX() + (1f / previewScale) * (p.getMinX() - viewOrigin.getMinX()), mapOrigin.getMinY() + (1f / previewScale) * (p.getMinY() - viewOrigin.getMinY()));
+    }    
 }

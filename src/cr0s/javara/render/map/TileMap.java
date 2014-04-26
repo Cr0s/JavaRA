@@ -345,4 +345,32 @@ public class TileMap {
     public Theater getTheater() {
 	return this.theater;
     }
+    
+    public int getSurfaceIdAt(int cellX, int cellY) {
+	if (!this.isInMap(cellX * 24, cellY * 24)) {
+	    return 0;
+	}
+	
+	if (this.resourcesLayer.resources[cellX][cellY] != null) {
+	    if (this.resourcesLayer.resources[cellX][cellY].type == 1) {
+		return TileSet.SURFACE_ORE_GOLD;
+	    } else {
+		return TileSet.SURFACE_ORE_GEM;
+	    }
+	}
+	
+	Integer id = (Integer) this.mapTiles[cellX][cellY].getTile();
+	Byte index = (Byte) this.mapTiles[cellX][cellY].getIndex();
+	Integer[] surfaces = this.theater.tilesSurfaces.get(id);
+
+	if (surfaces != null && index >= surfaces.length) {
+	    return 0;
+	}
+
+	if (surfaces != null) {
+	    return surfaces[index];
+	} 
+	
+	return 0;
+    }
 }

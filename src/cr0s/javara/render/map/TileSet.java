@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.newdawn.slick.Color;
 import org.yaml.snakeyaml.Yaml;
 
 import cr0s.javara.resources.ResourceManager;
@@ -30,6 +31,8 @@ public class TileSet {
     public static final int SURFACE_ROUGH_ID = 14;
     public static final int SURFACE_BUILDING_CLEAR_ID = 15;
     public static final int SURFACE_BUILDING = 2;
+    public static final int SURFACE_ORE_GOLD = 16;
+    public static final int SURFACE_ORE_GEM = 17;
     
     static {
 	renameMap.put("Clear", SURFACE_CLEAR_ID);
@@ -39,11 +42,15 @@ public class TileSet {
 	renameMap.put("Water", SURFACE_WATER_ID);
 	renameMap.put("River", SURFACE_RIVER_ID);
 	renameMap.put("Rough", SURFACE_ROUGH_ID);
+	renameMap.put("Ore", SURFACE_ORE_GOLD);
+	renameMap.put("Gems", SURFACE_ORE_GEM);
     }
 
     private HashMap<Integer, String> tiles;
     public HashMap<Integer, HashMap<Integer, String>> tilesSurfaces;
 
+    public HashMap<Integer, Color> terrainColors;
+    
     private String setName;
 
     public TileSet(final String aSetName) {
@@ -62,6 +69,21 @@ public class TileSet {
 		System.out.println("Loaded tileset segment: " + s);
 	    }
 
+	    // Load terrain colors
+	    Map<String, Object> terrainMap = (Map) tilesetYamlMap.get("Terrain");
+	    this.terrainColors = new HashMap<>();
+	    
+	    for (Object v : terrainMap.values()) {
+		Map<String, Object> tt = (Map) v;
+		
+		Integer typeId = this.renameMap.get((String) tt.get("Type"));
+		int r = (int) tt.get("ColorR");
+		int g = (int) tt.get("ColorG");
+		int b = (int) tt.get("ColorB");
+		
+		this.terrainColors.put(typeId, new Color(r, g, b, 255));
+	    }
+	    
 	    // Load Templates
 	    Map<String, Object> templatesMap = (Map) tilesetYamlMap.get("Templates");
 

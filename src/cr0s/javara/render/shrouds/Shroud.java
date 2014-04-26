@@ -21,7 +21,7 @@ public class Shroud {
     }
     
     public boolean isExplored(int tileX, int tileY) {
-	if (tileX < 0 || tileY < 0 || tileX > w.getMap().getWidth() || tileY > w.getMap().getHeight()) {
+	if (tileX < 0 || tileY < 0 || tileX >= w.getMap().getWidth() || tileY >= w.getMap().getHeight()) {
 	    return false;
 	}
 	
