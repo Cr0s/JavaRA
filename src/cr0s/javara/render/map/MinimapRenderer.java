@@ -24,7 +24,7 @@ public class MinimapRenderer {
 	this.imgbuf = new ImageBuffer(width, height);
     }
     
-    public void updateMinimap(Color filterColor) {
+    public void updateMinimap() {
 	// Render terrain
 	for (int x = 0; x < width; x++) {
 	    for (int y = 0; y < height; y++) {
@@ -35,7 +35,6 @@ public class MinimapRenderer {
 		g = targetColor.getGreen();
 		b = targetColor.getBlue();
 		
-		targetColor.multiply(filterColor);
 		
 		imgbuf.setRGBA(x, y, r, g, b, targetColor.getAlpha());
 	    }

@@ -85,7 +85,7 @@ public class GameSideBar {
 	this.sideBarCategoriesOpened[1][1] = true;
 	
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
-	this.minimap = new MinimapRenderer(Main.getInstance().getWorld(), (int) this.radarRect.getWidth(), (int) this.radarRect.getHeight());
+	this.minimap = new MinimapRenderer(Main.getInstance().getWorld(), (int) Main.getInstance().getWorld().getMap().getBounds().getWidth() / 24, (int) (int) Main.getInstance().getWorld().getMap().getBounds().getHeight() / 24);
 	
 	switchPage(START_PAGE_NAME);
     }
@@ -110,7 +110,7 @@ public class GameSideBar {
 	g.setColor(Color.black.multiply(getBackgroundColor()));
 	//g.fill(radarRect);
 	
-	this.minimap.getImage().draw(this.radarRect.getMinX(), this.radarRect.getMinY());
+	this.minimap.getImage().draw(this.previewOrigin.getMinX(), this.previewOrigin.getMinY(), getBackgroundColor());
 	
 	drawCurrentViewportRect(g);
     }
@@ -191,7 +191,7 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
-	this.minimap.updateMinimap(this.getBackgroundColor());
+	this.minimap.updateMinimap();
 	
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
@@ -199,10 +199,13 @@ public class GameSideBar {
 	// Update current viewport rect
 	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
 	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	
-	previewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
+	
+	int spaceLeft = (int) (this.radarRect.getWidth() - Main.getInstance().getWorld().getMap().getBounds().getWidth() / 24);
+	
+	previewOrigin = new Point(this.radarRect.getMinX() + spaceLeft / 2, this.radarRect.getMinY() + spaceLeft / 2);
 	
 	Point vpPoint = this.cellToMinimapPixel(new Point(-Main.getInstance().getCamera().getOffsetX() / 24, -Main.getInstance().getCamera().getOffsetY() / 24));
-	this.currentViewportRect.setBounds(this.radarRect.getMinX(), this.radarRect.getMinY(), 2 * previewScale * Main.getInstance().getWorld().getMap().getWidth(), 2 * previewScale * Main.getInstance().getWorld().getMap().getHeight());
+	this.currentViewportRect.setBounds(0, 0, previewScale * Main.getInstance().getWorld().getMap().getWidth(), previewScale * Main.getInstance().getWorld().getMap().getHeight());
 	this.currentViewportRect.setLocation(vpPoint.getMinX(), vpPoint.getMinY());	
 	
 	// Update buttons presents
@@ -329,7 +332,7 @@ public class GameSideBar {
 
     public Point cellToMinimapPixel(Point p)
     {
-	Point viewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
+	Point viewOrigin = new Point(this.previewOrigin.getMinX(), this.previewOrigin.getMinY());
 	Point mapOrigin = new Point(Main.getInstance().getWorld().getMap().getBounds().getMinX() / 24, Main.getInstance().getWorld().getMap().getBounds().getMinY() / 24);
 
 	return new Point(viewOrigin.getMinX() + this.radarRect.getWidth() / 24 * previewScale * (p.getX()- mapOrigin.getMinX()), viewOrigin.getMinY() + this.radarRect.getHeight() / 24 * previewScale * (p.getMinY() - mapOrigin.getMinY()));
