@@ -7,6 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.building.EntityConstructionYard;
@@ -121,6 +122,22 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     @Override
     public boolean canDeploy() {
 	// Check deploy possibility via World blockingMap
+	int bx = (int) (posX / 24) - (EntityConstructionYard.WIDTH_TILES / 2);
+	int by = (int) (posY / 24) - (EntityConstructionYard.HEIGHT_TILES / 2);
+	
+	for (int x = 0; x < EntityConstructionYard.WIDTH_TILES; x++) {
+	    for (int y = 0; y < EntityConstructionYard.HEIGHT_TILES; y++) {
+		if (!world.isCellBuildable(bx + x, by + y, true)) {
+		    return false;
+		}
+		
+		Entity e = world.getEntityInPoint((bx + x) * 24, (bx + x) * 24);
+		if (e != null && !(e instanceof EntityMcv)) {
+		    return false;
+		}
+	    }
+	}
+	
 	return true;
     }
 

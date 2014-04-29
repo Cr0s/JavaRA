@@ -14,7 +14,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
+public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer, IOreCapacitor {
     private Image normal, corrupted;
     private final String TEXTURE_NAME = "powr.shp";
     private final String MAKE_TEXTURE_NAME = "powrmake.shp";
@@ -25,6 +25,8 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     private static final int POWER_PRODUCTION_LEVEL = 30;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
+    
+    private static final int ORE_CAPACITY_VALUE = 500;
 
     public EntityPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
@@ -115,5 +117,10 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     @Override
     public Image getTexture() {
 	return normal;
+    }
+
+    @Override
+    public int getOreCapacityValue() {
+	return ORE_CAPACITY_VALUE;
     }        
 }

@@ -398,6 +398,10 @@ public class World implements TileBasedMap {
     }
     
     public boolean isCellBuildable(int x, int y) {
+	return isCellBuildable(x, y, false);
+    }
+    
+    public boolean isCellBuildable(int x, int y, boolean isMcvDeploy) {
 	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
 	    return false;
 	}
@@ -410,7 +414,7 @@ public class World implements TileBasedMap {
 	    return false;
 	}
 	
-	return (blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
+	return (isMcvDeploy || blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
 		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
