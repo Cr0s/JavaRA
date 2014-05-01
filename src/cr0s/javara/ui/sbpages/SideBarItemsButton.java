@@ -11,6 +11,7 @@ import cr0s.javara.resources.ShpTexture;
 
 public abstract class SideBarItemsButton {
     private ShpTexture buttonTexture;
+    private String textureName;
     private Image buttonImg;
     
     private Point position;
@@ -21,7 +22,7 @@ public abstract class SideBarItemsButton {
     
     private String description;
     
-    public SideBarItemsButton(String aDescription, String textureName, Point pagePos, int aPosX, int aPosY, boolean aIsVisible) {
+    public SideBarItemsButton(String aDescription, String aTextureName, Point pagePos, int aPosX, int aPosY, boolean aIsVisible) {
 	this.position = new Point(pagePos.getX() + aPosX * 64, pagePos.getY() + aPosY * 48);
 	this.posX = aPosX;
 	this.posY = aPosY;
@@ -29,8 +30,9 @@ public abstract class SideBarItemsButton {
 	this.description = aDescription;
 	this.isVisible = aIsVisible;
 	
-	if (!textureName.isEmpty()) {
-	    this.buttonTexture = ResourceManager.getInstance().getSidebarTexture(textureName);
+	if (!aTextureName.isEmpty()) {
+	    this.textureName = aTextureName;
+	    this.buttonTexture = ResourceManager.getInstance().getSidebarTexture(aTextureName);
 	    this.buttonImg = buttonTexture.getAsImage(0, Main.getInstance().getSideBar().getPlayer().playerColor);
 	}
     }
@@ -62,5 +64,13 @@ public abstract class SideBarItemsButton {
     
     public Image getTexture() {
 	return this.buttonImg;
+    }
+
+    public void setVisible(boolean b) {
+	this.isVisible = b;
+    }
+
+    public String getTextureName() {
+	return this.textureName;
     }
 }

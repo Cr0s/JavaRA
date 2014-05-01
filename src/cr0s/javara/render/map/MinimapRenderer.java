@@ -1,8 +1,10 @@
 package cr0s.javara.render.map;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
+import org.newdawn.slick.SlickException;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.main.Main;
@@ -11,7 +13,6 @@ import cr0s.javara.render.World;
 public class MinimapRenderer {
     
     private int width, height;
-    private ImageBuffer imgbuf;
     private Image minimapImage;
     private World w;
     
@@ -21,50 +22,49 @@ public class MinimapRenderer {
 	this.width = aWidth;
 	this.height = aHeight;
 	
-	this.imgbuf = new ImageBuffer(width, height);
+	try {
+	    this.minimapImage = new Image(width, height);
+	} catch (SlickException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
     
-    public void updateMinimap() {
-	// Render terrain
-	for (int x = 0; x < width; x++) {
-	    for (int y = 0; y < height; y++) {
-		int r, g, b;
-		
-		Color targetColor = getMapCellColor((int) (w.getMap().getBounds().getMinX() / 24 + x), (int) (w.getMap().getBounds().getMinY() / 24 + y));
-		r = targetColor.getRed();
-		g = targetColor.getGreen();
-		b = targetColor.getBlue();
-		
-		
-		imgbuf.setRGBA(x, y, r, g, b, targetColor.getAlpha());
+    public void updateMinimap(Color filterColor) {
+	try {
+	    Graphics gr = this.minimapImage.getGraphics();
+
+
+	    // Render terrain
+	    for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+		    int r, g, b;
+
+		    Color targetColor = getMapCellColor((int) (w.getMap().getBounds().getMinX() / 24 + x), (int) (w.getMap().getBounds().getMinY() / 24 + y));
+
+
+		    gr.setColor(targetColor.multiply(filterColor));
+		    gr.fillRect(x, y, 1, 1);
+		}
 	    }
-	}
-	
-	for (Entity e : w.getEntitiesList()) {
-	    int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
-	    int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
+
+	    for (Entity e : w.getEntitiesList()) {
+		int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
+		int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
+
+		if (Main.getInstance().getPlayer().getShroud() != null && !Main.getInstance().getPlayer().getShroud().isExplored(cellPosX, cellPosY)) {
+		    //continue;
+		}
+
+		gr.setColor(e.owner.playerColor.multiply(filterColor));
+		gr.fillRect(cellPosX, cellPosY, (int) e.sizeWidth / 24, (int) e.sizeHeight / 24);
+	    }
 	    
-	    if (Main.getInstance().getPlayer().getShroud() != null && !Main.getInstance().getPlayer().getShroud().isExplored(cellPosX, cellPosY)) {
-		//continue;
-	    }
-	    
-	    fillRect(imgbuf, cellPosX, cellPosY, (int) e.sizeWidth / 24, (int) e.sizeHeight / 24, e.owner.playerColor);
-	}
-	
-	this.minimapImage = imgbuf.getImage();
-    }
-    
-    public void fillRect(ImageBuffer imgbuf, int x, int y, int width, int height, Color color) {
-	int r, g, b;
-	r = color.getRed();
-	g = color.getGreen();
-	b = color.getBlue();
-	
-	for (int ix = 0; ix < width; ix++) {
-	    for (int iy = 0; iy < height; iy++) {
-		imgbuf.setRGBA(x + ix, y + iy, r, g, b, color.getAlpha());
-	    }
-	}
+	    gr.flush();
+	} catch (SlickException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}	
     }
     
     public Image getImage() {

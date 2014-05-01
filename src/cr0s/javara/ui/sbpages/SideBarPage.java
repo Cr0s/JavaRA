@@ -11,6 +11,7 @@ import cr0s.javara.main.Main;
 
 public abstract class SideBarPage {
     private ArrayList<SideBarItemsButton> buttons;
+    private HashMap<String, SideBarItemsButton> buttonsHash;
     
     private SideBarItemsButton currentButton;
     
@@ -20,6 +21,7 @@ public abstract class SideBarPage {
     
     protected SideBarPage(Point pos) {
 	this.buttons = new ArrayList<>();
+	this.buttonsHash = new HashMap<>();
 	
 	this.position = pos;
     }
@@ -54,7 +56,8 @@ public abstract class SideBarPage {
     }
     
     protected void addButton(SideBarItemsButton button) {
-	this.buttons.add( button);
+	this.buttons.add(button);
+	this.buttonsHash.put(button.getTextureName(), button);
     }
     
     public boolean isCurrentButtonReady() {
@@ -63,6 +66,10 @@ public abstract class SideBarPage {
     
     public Point getPosition() {
 	return this.position;
+    }
+    
+    public SideBarItemsButton getButton(String name) {
+	return this.buttonsHash.get(name);
     }
     
     public abstract void buttonClicked(SideBarItemsButton button);

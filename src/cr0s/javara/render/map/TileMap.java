@@ -373,4 +373,8 @@ public class TileMap {
 	
 	return 0;
     }
+
+    public ResourcesLayer getResourcesLayer() {
+	return this.resourcesLayer;
+    }
 }

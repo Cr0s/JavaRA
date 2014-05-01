@@ -129,4 +129,8 @@ public class ResourcesLayer {
 	    }		    
 	}	
     }
+
+    public boolean isCellEmpty(int x, int y) {
+	return this.resources[x][y] == null;
+    }
 }

@@ -50,7 +50,7 @@ public class Base {
     public boolean isPowerPlantPresent = false;
     public boolean isFlameTowerPresent = false;
 
-    private boolean isProcPresent = false;
+    public boolean isProcPresent = false;
 
     public boolean isAnySuperPowerPresent;    
 
@@ -147,23 +147,25 @@ public class Base {
 	for (EntityBuilding b : this.buildings) {
 	    // Update power levels
 	    if (b instanceof IPowerConsumer) {
-		this.powerConsumptionLevel += ((IPowerConsumer)b).getConsumptionLevel();
+		this.powerConsumptionLevel += ((IPowerConsumer) b).getConsumptionLevel();
 	    } else if (b instanceof IPowerProducer) {
-		this.powerLevel += ((IPowerProducer)b).getPowerProductionLevel();
+		this.powerLevel += ((IPowerProducer) b).getPowerProductionLevel();
 	    }	    
 
 	    if (b instanceof EntityConstructionYard) {
-		if (((EntityConstructionYard)b).getAlignment() == Alignment.ALLIED) {
+		if (((EntityConstructionYard) b).getAlignment() == Alignment.ALLIED) {
 		    this.isAlliedCYPresent = true;
-		} else if (((EntityConstructionYard)b).getAlignment() == Alignment.SOVIET) {
+		} else if (((EntityConstructionYard) b).getAlignment() == Alignment.SOVIET) {
 		    this.isSovietCYPresent = true;
 		}
 	    } else if (b instanceof EntityBarracks) {
 		this.isBarracksPresent = true;
+	    //} else if (b instanceof EntityTent) {
+		//this.isTentPresent = true;
 	    } else if (b instanceof EntityWarFactory) {
-		if (((EntityWarFactory)b).getAlignment() == Alignment.ALLIED) {
+		if (((EntityWarFactory) b).getAlignment() == Alignment.ALLIED) {
 		    this.isAlliedWarFactoryPresent = true;
-		} else if (((EntityWarFactory)b).getAlignment() == Alignment.SOVIET) {
+		} else if (((EntityWarFactory) b).getAlignment() == Alignment.SOVIET) {
 		    this.isSovietWarFactoryPresent = true;
 		}
 	    } else if (b instanceof EntityProc) {

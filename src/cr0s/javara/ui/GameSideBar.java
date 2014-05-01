@@ -191,7 +191,7 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
-	this.minimap.updateMinimap();
+	this.minimap.updateMinimap(this.getBackgroundColor());
 	
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
@@ -230,6 +230,10 @@ public class GameSideBar {
 	
 	// Any superpower
 	this.sideBarCategoriesOpened[3][0] = this.sideBarCategoriesOpened[3][1] = base.isAnySuperPowerPresent;
+	
+	if (this.currentPage != null) {
+	    this.currentPage.update(delta);
+	}
     }
     
     public Player getPlayer() {
