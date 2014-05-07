@@ -62,7 +62,7 @@ public class PageBuildingSoviet extends SideBarPage {
 	try {
 	    getButton("powricon.shp").setVisible(b.isAlliedCYPresent || b.isSovietCYPresent);
 	    getButton("barricon.shp").setVisible(b.isPowerPlantPresent);
-	    getButton("procicon.shp").setVisible(b.isBarracksPresent || b.isTentPresent);
+	    getButton("procicon.shp").setVisible(b.isPowerPlantPresent);
 
 	    getButton("apwricon.shp").setVisible(b.isRadarDomePresent);
 	    //getButton("afldicon.shp").setVisible(b.isRadarDomePresent);
