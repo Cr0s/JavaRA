@@ -44,9 +44,9 @@ public class ResourcesLayer {
 	}
     }
     
-    public static int lerp( int a, int b, int mul, int div )
+    public static int lerp(int a, int b, int mul, int div )
     {
-	return a + ( b - a ) * mul / div;
+	return a + (b - a) * mul / div;
     }
     
     public class ResourceCell {

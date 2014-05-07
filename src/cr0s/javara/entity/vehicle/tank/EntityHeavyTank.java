@@ -6,14 +6,17 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.pathfinding.Mover;
+import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.activities.Turn;
+import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
-import cr0s.javara.entity.vehicle.EntityVehicle.RotationDirection;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
@@ -63,9 +66,9 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
+	
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-	doMoveTick(delta);
-	doRotationTick();
 	doTurretRotationTick();
     }
 
@@ -81,7 +84,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 	//g.drawRect(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture.startUse();
-	texture.getSubImage(0, rotation).drawEmbedded(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	texture.getSubImage(0, currentFacing).drawEmbedded(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	texture.getSubImage(0, 32 + turretRotation).drawEmbedded(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	texture.endUse();
 
@@ -104,9 +107,9 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 	    }
 
 	    if (this.turretRotationDirection == RotationDirection.LEFT) {
-		this.setTurretRotation((this.getTurretRotation() + 1) % maxRotation);
+		this.setTurretRotation((this.getTurretRotation() + 1) % Turn.MAX_FACING);
 	    } else if (this.turretRotationDirection == RotationDirection.RIGHT) {
-		this.setTurretRotation((this.getTurretRotation() - 1) % maxRotation);
+		this.setTurretRotation((this.getTurretRotation() - 1) % Turn.MAX_FACING);
 	    }
 
 	    return false;
@@ -116,7 +119,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 		this.rotateTurretTo(rot);	   		    
 	    } else {
 		if (this.targetEntity == null) { 
-		    this.rotateTurretTo(this.getRotation());
+		    this.rotateTurretTo(this.turretRotation);
 		}
 	    }
 	}
@@ -164,15 +167,6 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 	return this.turretRotation;
     }
 
-    /**
-     * Returns rotation value
-     * @return rotation value
-     */
-    public int getRotation() {
-	return this.rotation;
-    }
-
-
     @Override
     public void select() {
 	this.isSelected = true;
@@ -217,4 +211,14 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
+
+    @Override
+    public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
+	return world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
+    }
+    
+    @Override
+    public int getMinimumEnoughRange() {
+	return 3;
+    }    
 }

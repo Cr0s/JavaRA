@@ -190,7 +190,7 @@ public class World implements TileBasedMap {
 	map.renderMapEntities(container, g, camera);
 	
 	// Debug: render blocked cells
-	if (Main.DEBUG_MODE) {
+	//if (Main.DEBUG_MODE) {
 	    for (int y = 0; y < map.getHeight(); y++) {
 		for (int x = 0; x < map.getWidth(); x++) {
 		    if (!isCellPassable(x, y)) {
@@ -200,7 +200,7 @@ public class World implements TileBasedMap {
 		    }		
 		}
 	    }
-	}	
+	//}	
 	
 	renderSelectionBoxes(g);
 	renderHpBars(g);

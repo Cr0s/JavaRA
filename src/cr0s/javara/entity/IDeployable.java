@@ -7,4 +7,5 @@ package cr0s.javara.entity;
 public interface IDeployable {
     public boolean canDeploy();
     public void deploy();
+    public void executeDeployment();
 }

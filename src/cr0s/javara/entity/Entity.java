@@ -35,6 +35,8 @@ public abstract class Entity {
 	
 	public float sizeWidth, sizeHeight;
 	
+	public int currentFacing;
+	
 	public Entity (float posX, float posY, Team team, Player owner, float aSizeWidth, float aSizeHeight) {
 		this.posX = posX;
 		this.posY = posY;

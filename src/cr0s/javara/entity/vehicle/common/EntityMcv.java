@@ -5,11 +5,15 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.activities.Deploy;
+import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
@@ -52,31 +56,17 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	this.setHp(50);
 	this.setMaxHp(50);
 	
-	this.setRotation(16);
+	this.currentFacing = 16;
 	
 	this.buildingSpeed = 35;
     }
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
 	boundingBox.setBounds(posX, posY - 6, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 	boundingBox.setCenterX(this.getCenterPosX());
 	boundingBox.setCenterY(this.getCenterPosY());
-	
-	doRotationTick();
-	this.doMoveTick(delta);
-
-	if (isDeploying && this.canDeploy()) {
-	    if (this.rotation == BUILD_ROTATION) {
-		EntityConstructionYard cy = new EntityConstructionYard((int) posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), (int) posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
-		cy.isVisible = true;
-		cy.isSelected = true;
-		world.addBuildingTo(cy);
-
-		setDead();
-		return;
-	    }
-	}
     }
 
     @Override
@@ -94,7 +84,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	//g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture.startUse();
-	texture.getSubImage(0, rotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	texture.getSubImage(0, currentFacing).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	texture.endUse();
 	
 	//g.setColor(Color.white);
@@ -151,7 +141,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     private void deployConstructionYard() {
 	this.isDeploying = true;
 
-	this.rotateTo(this.BUILD_ROTATION);
+	queueActivity(new Turn(this, this.BUILD_ROTATION, 10));
+	queueActivity(new Deploy());
     }
 
     @Override
@@ -182,5 +173,29 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     @Override
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
+    }
+
+    @Override
+    public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
+	return world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
+    }
+
+    @Override
+    public void executeDeployment() {
+	if (!this.isDeploying) {
+	    return;
+	}
+	
+	EntityConstructionYard cy = new EntityConstructionYard((int) posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), (int) posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
+	cy.isVisible = true;
+	cy.isSelected = true;
+	world.addBuildingTo(cy);
+
+	setDead();
+    }
+    
+    @Override
+    public int getMinimumEnoughRange() {
+	return 3;
     }    
 }

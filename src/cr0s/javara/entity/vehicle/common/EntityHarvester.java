@@ -5,9 +5,12 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
@@ -16,7 +19,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHarvester extends EntityVehicle implements ISelectable {
+public class EntityHarvester extends EntityVehicle implements ISelectable, IShroudRevealer {
 
     private String TEXTURE_NAME = "harv.shp";
     private SpriteSheet texture;
@@ -47,17 +50,17 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	this.setHp(50);
 	this.setMaxHp(50);
 	
-	this.buildingSpeed = 50;
+	//this.buildingSpeed = 50;
 
-	setRotation(12);
+	//setRotation(12);
     }
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
 	boundingBox.setBounds(posX + 6, posY - 6, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
 
-	doRotationTick();
-	this.doMoveTick(delta);		
+	//doRotationTick();	
     }
 
     @Override
@@ -74,7 +77,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
 	//g.drawRect(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture.startUse();
-	texture.getSubImage(0, rotation).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	texture.getSubImage(0, currentFacing).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	texture.endUse();
 
 	drawPath(g);
@@ -123,5 +126,15 @@ public class EntityHarvester extends EntityVehicle implements ISelectable {
     @Override
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
+    }
+
+    @Override
+    public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
+	return world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
+    }
+    
+    @Override
+    public int getMinimumEnoughRange() {
+	return 3;
     }
 }

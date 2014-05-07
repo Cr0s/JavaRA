@@ -222,7 +222,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	target.setWorld(world);
 	this.targetEntity = target;
 	targetEntity.setPositionByCenter(this.getTileX() + 24 + 12, getTileY() + 24 * 1);
-	targetEntity.setRotation(16);
+	targetEntity.currentFacing = 16;
 	targetEntity.isVisible = false;
 	
 	animateOpenDoors();
@@ -300,6 +300,11 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 
     @Override
     public void deploy() {
+	executeDeployment();
+    }
+
+    @Override
+    public void executeDeployment() {
 	this.owner.getBase().setPrimaryWarFactory(this);
     }    
 }
