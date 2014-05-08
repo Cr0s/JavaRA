@@ -9,6 +9,7 @@ import org.newdawn.slick.util.pathfinding.heuristics.ClosestHeuristic;
 import org.newdawn.slick.util.pathfinding.heuristics.ClosestSquaredHeuristic;
 import org.newdawn.slick.util.pathfinding.heuristics.ManhattanHeuristic;
 
+import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.render.World;
 
@@ -26,7 +27,8 @@ public class VehiclePathfinder {
     }
     
     public Path findPathFromTo(EntityVehicle me, int goalX, int goalY) {
-	return this.pathfinder.findPath(me, (int) me.posX / 24, (int) me.posY / 24, goalX, goalY);
+	MobileEntity m = (MobileEntity) me;
+	return this.pathfinder.findPath(me, (int) m.getCellPos().getX(), (int) m.getCellPos().getY(), goalX, goalY);
     }
 }
 

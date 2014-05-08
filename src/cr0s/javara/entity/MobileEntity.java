@@ -1,5 +1,7 @@
 package cr0s.javara.entity;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
@@ -13,80 +15,27 @@ import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.Drag;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
+import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.util.RotationUtil;
 
-public abstract class MobileEntity extends EntityActor implements Mover, IMovable {
-
-    public int goalX, goalY;
-    public int startX, startY;
-    public Path currentPath = null;
-    public int pathIndex = 0;
-    public boolean isMovingByPath;
-
+public abstract class MobileEntity extends EntityActor implements Mover, IMovable, INotifyBlockingMove {
     protected float moveSpeed = 0.1f;
-
-    private static final int REPATH_RANGE = 3;    
    
     public int targetCellX, targetCellY;
-    public boolean isMovingToCell;    
+    public boolean isMovingToCell;   
+    
+    public int goalX, goalY;
     
     public MobileEntity(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
     }
 
-    public boolean findPathAndMoveTo(int aGoalX, int aGoalY) {
-	Path path = findPathFromTo(this, aGoalX, aGoalY);
-	this.startX = (int) this.getCenterPosX() / 24;
-	this.startY = (int) this.getCenterPosY() / 24;
-	if (path != null) {		
-	    startMovingByPath(path);
-
-	    return true;
-	} else {
-	    this.isMovingToCell = false;
-	    this.currentPath = null;
-	    this.isMovingByPath = false;
-	    this.pathIndex = 0;
-	}
-
-	return false;
-    }
 
     public abstract Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY);
-    
-    public void startMovingByPath(Path p) {
-	this.currentPath = p;
-
-	this.isMovingByPath = true;
-
-	this.goalX = p.getX(p.getLength() - 1);
-	this.goalY = p.getY(p.getLength() - 1);
-
-	//System.out.println("Generating path, moving from " + this.startX * 24 + "; " + this.startY * 24 + " to " + (int) this.goalX * 24 + "; " + (int) this.goalY * 24);
-
-	queueActivity(new Move(this, new Point(goalX, goalY), getMinimumEnoughRange()));
-    }
-
-    public void moveToAdjacentTile(int tileX, int tileY) {
-	//System.out.println("Moving to adjacent tile from " + (int) this.getCenterPosX() + "; " + (int) this.getCenterPosY() + " to " + tileX * 24 + "; " + tileY * 24);
-	this.isMovingToCell = true;
-
-	this.moveX = (tileX - (int) this.getCenterPosX() / 24);
-	this.moveY = (tileY - (int) this.getCenterPosY() / 24);
-	
-	this.targetCellX = tileX;
-	this.targetCellY = tileY;
-
-	Point targetPoint = new Point(this.targetCellX * 24, this.targetCellY * 24);
-	
-	int rot = RotationUtil.getRotationFromXY(0, 0, moveX, moveY);
-	queueActivity(new Turn(this, rot, (int) (50 * this.moveSpeed)));
-	queueActivity(new Drag(getPos(), targetPoint, (int) (1000 * this.getMoveSpeed())));	
-    }
 
     public Point getCenterPos() {
 	return new Point(this.getCenterPosX(), this.getCenterPosY());
@@ -95,6 +44,10 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     public Point getPos() {
 	return new Point(this.posX, this.posY);
     }
+    
+    public Point getCellPos() {
+	return new Point((int) getCenterPosX() / 24, (int) getCenterPosY() / 24);
+    }    
     
     public Point getTexturePos() {
 	return new Point(this.getTextureX(), this.getTextureY());
@@ -115,15 +68,35 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	    return;
 	}
 
-	if (this.currentPath != null) {
+	if (this.currentActivity != null) {
+	    Path currentPath = null;
+	    int pathIndex = 0;
+	    
+	    if ((this.currentActivity instanceof Move) && ((Move) this.currentActivity).currentPath != null) {
+		currentPath = ((Move) this.currentActivity).currentPath;
+		pathIndex = ((Move)currentActivity).currentPathIndex;
+	    } else if ((this.currentActivity instanceof Move.MovePart) && ((Move.MovePart) this.currentActivity).parentMove.currentPath != null) {
+		currentPath = ((Move.MovePart) this.currentActivity).parentMove.currentPath;
+		pathIndex = ((Move.MovePart) this.currentActivity).parentMove.currentPathIndex;	
+	    }
+	    
+	    if (currentPath == null) {
+		return;
+	    }
+	    
 	    g.setColor(Color.green);
 	    g.setLineWidth(1);
-	    g.drawLine(this.getCenterPosX(), this.getCenterPosY(), this.currentPath.getStep(this.pathIndex).getX() * 24 + 12, this.currentPath.getStep(this.pathIndex).getY() * 24 + 12);
+	    
+	    if (pathIndex == currentPath.getLength()) {
+		return;
+	    }
+	    
+	    g.drawLine(this.getCenterPosX(), this.getCenterPosY(), currentPath.getStep(pathIndex).getX() * 24 + 12, currentPath.getStep(pathIndex).getY() * 24 + 12);
 	    g.fillOval(this.goalX * 24 + 12 - 2, this.goalY * 24 + 12 - 2, 5, 5);
 
-	    for (int i = this.pathIndex; i < this.currentPath.getLength() - 1; i++) {
-		Step from = this.currentPath.getStep(i);
-		Step to = this.currentPath.getStep(i + 1);
+	    for (int i = pathIndex; i < currentPath.getLength() - 1; i++) {
+		Step from = currentPath.getStep(i);
+		Step to = currentPath.getStep(i + 1);
 
 		g.fillOval(from.getX() * 24 + 12 - 2, from.getY() * 24 + 12 - 2, 5, 5);
 		g.fillOval(to.getX() * 24 + 12 - 2, to.getY() * 24 + 12 - 2, 5, 5);
@@ -135,12 +108,14 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	    g.fillOval(this.targetCellX * 24 + 12, this.targetCellY * 24 + 12, 5, 5);		
 	}
 
-	//g.setColor(Color.gray); 
-	//	for (int i = (int) (posX / 24 - 5); i < posX / 24 + 5; i++) {
-	//    for (int j = (int) (posY / 24 - 5); j < posY / 24 + 5; j++) {
-	//	g.drawRect(i * 24, j * 24, 24, 24);
-	//    }
-	//}
+	// Draw grid
+	final int GRID_SIZE = 3;
+	g.setColor(Color.gray); 
+	for (int i = (int) (posX / 24 - GRID_SIZE); i < posX / 24 + GRID_SIZE; i++) {
+	    for (int j = (int) (posY / 24 - GRID_SIZE); j < posY / 24 + GRID_SIZE; j++) {
+		g.drawRect(i * 24, j * 24, 24, 24);
+	    }
+	}
     }
 
     public void finishMoving() {
@@ -150,13 +125,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	this.moveX = 0;
 	this.moveY = 0;
 
-	this.goalX = 0;
-	this.goalY = 0;
-
 	this.isMovingToCell = false;
-	this.isMovingByPath = false;
-	this.pathIndex = 0;
-	this.currentPath = null;
     }
 
     public float getCenterPosX() {
@@ -180,8 +149,111 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	this.posY = y - (this.sizeHeight / 2) + 12;	    
     }    
     
+    public void nudge(MobileEntity nudger, boolean force) {
+	// Don't allow non-forced nudges if we doing something
+	if (!force && !this.isIdle()) {
+	    return;
+	}
+	
+	// All possible adjacent cells directions
+	int dx[] = { +1, -1,  0,  0, +1, -1, +1, -1 };
+	int dy[] = {  0,  0, +1, -1, +1, +1, -1, -1 };
+	
+	Point nudgerPos = null;
+	if (nudger != null) {
+	    nudgerPos = nudger.getCellPos();
+	}
+	
+	ArrayList<Point> availCells = new ArrayList<>();
+	ArrayList<Point> smartCells = new ArrayList<>(); // smart cells is cells which blocked, but we can try to nudge actor inside it
+	
+	for (int i = 0; i < 8; i++) {
+	    int newCellX = (int) this.getCellPos().getX() + dx[i];
+	    int newCellY = (int) this.getCellPos().getY() + dy[i];
+	    
+	    // Skip cell with nudger position
+	    if (nudger != null && (nudgerPos.getX() == newCellX && nudgerPos.getY() == newCellY)) {
+		continue;
+	    }
+	    
+	    if (world.isCellPassable(newCellX, newCellY)) {
+		availCells.add(new Point(newCellX, newCellY));
+	    } else {
+		smartCells.add(new Point(newCellX, newCellY));
+	    }
+	}
+	
+	Point pointToGetOut = null; // target point to stand down
+	
+	// Choose random cell, first from of available, if not, then, select from smart cells
+	if (availCells.size() != 0) {
+	    pointToGetOut = availCells.get(world.getRandomInt(0, availCells.size()));
+	} else {
+	    if (smartCells.size() != 0) {
+		pointToGetOut = smartCells.get(world.getRandomInt(0, smartCells.size()));
+	    }
+	}
+	
+	if (pointToGetOut != null && availCells.size() != 0) {
+	    this.cancelActivity();
+	    
+	    this.queueActivity(new Move(this, pointToGetOut));
+	} else { 
+	    // All cells seems to be blocked, lets try to nudge someone around
+	    // FIXME: stack overflow if there is >2 surrounded units layer around nudging unit, looks like mutual nudging of two units
+	    /*Collections.shuffle(smartCells);
+	    
+	    for (Point cell : smartCells) {
+		MobileEntity blocker = world.getMobileEntityInCell(cell);
+		
+		if (blocker != this && blocker != null && blocker.isFrendlyTo(this)) {
+		    blocker.nudge(this, true);
+		}
+	    }*/
+	}
+    }
+    
+    public void moveTo(Point destCell) {
+	this.moveTo(destCell, null);
+    }
+    
+    public void moveTo(Point destCell, EntityBuilding ignoreBuilding) {
+	this.goalX = (int) destCell.getX();
+	this.goalY = (int) destCell.getY();
+
+	Move move = new Move(this, destCell, getMinimumEnoughRange(), ignoreBuilding);
+	
+	// If we already moving
+	if (this.currentActivity instanceof Move) {
+	    this.currentActivity.cancel();
+	} else if (this.currentActivity instanceof Move.MovePart) {
+	    this.currentActivity.queueActivity(move);
+	    return;
+	}
+	
+	queueActivity(move);
+    }
+    
+    public void startMovingByPath(Path p, EntityBuilding ignoreBuilding) {
+	this.goalX = (int) p.getX(p.getLength() - 1);
+	this.goalY = (int) p.getY(p.getLength() - 1);
+	
+	queueActivity(new Move(this, p, new Point(goalX, goalY), ignoreBuilding));
+    }    
+    
+    @Override
+    public void notifyBlocking(MobileEntity from) {
+	if (this.isIdle() && from.isFrendlyTo(this)) {
+	    this.nudge(from, true); // we being nudged by from 
+	}
+    }    
+    
     public abstract float getMoveSpeed();    
     public abstract float getTextureX();
     public abstract float getTextureY();    
     public abstract int getMinimumEnoughRange();
+    public abstract boolean canEnterCell(Point cellPos);
+    
+    public abstract int getWaitAverageTime();
+    public abstract int getWaitSpreadTime();
 }

@@ -40,7 +40,6 @@ public class Turn extends Activity {
 	}
 	
 	if (++ticks >= ticksBetweenTurn) {
-	    System.out.println("Current facing: " + a.currentFacing + " | Desired: " + this.desiredFacing);
 	    this.ticks = 0;
 	    
 	    int newFacing = a.currentFacing;

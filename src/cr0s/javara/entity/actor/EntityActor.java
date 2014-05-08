@@ -18,6 +18,8 @@ public class EntityActor extends Entity {
 
     @Override
     public void updateEntity(final int delta) {
+	updateDelta = delta;
+	
 	if (this.currentActivity != null) {
 	    this.currentActivity = this.currentActivity.tick(this);
 	}
@@ -31,6 +33,12 @@ public class EntityActor extends Entity {
 	}
     }
     
+    public void cancelActivity() {
+	if (this.currentActivity != null) {
+	    this.currentActivity.cancel();
+	} 	
+    }
+    
     @Override
     public void renderEntity(final Graphics g) {
     }
@@ -40,4 +48,16 @@ public class EntityActor extends Entity {
 	return false;
     }
 
+    public boolean isFrendlyTo(EntityActor other) {
+	// TODO: add ally logic
+	if (this.owner == other.owner) {
+	    return true;
+	}
+	
+	return false;
+    }
+    
+    public boolean isIdle() {
+	return this.currentActivity == null;
+    }
 }

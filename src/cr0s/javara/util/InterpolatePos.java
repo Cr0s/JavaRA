@@ -17,7 +17,7 @@ public class InterpolatePos {
     }
     
 	
-    private static int lerp(int a, int b, int mul, int div )
+    public static int lerp(int a, int b, int mul, int div )
     {
 	return a + (b - a) * mul / div;
     }    

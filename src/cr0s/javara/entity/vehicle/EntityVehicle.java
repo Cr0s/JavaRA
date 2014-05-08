@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
@@ -27,6 +28,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     private int moveWaitTicks = 0;
 
     protected int buildingSpeed;
+    Color nextColor = new Color(0, 255, 0, 64);
 
     public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
 	super(posX, posY, team, player, sizeWidth, sizeHeight);
@@ -37,8 +39,16 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	super.updateEntity(delta);
     }
 
+    
     @Override
-    public abstract void renderEntity(Graphics g);
+    public void renderEntity(Graphics g) {
+	super.renderEntity(g);
+	
+	//if (this.isMovingToCell) {
+	//    g.setColor(this.nextColor);
+	//    g.fillRect(this.targetCellX * 24, this.targetCellY * 24, 24, 24);
+	//}
+    }
 
     public static EntityVehicle newInstance(EntityVehicle b) {
 	Constructor ctor;
@@ -59,4 +69,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     public int getBuildingSpeed() {
 	return this.buildingSpeed;
     }	
+    
+    @Override
+    public abstract boolean canEnterCell(Point cellPos);
 }

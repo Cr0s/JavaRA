@@ -20,6 +20,10 @@ public abstract class Activity {
     }
     
     public void queueActivity(Activity a) {
+	if (nextActivity == this) {
+	    throw new IllegalArgumentException("Activity cycle detected");
+	}
+	
 	if (this.nextActivity != null) {
 	    this.nextActivity.queueActivity(a);
 	} else {

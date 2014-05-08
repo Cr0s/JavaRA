@@ -5,12 +5,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.gameplay.Player;
@@ -35,7 +37,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     private static final int SHROUD_REVEALING_RANGE = 10;
     private static final int ANIMATION_FRAME_DELAY = 5; // in ticks
     private static final int ANIMATION_LENGTH = 3;
-    private static final int DEPLOY_TRY_INTERVAL = 50;
+    private static final int DEPLOY_TRY_INTERVAL = 25;
     
     private static final String FOOTPRINT = "xxx xxx ~~~ ~~~";
 
@@ -181,6 +183,10 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	boolean isExitBlocked = isCellBlocked(exitX, exitY);
 	
 	if (isExitBlocked) {
+	    // Try to nudge blocker
+	    MobileEntity blocker = world.getMobileEntityInCell(new Point(exitX, exitY));
+	    blocker.nudge(null, true);
+	    
 	    return false;
 	}
 	
@@ -200,7 +206,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 
 		p.appendStep(cellX, cellY);
 
-		v.startMovingByPath(p);
+		v.startMovingByPath(p, this);		
 
 		return true;
 	    }	    

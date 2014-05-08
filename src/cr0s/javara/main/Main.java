@@ -88,8 +88,8 @@ public class Main extends StateBasedGame {
 	    container.setMinimumLogicUpdateInterval(20);
 	    //container.setShowFPS(false);
 	    container.setSmoothDeltas(true);
-	   // container.setVSync(true);
-	    //container.setTargetFrameRate(75);
+	    container.setVSync(true);
+	    container.setTargetFrameRate(75);
 	    container.setClearEachFrame(false);
 	    container.start();
 	} catch (Exception e) {
@@ -157,7 +157,8 @@ public class Main extends StateBasedGame {
 
 	w.addPlayer(player);
 
-	Point playerSpawn = player.getPlayerSpawnPoint();
+	Point playerSpawn = player.getPlayerSpawnPoint();	
+	
 	this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
 
 	this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());

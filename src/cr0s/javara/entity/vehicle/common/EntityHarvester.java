@@ -5,6 +5,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IDeployable;
@@ -34,6 +35,9 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     private static final int TEXTURE_WIDTH = 48;
     private static final int TEXTURE_HEIGHT = 48;
     private static final int SHROUD_REVEALING_RANGE = 5;
+    
+    private static final int WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS = 30;
+    private static final int WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS = 10;
 
     private int updateTicks = 0;
 
@@ -65,6 +69,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
     @Override
     public void renderEntity(Graphics g) {
+	super.renderEntity(g);
+	
 	if (Main.DEBUG_MODE) {
 	g.setLineWidth(1);
 	g.setColor(owner.playerColor);
@@ -100,7 +106,9 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
     @Override
     public boolean moveTo(int tileX, int tileY) {
-	return this.findPathAndMoveTo(tileX / 24, tileY / 24);
+	super.moveTo(new Point(tileX / 24, tileY / 24));
+	
+	return true;
     }
 
     @Override
@@ -136,5 +144,20 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     @Override
     public int getMinimumEnoughRange() {
 	return 3;
+    }
+    
+    @Override
+    public boolean canEnterCell(Point cellPos) {
+	return world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
+    }
+
+    @Override
+    public int getWaitAverageTime() {
+	return this.WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS;
+    }
+
+    @Override
+    public int getWaitSpreadTime() {
+	return this.WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS;
     }
 }

@@ -23,6 +23,7 @@ public class Drag extends Activity {
     @Override
     public Activity tick(EntityActor a) {
 	if (isCancelled || !(a instanceof MobileEntity)) {
+	    System.out.println("Drag is cancelled.");
 	    return nextActivity;
 	}
 	
@@ -39,8 +40,8 @@ public class Drag extends Activity {
 	me.setPos(nextPos);
 	
 	if (++ticks >= lengthInTicks) {
-	    cancel();
 	    me.isMovingToCell = false;
+	    return this.nextActivity;
 	}
 	
 	return this;

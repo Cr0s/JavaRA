@@ -5,6 +5,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.Path;
 
@@ -13,6 +14,8 @@ import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.activities.Drag;
+import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
 import cr0s.javara.entity.building.EntityConstructionYard;
@@ -36,6 +39,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     private static final int TEXTURE_WIDTH = 36;
     private static final int TEXTURE_HEIGHT = 36;
     private static final int SHROUD_REVEALING_RANGE = 8;
+    private static final int WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS = 15;
+    private static final int WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS = 5;
 
     private int updateTicks = 0;
 
@@ -46,7 +51,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
     private Entity targetEntity = null;
 
-    private final float MOVE_SPEED = 0.06f;
+    private final float MOVE_SPEED = 0.3f;
 
     private final float SHIFT = 12;
 
@@ -61,7 +66,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 	this.setHp(20);
 	this.setMaxHp(20);
 	
-	this.buildingSpeed = 60;
+	this.buildingSpeed = 99;
     }
 
     @Override
@@ -74,6 +79,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
     @Override
     public void renderEntity(Graphics g) {
+	super.renderEntity(g);
+	
 	if (Main.DEBUG_MODE) {
 	    g.setLineWidth(1);
 	    g.setColor(owner.playerColor);
@@ -114,12 +121,12 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
 	    return false;
 	} else {
-	    if (this.isMovingByPath) {
-		int rot = RotationUtil.getRotationFromXY(this.getCenterPosX(), this.getCenterPosY(), this.goalX * 24, this.goalY * 24);
+	    if (!this.isIdle()) {
+		int rot = RotationUtil.getRotationFromXY(this.getCenterPosX(), this.getCenterPosY(), this.goalX * 24, this.goalY * 24) % Turn.MAX_FACING;
 		this.rotateTurretTo(rot);	   		    
 	    } else {
 		if (this.targetEntity == null) { 
-		    this.rotateTurretTo(this.turretRotation);
+		    this.rotateTurretTo(this.currentFacing);
 		}
 	    }
 	}
@@ -184,7 +191,9 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
 
     @Override
     public boolean moveTo(int tileX, int tileY) {
-	return this.findPathAndMoveTo(tileX / 24, tileY / 24);
+	super.moveTo(new Point(tileX / 24, tileY / 24));
+	
+	return true;
     }
 
     @Override
@@ -220,5 +229,20 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     @Override
     public int getMinimumEnoughRange() {
 	return 3;
+    }    
+    
+    @Override
+    public boolean canEnterCell(Point cellPos) {
+	return world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
+    }    
+    
+    @Override
+    public int getWaitAverageTime() {
+	return this.WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS;
+    }
+
+    @Override
+    public int getWaitSpreadTime() {
+	return this.WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS;
     }    
 }

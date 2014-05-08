@@ -8,6 +8,7 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.render.World;
 import cr0s.javara.render.shrouds.Shroud;
@@ -82,9 +83,13 @@ public class Player {
     }
 
     public void spawn() {
-	EntityMcv mcv = new EntityMcv(24.0f * this.spawnX, 28.0f * this.spawnY, team, this);
+	EntityMcv mcv = new EntityMcv(24.0f * this.spawnX, 24.0f * this.spawnY, team, this);
 	mcv.isVisible = true;
 	
 	this.world.spawnEntityInWorld(mcv);
+	
+	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht);
     }
 }
