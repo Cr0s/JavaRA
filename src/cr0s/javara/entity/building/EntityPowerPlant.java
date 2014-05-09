@@ -37,7 +37,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	setMaxHp(50);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 50;
+	this.buildingSpeed = 90;//50;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }

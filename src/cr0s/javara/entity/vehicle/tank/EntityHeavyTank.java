@@ -228,7 +228,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     
     @Override
     public int getMinimumEnoughRange() {
-	return 3;
+	return 2;
     }    
     
     @Override

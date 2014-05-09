@@ -74,7 +74,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	    
 	    if ((this.currentActivity instanceof Move) && ((Move) this.currentActivity).currentPath != null) {
 		currentPath = ((Move) this.currentActivity).currentPath;
-		pathIndex = ((Move)currentActivity).currentPathIndex;
+		pathIndex = ((Move) currentActivity).currentPathIndex;
 	    } else if ((this.currentActivity instanceof Move.MovePart) && ((Move.MovePart) this.currentActivity).parentMove.currentPath != null) {
 		currentPath = ((Move.MovePart) this.currentActivity).parentMove.currentPath;
 		pathIndex = ((Move.MovePart) this.currentActivity).parentMove.currentPathIndex;	
@@ -91,10 +91,11 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 		return;
 	    }
 	    
-	    g.drawLine(this.getCenterPosX(), this.getCenterPosY(), currentPath.getStep(pathIndex).getX() * 24 + 12, currentPath.getStep(pathIndex).getY() * 24 + 12);
+	    g.drawLine(this.getCenterPosX(), this.getCenterPosY(), currentPath.getStep(pathIndex - 1).getX() * 24 + 12, currentPath.getStep(pathIndex - 1).getY() * 24 + 12);
+	    
 	    g.fillOval(this.goalX * 24 + 12 - 2, this.goalY * 24 + 12 - 2, 5, 5);
 
-	    for (int i = pathIndex; i < currentPath.getLength() - 1; i++) {
+	    for (int i = pathIndex - 1; i < currentPath.getLength() - 1; i++) {
 		Step from = currentPath.getStep(i);
 		Step to = currentPath.getStep(i + 1);
 
@@ -104,30 +105,28 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 		g.drawLine(from.getX() * 24 + 12, from.getY() * 24 + 12, to.getX() * 24 + 12, to.getY() * 24 + 12);
 	    }
 
-	    g.setColor(Color.orange);
-	    g.fillOval(this.targetCellX * 24 + 12, this.targetCellY * 24 + 12, 5, 5);		
+	    //g.setColor(Color.orange);
+	    //g.fillOval(this.targetCellX * 24 + 12, this.targetCellY * 24 + 12, 5, 5);		
 	}
 
 	// Draw grid
-	final int GRID_SIZE = 3;
+	/*final int GRID_SIZE = 3;
 	g.setColor(Color.gray); 
 	for (int i = (int) (posX / 24 - GRID_SIZE); i < posX / 24 + GRID_SIZE; i++) {
 	    for (int j = (int) (posY / 24 - GRID_SIZE); j < posY / 24 + GRID_SIZE; j++) {
 		g.drawRect(i * 24, j * 24, 24, 24);
 	    }
-	}
+	}*/
     }
 
     public void finishMoving() {
-	// Set up unit in cell center
-	setPositionByCenter(((int)Math.floor(this.getCenterPosX() / 24) * 24) + 12, ((int)Math.floor(this.getCenterPosY() / 24) * 24) + 12);
-
 	this.moveX = 0;
 	this.moveY = 0;
 
 	this.isMovingToCell = false;
     }
 
+    
     public float getCenterPosX() {
 	return this.getTextureX() + (this.sizeWidth / 2);
     }

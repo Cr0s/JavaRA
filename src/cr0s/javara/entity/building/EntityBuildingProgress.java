@@ -55,6 +55,8 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	    
 	    this.targetBuilding.isVisible = true;
 	    world.spawnEntityInWorld(this.targetBuilding);
+	    
+	    this.targetBuilding.onBuildFinished();
 	}
     }
 

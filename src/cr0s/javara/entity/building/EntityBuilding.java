@@ -306,4 +306,7 @@ public abstract class EntityBuilding extends Entity {
 
 		return null;
 	}
+	
+	public void onBuildFinished() {
+	}
 }

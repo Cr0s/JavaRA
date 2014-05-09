@@ -91,7 +91,9 @@ public abstract class Entity {
 	    g.drawLine(cornerXDownRight, cornerYDownRight, cornerXDownRight, cornerYDownRight - bbHeight / REDUCE);
 	    
 	    drawHpBar(g);
-    
+	    if (this instanceof IPips) {
+		drawPips(g);
+	    }
 	}
 	
 	public void drawHpBar(Graphics g) {
@@ -141,6 +143,39 @@ public abstract class Entity {
 	       }
 	   }
 	}	
+	
+	private void drawPips(Graphics g) {
+	    final int PIPS_OFFSET_Y = 8;
+	    final int PIPS_OFFSET_X = 4;
+	    final int PIPS_SPACING_X = 5;
+	    final int PIPS_SIZE = 3;
+	    
+	    float cornerYDownLeft = this.boundingBox.getMinY() + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
+	    float cornerXDownLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD;   
+	    
+	    int pipY = (int) cornerYDownLeft - PIPS_OFFSET_Y; 
+	    int startPipX = (int) cornerXDownLeft + PIPS_SPACING_X;
+	    
+	    
+	    IPips pipedEntity = (IPips) this;
+	    
+	    for (int pip = 0; pip < pipedEntity.getPipCount(); pip++) {
+		Color pipColor = pipedEntity.getPipColorAt(pip);
+		
+		int pipX = startPipX + pip * PIPS_SPACING_X;
+		
+		g.setColor(Color.gray);
+		g.setLineWidth(1);
+		
+		g.drawRect(pipX, pipY, PIPS_SIZE, PIPS_SIZE);
+		
+		if (pipColor != null) {
+		    g.setColor(pipColor);
+		    
+		    g.fillRect(pipX + 1, pipY + 1, PIPS_SIZE - 1, PIPS_SIZE - 1);
+		}
+	    }
+	}
 	
 	public void drawPrimarySign(Graphics g) {
 	    g.setColor(Color.white);

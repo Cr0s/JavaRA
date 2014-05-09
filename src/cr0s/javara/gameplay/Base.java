@@ -72,6 +72,8 @@ public class Base {
     public static final int WAIT_BEFORE_DEPLOY_VEHICLE = 5;
     private int waitDeployVehicleTicks;
     
+    public int oreCapacity, oreValue;
+    
     public Base(Team team, Player owner) {
 
     }
@@ -170,6 +172,8 @@ public class Base {
 		}
 	    } else if (b instanceof EntityProc) {
 		this.isProcPresent = true;
+		
+		this.oreCapacity += EntityProc.MAX_CAPACITY;
 	    } else if (b instanceof EntityPowerPlant) {
 		this.isPowerPlantPresent = true;
 	    }
@@ -315,5 +319,15 @@ public class Base {
 	this.isCurrentVehicleReady = false;
 	this.currentVehicleProgress = 0;
 	this.currentVehicleProgressTicks = 0;
+    }
+
+    public void giveOre(int aCapacity) {
+	// TODO: silos and overflow
+	//int overflow = 0;
+	//if (this.oreValue + aCapacity > this.oreCapacity) {
+	//    overflow = this.oreValue + aCapacity - this.oreCapacity;
+	//}
+	
+	this.oreValue += aCapacity;// - overflow;
     }
 }

@@ -5,16 +5,20 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.actor.activity.activities.harvester.FindResources;
+import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer {
+public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips {
 
     private SpriteSheet sheet;
 
@@ -29,6 +33,16 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     private static final int SHROUD_REVEALING_RANGE = 9;
 
+    // Harverster offset position
+    private static final int HARV_OFFSET_X = 1;
+    private static final int HARV_OFFSET_Y = 2;
+
+    public static final int HARV_FACING = 8;
+    
+    // Ore capacity
+    public static final int MAX_CAPACITY = 2000;
+    public static final int PIPS_COUNT = 17;
+    
     public EntityProc(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
 
@@ -38,11 +52,40 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	setMaxHp(100);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 20;
+	this.buildingSpeed = 80;//20;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
 
+    @Override
+    public void onBuildFinished() {
+	spawnHarvester();
+    }
+    
+    private void spawnHarvester() {
+	if (world == null) {
+	    return;
+	}
+	
+	System.out.println("Spawning harvester");
+	
+	Point harvCell = getHarvesterCell();
+	EntityHarvester harv = new EntityHarvester(harvCell.getX() * 24f, harvCell.getY() * 24f, team, owner);
+	
+	harv.currentFacing = HARV_FACING;
+	harv.isVisible = true;
+	harv.setWorld(world);
+	
+	harv.linkedProc = this;
+	harv.queueActivity(new FindResources());
+	
+	world.spawnEntityInWorld(harv);
+    }
+    
+    public Point getHarvesterCell() {
+	return new Point((this.getTileX() / 24) + HARV_OFFSET_X, (this.getTileY() / 24) + HARV_OFFSET_Y);	
+    }
+    
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
 	corrupted = tex.getAsImage(1, owner.playerColor);
@@ -118,5 +161,19 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     @Override
     public Image getTexture() {
 	return normal;
+    }
+
+    public void acceptResources(int aCapacity) {
+	owner.getBase().giveOre(aCapacity);
+    }
+    
+    @Override
+    public int getPipCount() {
+	return this.PIPS_COUNT;
+    }
+
+    @Override
+    public Color getPipColorAt(int i) {
+	return (owner.getBase().oreValue * this.PIPS_COUNT > i * owner.getBase().oreCapacity) ? Color.yellow : null;
     }        
 }

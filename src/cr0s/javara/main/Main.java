@@ -87,9 +87,9 @@ public class Main extends StateBasedGame {
 
 	    container.setMinimumLogicUpdateInterval(20);
 	    //container.setShowFPS(false);
-	    container.setSmoothDeltas(true);
-	    container.setVSync(true);
-	    container.setTargetFrameRate(75);
+	    //container.setSmoothDeltas(true);
+	    //container.setVSync(true);
+	    //container.setTargetFrameRate(75);
 	    container.setClearEachFrame(false);
 	    container.start();
 	} catch (Exception e) {

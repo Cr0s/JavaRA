@@ -45,6 +45,7 @@ import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.TmpTexture;
+import cr0s.javara.util.CellChooser;
 
 import org.newdawn.slick.geom.Point;
 
@@ -137,6 +138,11 @@ public class World implements TileBasedMap {
 		// Set up blocking map parameters
 		if (e instanceof MobileEntity) {
 		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
+		    
+		    // If entity moving, claim next cell for it
+		    if (((MobileEntity) e).isMovingToCell) {
+			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 1;
+		    }
 		}
 	    }
 	}
@@ -535,5 +541,37 @@ public class World implements TileBasedMap {
     
     public int getRandomInt(int from, int to) {
 	return from + random.nextInt(to);
+    }
+    
+    public ArrayList<Point> chooseTilesInCircle(Point centerPos, int range, CellChooser chooser) {
+	ArrayList<Point> res = new ArrayList<Point>();
+	
+	for (int x = -range; x <= range; x++) {
+	    for (int y = -range; y <= range; y++) {
+		if (range * range < x * x + y * y) {
+		    int cellPosX = (int) centerPos.getX() + x;
+		    int cellPosY = (int) centerPos.getY() + y;
+		    
+		    Point cellPoint = new Point(cellPosX, cellPosY);
+		    
+		    if (chooser.isCellChoosable(cellPoint)) {
+			res.add(cellPoint);
+		    }
+		}
+	    }
+	}
+	
+	return res;
+    }
+    
+    public ArrayList<Point> choosePassableCellsInCircle(Point centerPos, int range) {
+	return this.chooseTilesInCircle(centerPos, range, new CellChooser() {
+
+	    @Override
+	    public boolean isCellChoosable(Point cellPos) {
+		return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
+	    }
+	    
+	});
     }
 }

@@ -3,7 +3,7 @@ package cr0s.javara.entity.actor.activity;
 import cr0s.javara.entity.actor.EntityActor;
 
 public abstract class Activity {
-    protected Activity nextActivity;
+    public Activity nextActivity;
     protected boolean isCancelled;
     
     public Activity getNext() {

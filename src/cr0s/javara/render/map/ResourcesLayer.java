@@ -133,4 +133,22 @@ public class ResourcesLayer {
     public boolean isCellEmpty(int x, int y) {
 	return this.resources[x][y] == null;
     }
+    
+    public int harvestCell(int x, int y) {
+	ResourceCell resource = this.resources[x][y];
+	
+	if (resource != null) {
+	    if (resource.density >= 0) {
+		resource.density--;
+		
+		if (resource.density <= 0) {
+		    this.resources[x][y] = null;
+		}
+		
+		return resource.type;
+	    }
+	}
+	
+	return -1;
+    }
 }

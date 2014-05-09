@@ -18,8 +18,6 @@ public class EntityActor extends Entity {
 
     @Override
     public void updateEntity(final int delta) {
-	updateDelta = delta;
-	
 	if (this.currentActivity != null) {
 	    this.currentActivity = this.currentActivity.tick(this);
 	}
