@@ -62,6 +62,9 @@ public class GameSideBar {
     private Point previewOrigin;
     
     private MinimapRenderer minimap;
+    private PowerBarRenderer powerBar;
+    
+    private static final int POWERBAR_WIDTH = 10;
     
     public GameSideBar(Team aTeam, Player aPlayer) {
 	try {
@@ -87,6 +90,8 @@ public class GameSideBar {
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
 	this.minimap = new MinimapRenderer(Main.getInstance().getWorld(), (int) Main.getInstance().getWorld().getMap().getBounds().getWidth() / 24, (int) (int) Main.getInstance().getWorld().getMap().getBounds().getHeight() / 24);
 	
+	this.powerBar = new PowerBarRenderer(new Point(sidebarBounds.getMinX() - POWERBAR_WIDTH, sidebarBounds.getMaxY()), POWERBAR_WIDTH, (int) sidebarBounds.getHeight());
+	
 	switchPage(START_PAGE_NAME);
     }
     
@@ -101,16 +106,19 @@ public class GameSideBar {
 	Color pColor = g.getColor();
 	g.setColor(BG_COLOR.multiply(this.getBackgroundColor()));
 	g.fill(this.sidebarBounds);
+	this.powerBar.render(g, this.getBackgroundColor());
 	drawSideBarButtons(g);
 	g.setColor(pColor);
 
     }
 
     public void drawRadar(Graphics g) {
-	g.setColor(Color.black.multiply(getBackgroundColor()));
-	//g.fill(radarRect);
-	
-	this.minimap.getImage().draw(this.previewOrigin.getMinX(), this.previewOrigin.getMinY(), getBackgroundColor());
+	if (Main.getInstance().getPlayer().getBase().isRadarDomePresent && !Main.getInstance().getPlayer().getBase().isLowPower()) {
+	    this.minimap.renderMinimap(this.previewOrigin, g, getBackgroundColor());
+	} else {
+	    g.setColor(Color.black.multiply(getBackgroundColor()));
+	    g.fill(radarRect);	    
+	}
 	
 	drawCurrentViewportRect(g);
     }
@@ -182,7 +190,7 @@ public class GameSideBar {
 	g.setColor(Color.white.multiply(filterColor));
 	// Draw status
 	if (player.getBase().isCurrentVehicleReady()) {
-	    g.drawString("ready", x + 1, y + 46 - g.getFont().getLineHeight());
+	    g.drawString("ready", x + 5, y + 46 - g.getFont().getLineHeight());
 	} else if (player.getBase().isCurrentVehicleHold()) {
 	    g.drawString("on hold", x + 1, y + 46 - g.getFont().getLineHeight());
 	}
@@ -191,8 +199,6 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
-	this.minimap.updateMinimap(this.getBackgroundColor());
-	
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
 	

@@ -44,7 +44,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     private int rotationDirection = 1;
     private boolean isDeploying = false;
 
-    private final float MOVE_SPEED = 0.03f;
+    private final float MOVE_SPEED = 0.1f;
 
     public EntityMcv(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -126,7 +126,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 		    return false;
 		}
 		
-		Entity e = world.getEntityInPoint((bx + x) * 24, (bx + x) * 24);
+		Entity e = world.getEntityInPoint((bx + x) * 24, (by + y) * 24);
 		if (e != null && !(e instanceof EntityMcv)) {
 		    return false;
 		}
@@ -164,7 +164,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 
     @Override
     public float getMoveSpeed() {
-	return MOVE_SPEED;
+	return this.MOVE_SPEED;
     }
 
     @Override

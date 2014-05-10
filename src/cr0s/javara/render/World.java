@@ -119,8 +119,7 @@ public class World implements TileBasedMap {
 	for (Entity e : entitiesToAdd) {
 	    if (e instanceof EntityBuilding) {
 		EntityBuilding eb = (EntityBuilding) e;
-		
-		System.out.println("[World] Adding building: " + e.toString());
+
 		for (int by = 0; by < eb.getHeightInTiles(); by++) {
 		    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
 			this.blockingMap[((eb.getTileX() + 12) / 24) + bx][((eb.getTileY() + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
@@ -152,11 +151,31 @@ public class World implements TileBasedMap {
 		// Reveal shroud
 		if (e instanceof IShroudRevealer) {
 		    if (e.owner.getShroud() != null) {
-			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX()/ 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer)e).getRevealingRange());
+			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX() / 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer)e).getRevealingRange());
 		    }
 		}
 		
-		e.updateEntity(delta);		
+		
+		// For mobile entities, after entity updated, update it's blocking map state to avoid entity movement collisions
+		if (e instanceof MobileEntity) {
+		    // Unlock current entity position
+		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 0;
+		    if (((MobileEntity) e).isMovingToCell) {
+			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 0;
+		    }
+		    
+		    e.updateEntity(delta);	
+		    
+		    // Lock next entity position. Or relock current, if position is not changed
+		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
+		    
+		    // If entity moving, claim next cell for it
+		    if (((MobileEntity) e).isMovingToCell) {
+			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 1;
+		    }
+		} else {
+		    e.updateEntity(delta);
+		}
 	    }
 	}  	
 	
@@ -184,17 +203,19 @@ public class World implements TileBasedMap {
 
 	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
-
-	// Make rendering passes for bibs (bibs always must drawn on zero pass)
-	for (Entity e : this.entities) {
-	    if ((e instanceof EntityBuilding) && !e.isDead() && e.isVisible && e.shouldRenderedInPass(0) && camera.isEntityInsideViewport(e)) { 
-		renderEntityBib((EntityBuilding) e);
-	    }
-	}	
 	
-	// Make rendering passes for buildings
-	for (int i = 0; i < PASSES_COUNT; i++) {
-	    for (Entity e : this.entities) {
+	// Render bibs
+	for (Entity e : this.entities) {		    
+	    if (!e.isDead() && e.isVisible && camera.isEntityInsideViewport(e)) { 
+		if (e instanceof EntityBuilding) {
+		    renderEntityBib((EntityBuilding) e);
+		}
+	    }
+	}
+	
+	// Make rendering passes
+	for (int i = -1; i < PASSES_COUNT; i++) {
+	    for (Entity e : this.entities) {		    
 		if (!e.isDead() && e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
 		    e.renderEntity(g);
 		}
@@ -234,13 +255,17 @@ public class World implements TileBasedMap {
      */
     private void renderEntityBib(final EntityBuilding b) {
 	BibType bt = b.getBibType();
+	
 	SpriteSheet bibSheet = ResourceManager.getInstance().getBibSheet(bt);
+	if (bt == BibType.NONE || bibSheet == null) {
+	    return;
+	}
 	
 	bibSheet.startUse();
 	int x = (int) b.posX, y = (int) b.posY;
 	int bibCount = 0;
 	
-	switch (bt) {
+	switch (bt) { 
 	case SMALL:
 	    bibCount = 2;
 	    break;
@@ -252,16 +277,19 @@ public class World implements TileBasedMap {
 	case BIG:
 	    bibCount = 4;
 	    break;
+	    
 	default:
 	    bibSheet.endUse();
 	    return;
 	}
 	
-	for (int bibY = 0; bibY < 2; bibY++) {
-	    for (int bibX = 0; bibX < bibCount; bibX++) {
-		int index = bibCount * bibY + bibX;	
-		
-		bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + 24 * (b.getHeightInTiles() / 2) + 24 * bibY - 12, 24, 24);
+	if (bibCount > 1) {
+	    for (int bibY = 0; bibY < 2; bibY++) {
+		for (int bibX = 0; bibX < bibCount; bibX++) {
+		    int index = bibCount * bibY + bibX;	
+
+		    bibSheet.getSubImage(0, index).drawEmbedded(x + 24 * bibX,  y + 24 * (b.getHeightInTiles() / 2) + 24 * bibY - 12, 24, 24);
+		}
 	    }
 	}
 	    

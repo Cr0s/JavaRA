@@ -27,12 +27,17 @@ public class Move extends Activity {
     private boolean hasNotifiedBlocker, hasWaited;
     private int waitTicksRemaining;
 
-    private final static int REPATHING_INTERVAL_TICKS = 10;
+    private final static int REPATHING_INTERVAL_TICKS = 35;
     private int ticksBeforeRepath = REPATHING_INTERVAL_TICKS;
+
+    private boolean isNewPath;
+    private int randomWaitTicks;
 
     public Move(MobileEntity me, Point destinationCell) {
 	this.destCell = destinationCell;
 
+	this.randomWaitTicks = me.world.getRandomInt(1, 3);
+	
 	chooseNewPath(me);
     }
 
@@ -70,13 +75,14 @@ public class Move extends Activity {
 	Point nextCell = new Point(px, py);
 
 	if (!me.canEnterCell(nextCell) && me.world.isCellBlockedByEntity(nextCell)) {
-	    if (this.ignoreBuilding != null && me.world.getBuildingInCell(nextCell) != this.ignoreBuilding) {
+	    // This building we ignore
+	    if (this.ignoreBuilding != null && me.world.getBuildingInCell(nextCell) == this.ignoreBuilding) {
 		this.hasNotifiedBlocker = false;
 		this.hasWaited = false;
 
-		return nextCell;		
+		return null;		
 	    }
-
+	    
 	    // See if we close enough
 	    float dx = destCell.getX() - nextCell.getX();
 	    float dy = destCell.getY() - nextCell.getY();
@@ -133,33 +139,38 @@ public class Move extends Activity {
     private void chooseNewPath(MobileEntity me) {
 	this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
 	this.currentPathIndex = 1;
-	
+
+	this.isNewPath = true;
+
 	// It seems destination cell are blocked, try to choose nearest free cell as new destination cell
 	if (this.currentPath == null) {
 	    Point newDestCell = chooseClosestToDestCell(me);
-	    
+
 	    // Give up
 	    if (newDestCell == null) {
+		this.isNewPath = false;
 		return;
 	    }
-	    
+
 	    this.destCell = newDestCell;
 	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
+
+	    this.isNewPath = true;
 	}
     }
-    
+
     public Point chooseClosestToDestCell(MobileEntity me) {
 	Point res = this.destCell;
-	
+
 	// Find free cells in range, starting from closest range
 	for (int range = 1; range <= this.destRange; range++) {
 	    ArrayList<Point> cells = me.world.choosePassableCellsInCircle(destCell, range);
-	    
+
 	    if (cells.size() != 0) {
 		return cells.get(me.world.getRandomInt(0, cells.size()));
 	    }
 	}
-	
+
 	return res;
     }    
 
@@ -167,7 +178,7 @@ public class Move extends Activity {
     public Activity tick(EntityActor a) {
 	Point nextCell = null;
 
-	if (!(a instanceof MobileEntity)) {
+	if (isCancelled || !(a instanceof MobileEntity)) {
 	    return nextActivity;
 	}
 
@@ -177,12 +188,17 @@ public class Move extends Activity {
 	    return nextActivity;
 	}
 
+	if (randomWaitTicks > 0) {
+	    randomWaitTicks--;
+	    return this;
+	}	
+	
 	nextCell = popPath(me);
 
 	if (nextCell == null) {
 	    return this;
 	}
-
+	
 	me.isMovingToCell = true;
 	me.targetCellX = (int) nextCell.getX();
 	me.targetCellY = (int) nextCell.getY();
@@ -203,9 +219,15 @@ public class Move extends Activity {
 	 *                           Move ->+ (if we have next cell to move)
 	 */
 
-	Activity movePartActivity = new MovePart(this, me, me.getPos(), nextCell);
-	movePartActivity.tick(me); // Tick once to avoid tick skipping without movement when current activiy is Move
+	MovePart movePartActivity = new MovePart(this, me, me.getPos(), nextCell);
+	if (this.isNewPath) {
+	    movePartActivity.setIsNewPath(true);
+	    
+	    this.isNewPath = false;
+	}
 	
+	movePartActivity.tick(me); // Tick once to avoid tick skipping without movement when current activiy is Move
+
 	return movePartActivity;
     }
 
@@ -226,6 +248,8 @@ public class Move extends Activity {
 	private int desiredFacing, startFacing;
 	private RotationDirection rotationDirection;
 
+	private boolean isNewPath;
+
 	public MovePart(Move aParentMove, MobileEntity aMe, Point aStart, Point aDestCell) {
 	    this.parentMove = aParentMove;
 
@@ -236,9 +260,9 @@ public class Move extends Activity {
 	    this.end = new Point(aDestCell.getX() * 24, aDestCell.getY() * 24);
 	    this.start = aStart;
 
-	    this.lengthInTicks = (int) (10 - (10 * me.getMoveSpeed()));
+	    this.lengthInTicks = (int) (20 - (10 * me.getMoveSpeed()));
 
-	    this.desiredFacing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY()) % Turn.MAX_FACING;
+	    this.desiredFacing = RotationUtil.getRotationFromXY(start.getX() + 12, start.getY() + 12, end.getX() + 12, end.getY() + 12) % Turn.MAX_FACING;
 	    this.startFacing = me.currentFacing;
 
 	    if (me.currentFacing >= 24 && desiredFacing <= 8) {
@@ -264,30 +288,38 @@ public class Move extends Activity {
 		nextPos = end;
 	    }
 
-	    me.setPos(nextPos);	
-
 	    if (me.currentFacing != this.desiredFacing) {
 		turnFacing();
 
-		return this;
-	    } else {
-
-		ticks++;
-		// If move is finished, return control to parent activity
-		if ((me.getPos().getX() == end.getX() && me.getPos().getY() == end.getY()) || ticks >= lengthInTicks) {
-		    me.currentFacing = this.desiredFacing % Turn.MAX_FACING; // how rough!
-		    me.finishMoving();
-
-		    // Parent Move activity is cancelled, lets switch to next activity (user send move order when Move/PartMove activity is working)
-		    if (this.nextActivity instanceof Move || parentMove.isCancelled()) {
-			return this.nextActivity;
-		    } else {
-			return parentMove;
-		    }
-		} else {
+		// Don't move while our turn is not finished for new direction
+		if (isNewPath) { 
 		    return this;
 		}
+	    } else {
+		this.isNewPath = false;
 	    }
+
+	    me.setPos(nextPos);		    
+
+	    ticks++;
+	    // If move is finished, return control to parent activity
+	    if ((me.getPos().getX() == end.getX() && me.getPos().getY() == end.getY()) || ticks >= lengthInTicks) {
+		me.currentFacing = this.desiredFacing % Turn.MAX_FACING; // how rough!
+		me.finishMoving();
+
+		// Parent Move activity is cancelled, lets switch to next activity (user send move order when Move/PartMove activity is working)
+		if (this.nextActivity instanceof Move || parentMove.isCancelled()) {
+		    return this.nextActivity;
+		} else {
+		    return parentMove;
+		}
+	    } else {
+		return this;
+	    }
+	}
+
+	public void setIsNewPath(boolean aIsNewPath) {
+	    this.isNewPath = aIsNewPath;
 	}
 
 	private void turnFacing() {

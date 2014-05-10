@@ -14,28 +14,28 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
+public class EntityRadarDome extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer {
     private Image normal, corrupted;
-    private final String TEXTURE_NAME = "powr.shp";
-    private final String MAKE_TEXTURE_NAME = "powrmake.shp";
+    private final String TEXTURE_NAME = "dome.shp";
+    private final String MAKE_TEXTURE_NAME = "domemake.shp";
 
     public static final int WIDTH_TILES = 2;
     public static final int HEIGHT_TILES = 3;
 
-    private static final int POWER_PRODUCTION_LEVEL = 30;
+    private static final int POWER_CONSUMPTION_LEVEL = 35;
 
-    private static final int SHROUD_REVEALING_RANGE = 7;
+    private static final int SHROUD_REVEALING_RANGE = 15;
 
-    public EntityPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
+    public EntityRadarDome(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
 
-	setMaxHp(50);
+	setMaxHp(60);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 90;//50;
+	this.buildingSpeed = 45;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
@@ -73,8 +73,6 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
     }
 
     @Override
@@ -103,11 +101,6 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     }
 
     @Override
-    public int getPowerProductionLevel() {
-	return POWER_PRODUCTION_LEVEL;
-    }
-
-    @Override
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
@@ -115,5 +108,10 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     @Override
     public Image getTexture() {
 	return normal;
+    }
+
+    @Override
+    public int getConsumptionLevel() {
+	return this.POWER_CONSUMPTION_LEVEL;
     }      
 }

@@ -5,5 +5,5 @@ package cr0s.javara.entity.building;
  * @author Cr0s
  */
 public enum BibType {
-    SMALL, MIDDLE, BIG;
+    NONE, SMALL, MIDDLE, BIG;
 }

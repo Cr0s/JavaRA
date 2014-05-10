@@ -18,78 +18,49 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor {
+public class EntityOreSilo extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor {
 
     private SpriteSheet sheet;
+    
+    private final String TEXTURE_NAME = "silo.shp";
+    private final String MAKE_TEXTURE_NAME = "silomake.shp";
 
-    private Image normal, corrupted;
-    private final String TEXTURE_NAME = "proc.shp";
-    private final String MAKE_TEXTURE_NAME = "procmake.shp";
+    public static final int WIDTH_TILES = 1;
+    public static final int HEIGHT_TILES = 1;
 
-    public static final int WIDTH_TILES = 3;
-    public static final int HEIGHT_TILES = 4;
+    private static final int POWER_CONSUMPTION_LEVEL = 5;
 
-    private static final int POWER_CONSUMPTION_LEVEL = 20;
-
-    private static final int SHROUD_REVEALING_RANGE = 9;
-
-    // Harverster offset position
-    private static final int HARV_OFFSET_X = 1;
-    private static final int HARV_OFFSET_Y = 2;
-
-    public static final int HARV_FACING = 8;
+    private static final int SHROUD_REVEALING_RANGE = 3;
     
     // Ore capacity
-    public static final int MAX_CAPACITY = 2000;
-    public static final int PIPS_COUNT = 17;
+    public static final int MAX_CAPACITY = 1500;
+    public static final int PIPS_COUNT = 5;
     
-    public EntityProc(Integer tileX, Integer tileY, Team team, Player player) {
-	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
+    private int oreLevel = 0;
+    private final int CORRUPTED_OFFSET = 5;
+    
+    public EntityOreSilo(Integer tileX, Integer tileY, Team team, Player player) {
+	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "x");
 
-	setBibType(BibType.MIDDLE);
+	setBibType(BibType.NONE);
 	setProgressValue(-1);
 
-	setMaxHp(100);
+	setMaxHp(25);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 80;//20;
+	this.buildingSpeed = 80;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
 
     @Override
     public void onBuildFinished() {
-	spawnHarvester();
-    }
-    
-    private void spawnHarvester() {
-	if (world == null) {
-	    return;
-	}
-	
-	System.out.println("Spawning harvester");
-	
-	Point harvCell = getHarvesterCell();
-	EntityHarvester harv = new EntityHarvester(harvCell.getX() * 24f, harvCell.getY() * 24f, team, owner);
-	
-	harv.currentFacing = HARV_FACING;
-	harv.isVisible = true;
-	harv.setWorld(world);
-	
-	harv.linkedProc = this;
-	harv.queueActivity(new FindResources());
-	
-	world.spawnEntityInWorld(harv);
-    }
-    
-    public Point getHarvesterCell() {
-	return new Point((this.getTileX() / 24) + HARV_OFFSET_X, (this.getTileY() / 24) + HARV_OFFSET_Y);	
     }
     
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-	corrupted = tex.getAsImage(1, owner.playerColor);
-	normal = tex.getAsImage(0, owner.playerColor);	
+	
+	this.sheet = new SpriteSheet(tex.getAsCombinedImage(owner.playerColor), 24, 24);
     }
 
     @Override
@@ -97,12 +68,14 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	float nx = posX;
 	float ny = posY;
 
-	if (this.getHp() > this.getMaxHp() / 2) {
-	    normal.draw(nx, ny);
-	} else {
-	    corrupted.draw(nx, ny);
+	int textureIndex = this.oreLevel;
+	
+	if (this.getHp() < this.getMaxHp() / 2) {
+	    textureIndex += CORRUPTED_OFFSET;
 	}
 
+	this.sheet.getSubImage(0, textureIndex).draw(nx, ny);
+	
 	// Draw bounding box if debug mode is on
 	if (Main.DEBUG_MODE) {
 	    g.setLineWidth(2);
@@ -114,13 +87,19 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     @Override
     public boolean shouldRenderedInPass(int passnum) {
-	return passnum == 0;
+	return passnum == -1;
     }
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
+	// Update ore level
+	this.oreLevel = 0;
+	
+	for (int i = 1; i < this.getPipCount(); i++) {
+	    if (this.getPipColorAt(i) != null) {
+		this.oreLevel++;
+	    }
+	}
     }
 
     @Override
@@ -160,11 +139,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     
     @Override
     public Image getTexture() {
-	return normal;
-    }
-
-    public void acceptResources(int aCapacity) {
-	owner.getBase().giveOre(aCapacity);
+	return this.sheet.getSubImage(0, 0);
     }
     
     @Override

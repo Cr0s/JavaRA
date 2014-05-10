@@ -149,6 +149,10 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     }    
     
     public void nudge(MobileEntity nudger, boolean force) {
+	nudge(nudger, force, 1);
+    }
+    
+    public void nudge(MobileEntity nudger, boolean force, int nudgingDepth) {
 	// Don't allow non-forced nudges if we doing something
 	if (!force && !this.isIdle()) {
 	    return;
@@ -199,16 +203,20 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	    this.queueActivity(new Move(this, pointToGetOut));
 	} else { 
 	    // All cells seems to be blocked, lets try to nudge someone around
-	    // FIXME: stack overflow if there is >2 surrounded units layer around nudging unit, looks like mutual nudging of two units
-	    /*Collections.shuffle(smartCells);
+	    // Check depth to avoid stack overflow if we fall into recursion
+	    if (nudgingDepth > 3) {
+		return;
+	    }
+
+	    Collections.shuffle(smartCells);
 	    
 	    for (Point cell : smartCells) {
 		MobileEntity blocker = world.getMobileEntityInCell(cell);
 		
 		if (blocker != this && blocker != null && blocker.isFrendlyTo(this)) {
-		    blocker.nudge(this, true);
+		    blocker.nudge(this, force, nudgingDepth + 1);
 		}
-	    }*/
+	    }
 	}
     }
     

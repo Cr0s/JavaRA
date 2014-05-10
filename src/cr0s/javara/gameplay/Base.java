@@ -7,7 +7,9 @@ import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
+import cr0s.javara.entity.building.EntityRadarDome;
 import cr0s.javara.entity.building.EntityWarFactory;
+import cr0s.javara.entity.building.IOreCapacitor;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
 import cr0s.javara.entity.vehicle.EntityVehicle;
@@ -146,6 +148,9 @@ public class Base {
 	isRadarDomePresent = false;
 	isProcPresent = false;
 
+	this.oreCapacity = 0;
+	this.powerConsumptionLevel = this.powerLevel = 0;
+	
 	for (EntityBuilding b : this.buildings) {
 	    // Update power levels
 	    if (b instanceof IPowerConsumer) {
@@ -172,20 +177,22 @@ public class Base {
 		}
 	    } else if (b instanceof EntityProc) {
 		this.isProcPresent = true;
-		
-		this.oreCapacity += EntityProc.MAX_CAPACITY;
 	    } else if (b instanceof EntityPowerPlant) {
 		this.isPowerPlantPresent = true;
+	    } else if (b instanceof EntityRadarDome) {
+		this.isRadarDomePresent = true;
 	    }
 
-
+	    if (b instanceof IOreCapacitor) {
+		this.oreCapacity += ((IOreCapacitor) b).getOreCapacityValue();
+	    }
 	}
 
 	this.isLowPower = (this.powerConsumptionLevel > this.powerLevel);
     }
 
     public boolean isLowPower() {
-	return this.isLowPower();
+	return this.isLowPower;
     }
 
     public int getPowerLevel() {

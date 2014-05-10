@@ -22,7 +22,7 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
 
-    private static final int POWER_PRODUCTION_LEVEL = 30;
+    private static final int POWER_PRODUCTION_LEVEL = 60;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
 

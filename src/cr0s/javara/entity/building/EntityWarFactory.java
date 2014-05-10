@@ -185,7 +185,9 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	if (isExitBlocked) {
 	    // Try to nudge blocker
 	    MobileEntity blocker = world.getMobileEntityInCell(new Point(exitX, exitY));
-	    blocker.nudge(null, true);
+	    if (blocker != null) {
+		blocker.nudge(null, true);
+	    }
 	    
 	    return false;
 	}

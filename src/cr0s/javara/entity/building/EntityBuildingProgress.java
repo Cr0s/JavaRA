@@ -67,7 +67,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 
     @Override
     public boolean shouldRenderedInPass(int passNum) {
-	return (passNum == 0);
+	return this.targetBuilding.shouldRenderedInPass(passNum);// && passNum == -1) ? true : passNum == 0;
     }
 
     @Override
