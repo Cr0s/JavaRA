@@ -52,8 +52,8 @@ public class Camera {
 		//g.setWorldClip(worldClip);
 
 		g.resetTransform();
-		gc.getDefaultFont().drawString(5, 25, "Camera offset: " + offsetX + " x " + offsetY);
-		gc.getDefaultFont().drawString(5, 45, "Map: " + (int)this.mapTilesBounds.getX() / 24 + " x " + (int)this.mapTilesBounds.getY() / 24);
+		//gc.getDefaultFont().drawString(5, 25, "Camera offset: " + offsetX + " x " + offsetY);
+		//gc.getDefaultFont().drawString(5, 45, "Map: " + (int)this.mapTilesBounds.getX() / 24 + " x " + (int)this.mapTilesBounds.getY() / 24);
 	}
 
 	public void setOffset(float x, float y) {
