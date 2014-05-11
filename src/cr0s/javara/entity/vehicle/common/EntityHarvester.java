@@ -251,8 +251,6 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	    contents.remove(resourceType);
 	    contents.put(resourceType, previousValue + 1);
 	}
-
-
     }
 
     public boolean isFull() {

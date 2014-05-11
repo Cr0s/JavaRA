@@ -37,6 +37,8 @@ import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.ITargetLines;
+import cr0s.javara.order.TargetLine;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.render.map.VehiclePathfinder;
@@ -184,6 +186,12 @@ public class World implements TileBasedMap {
 		    
 		    e.updateEntity(delta);	
 		    
+		    if (e instanceof ITargetLines && e.isSelected) {
+			for (TargetLine tl : ((ITargetLines)e).getTargetLines()) {
+			    tl.update(delta);
+			}
+		    }
+		    
 		    // Lock next entity position. Or re-lock current, if position is not changed
 		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
 		    
@@ -193,6 +201,12 @@ public class World implements TileBasedMap {
 		    }
 		} else {
 		    e.updateEntity(delta);
+		    
+		    if (e instanceof ITargetLines && e.isSelected) {
+			for (TargetLine tl : ((ITargetLines)e).getTargetLines()) {
+			    tl.update(delta);
+			}
+		    }		    
 		}
 	    }
 	}  	
@@ -236,6 +250,12 @@ public class World implements TileBasedMap {
 	    for (Entity e : this.entities) {		    
 		if (!e.isDead() && e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
 		    e.renderEntity(g);
+		    
+		    if (e instanceof ITargetLines && e.isSelected) {
+			for (TargetLine tl : ((ITargetLines) e).getTargetLines()) {
+			    tl.render(g);
+			}
+		    }
 		}
 	    }
 	}	

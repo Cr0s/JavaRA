@@ -1,5 +1,8 @@
 package cr0s.javara.entity.building;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -7,6 +10,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -15,10 +19,12 @@ import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.ITargetLines;
+import cr0s.javara.order.TargetLine;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor {
+public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor, ITargetLines {
 
     private SpriteSheet sheet;
 
@@ -42,6 +48,8 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     // Ore capacity
     public static final int MAX_CAPACITY = 2000;
     public static final int PIPS_COUNT = 17;
+    
+    private LinkedList<TargetLine> targetLines = new LinkedList<>();
     
     public EntityProc(Integer tileX, Integer tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
@@ -180,5 +188,24 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     @Override
     public int getOreCapacityValue() {
 	return this.MAX_CAPACITY;
+    }
+
+    @Override
+    public LinkedList<TargetLine> getTargetLines() {
+	return linkedHarvestersLines();
+    }
+
+    private LinkedList<TargetLine> linkedHarvestersLines() {
+	this.targetLines.clear();
+	
+	for (Entity e : world.getEntitiesList()) {
+	    if (e instanceof EntityHarvester) {
+		if (((EntityHarvester)e).linkedProc == this) {
+		    this.targetLines.add(new TargetLine(new Point(this.boundingBox.getCenterX(), this.boundingBox.getCenterY()), ((EntityHarvester) e).getCenterPos(), Color.yellow));
+		}
+	    }
+	}
+	
+	return this.targetLines;
     }        
 }
