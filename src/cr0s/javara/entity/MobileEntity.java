@@ -19,6 +19,13 @@ import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.IOrderIssuer;
+import cr0s.javara.order.IOrderResolver;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.MoveOrderTargeter;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.util.RotationUtil;
 
 public abstract class MobileEntity extends EntityActor implements Mover, IMovable, INotifyBlockingMove {
@@ -28,10 +35,15 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     public boolean isMovingToCell;   
     
     public int goalX, goalY;
+
+    protected ArrayList<OrderTargeter> ordersList;
     
     public MobileEntity(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
+	
+	ordersList = new ArrayList<>();
+	ordersList.add(new MoveOrderTargeter(this));
     }
 
 
@@ -263,4 +275,30 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     
     public abstract int getWaitAverageTime();
     public abstract int getWaitSpreadTime();
+    
+    // Orders section
+    @Override
+    public ArrayList<OrderTargeter> getOrders() {
+	return this.ordersList;
+    }
+    
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (targeter.orderString.equals("Move") && ia.mouseButton == 1) {
+	    if (!target.isCellTarget()) {
+		return null;
+	    }
+	    
+	    return new Order("Move", null, target.getTargetCell());
+	}
+	
+	return null;
+    }
+    
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Move") && order.targetPosition != null) {
+	    this.moveTo(order.targetPosition);
+	}
+    }
 }

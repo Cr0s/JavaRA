@@ -10,6 +10,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
@@ -19,7 +20,12 @@ import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.main.CursorType;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
@@ -62,6 +68,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	this.currentFacing = 16;
 	
 	this.buildingSpeed = 35;
+	
+	this.ordersList.add(new McvDeployTargeter(this));
     }
 
     @Override
@@ -219,5 +227,39 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     @Override
     public int getWaitSpreadTime() {
 	return this.WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS;
-    }    
+    }   
+    
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (targeter.orderString.equals("Deploy") && ia.mouseButton == 1) {
+	    return new Order("Deploy", null, null);
+	}
+	
+	return super.issueOrder(self, targeter, target, ia);
+    }
+    
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Move") && order.targetPosition != null) {
+	    this.moveTo(order.targetPosition);
+	} else if (order.orderString.equals("Deploy")) {
+	    this.deploy();
+	}
+    }
+    
+    private class McvDeployTargeter extends OrderTargeter {
+	public McvDeployTargeter(EntityActor ent) {
+	    super("Deploy", 8, true, false, ent);
+	}
+
+	@Override
+	public boolean canTarget(Entity self, Target target) {
+	    return (self instanceof EntityMcv) && (target.getTargetEntity() == self);
+	}
+
+	@Override
+	public CursorType getCursorForTarget(Entity self, Target target) {
+	    return (((EntityMcv)self).canDeploy()) ? CursorType.CURSOR_DEPLOY : CursorType.CURSOR_NO_DEPLOY;
+	}
+    }
 }

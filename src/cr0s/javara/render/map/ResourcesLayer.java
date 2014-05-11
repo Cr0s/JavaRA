@@ -151,4 +151,8 @@ public class ResourcesLayer {
 	
 	return -1;
     }
+
+    public boolean isCellEmpty(Point targetCell) {
+	return isCellEmpty((int) targetCell.getX(), (int) targetCell.getY());
+    }
 }

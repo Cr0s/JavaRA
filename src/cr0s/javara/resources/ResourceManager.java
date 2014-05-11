@@ -57,6 +57,10 @@ public class ResourceManager {
     public static final String DEPLOY_CURSOR = CURSORS_FOLDER + "deploy.tga";
     
     public static final String NO_DEPLOY_CURSOR = CURSORS_FOLDER + "no_deploy.tga";
+    public static final String ATTACK_CURSOR = CURSORS_FOLDER + "attack.tga";
+    public static final String ENTER_CURSOR = CURSORS_FOLDER + "enter.tga";
+    public static final String NO_ENTER_CURSOR = CURSORS_FOLDER + "no_enter.tga";
+    
     public static final String SIDEBAR_CATEGORIES_SHEET = RESOURCE_FOLDER + "sidebar_buttons.png";
     
     public static Cursor pointerCursor;

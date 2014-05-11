@@ -16,358 +16,354 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
+import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 
 public class StateGameMap extends BasicGameState {
-	public static final int STATE_ID = 1;
+    public static final int STATE_ID = 1;
 
-	private GameContainer container;
-	
-	private Point pressStart = new Point(0, 0);
-	private boolean selectionRectVisible = true;
-	private Rectangle selectionRect = new Rectangle(0, 0, 0, 0);
-	private Color selectionFillColor = new Color(0, 0, 0, 64);
-	
-	private boolean isAnyMovableEntitySelected = false;
-	
-	private Entity mouseOverEntity = null;
-	
-	public StateGameMap(final GameContainer container) {
-		this.container = container;
-	}
-	
-	@Override
-	public void mouseDragged(final int arg0, final int arg1, final int newX, final int newY) {
-	    if (Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
-		if (!this.selectionRectVisible) {
-		    this.selectionRectVisible = true;
-		}
-		
-		float startX = this.pressStart.getX();
-		float startY = this.pressStart.getY();
-		
-		float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
-		float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
-		float s;
-		
-		// Swap if necessary
-		if (startX > endX) {
-		    s = endX;
-		    endX = startX;
-		    startX = s;
-		}
+    private GameContainer container;
 
-		if (startY > endY) {
-		    s = endY;
-		    endY = startY;
-		    startY = s;
-		}
-		
-		int boxH = (int) (endY - startY);
-		int boxW = (int) (endX - startX);
-		
-		this.selectionRect.setBounds(startX, startY, boxW, boxH);	
+    private Point pressStart = new Point(0, 0);
+    private boolean selectionRectVisible = true;
+    private Rectangle selectionRect = new Rectangle(0, 0, 0, 0);
+    private Color selectionFillColor = new Color(0, 0, 0, 64);
+
+    private boolean isAnyMovableEntitySelected = false;
+
+    private Entity mouseOverEntity = null;
+
+    public StateGameMap(final GameContainer container) {
+	this.container = container;
+    }
+
+    @Override
+    public void mouseDragged(final int arg0, final int arg1, final int newX, final int newY) {
+	if (Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
+	    if (!this.selectionRectVisible) {
+		this.selectionRectVisible = true;
 	    }
+
+	    float startX = this.pressStart.getX();
+	    float startY = this.pressStart.getY();
+
+	    float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
+	    float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
+	    float s;
+
+	    // Swap if necessary
+	    if (startX > endX) {
+		s = endX;
+		endX = startX;
+		startX = s;
+	    }
+
+	    if (startY > endY) {
+		s = endY;
+		endY = startY;
+		startY = s;
+	    }
+
+	    int boxH = (int) (endY - startY);
+	    int boxW = (int) (endX - startX);
+
+	    this.selectionRect.setBounds(startX, startY, boxW, boxH);	
+	}
+    }
+
+    @Override
+    public final void mouseMoved(final int arg0, final int arg1, final int x, final int y) {
+	updateCursor();
+    }
+
+    @Override
+    public final void mouseClicked(final int button, final int x, final int y, final int clickCount) {
+	Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
+
+	if (Main.getInstance().getSideBar().isMouseInsideBar()) {
+	    Main.getInstance().getSideBar().mouseClicked(button, x, y);
+	    return;
 	}
 
-	@Override
-	public final void mouseMoved(final int arg0, final int arg1, final int x, final int y) {
-	    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
-	
-	    if (e != null) {
-		if (this.mouseOverEntity != null && this.mouseOverEntity != e) {
-		    this.mouseOverEntity.isMouseOver = false;
-		} else {
-		    if (e.isSelected && this.mouseOverEntity == e) {
-			if (e instanceof IDeployable) {
-			    if (((IDeployable)e).canDeploy()) { 
-				Main.getInstance().setCursorType(CursorType.CURSOR_DEPLOY);
-			    } else {
-				Main.getInstance().setCursorType(CursorType.CURSOR_NO_DEPLOY);
-			    }
-			} else {
-			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-			}
-			return;
+	if (Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
+	    Main.getInstance().getBuildingOverlay().mouseClick(button);
+
+	    return;
+	}
+
+	Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
+
+	// Is there entity under mouse
+	Target target;
+	if (e != null) {
+	    target = new Target(e);
+	} else {
+	    target = new Target(new Point((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
+	}
+
+	// We have no selected entities
+	if (Main.getInstance().getPlayer().selectedEntities.isEmpty()) {
+	    if (target.isEntityTarget() && button == 0) {
+		Main.getInstance().getPlayer().selectOneEntity(e);
+	    } else {
+		Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    }
+	} else {
+	    InputAttributes ia = new InputAttributes(button);
+	    OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(target);
+
+	    if (targeterForEntity != null) {
+		// Issue orders to selected entities
+		for (Entity entity : Main.getInstance().getPlayer().selectedEntities) {
+		    if (!(entity instanceof EntityActor) || !entity.isSelected) {
+			continue;
 		    }
-		}
-		
-		this.mouseOverEntity = e;
-		e.isMouseOver = true;
-		
-		if (!e.isSelected) { 
-		    Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
+
+		    EntityActor ea = (EntityActor) entity;
+
+		    Order order = ea.issueOrder(ea, targeterForEntity, target, ia);
+
+		    if (order != null) {
+			ea.resolveOrder(order);
+		    } else {
+			// Current entity can't resolve this order, so de-select this entity
+			if (entity != null) { 
+			    entity.isSelected = false;
+			}
+		    }
 		}
 	    } else {
-		if (this.mouseOverEntity != null) {
-		    this.mouseOverEntity.isMouseOver = false;
-		    this.mouseOverEntity = null;
-		}
-		
-		if (!this.isAnyMovableEntitySelected) {
+		Main.getInstance().getWorld().cancelAllSelection();
+	    }
+
+	    Main.getInstance().getPlayer().removeNotActuallySelectedEntities();
+	    
+	    // No one entity left, set basic pointer cursor
+	    if (!Main.getInstance().getPlayer().isAnyActorEntitySelected()) {		
+		if (e != null && button == 0) {
+		    Main.getInstance().getPlayer().selectOneEntity(e);
+		} else {
 		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-		} else {
-		    setGotoCursorIfCellPassable(x, y);
 		}
 	    }
 	}
+    }	    	
 
-	@Override
-	public final void mouseClicked(final int button, final int x, final int y, final int clickCount) {
-	    	Main.getInstance().getController().mouseClicked(button, x, y, clickCount);
-		
-	    	if (Main.getInstance().getSideBar().isMouseInsideBar()) {
-	    	    Main.getInstance().getSideBar().mouseClicked(button, x, y);
-	    	    return;
-	    	}
-	    	
-	    	if (Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
-	    	    Main.getInstance().getBuildingOverlay().mouseClick(button);
-	    	    
-	    	    return;
-	    	}
-	    	
-		if (button == 0) { 
-		    Main.getInstance().getWorld().cancelAllSelection();
-		    
-		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
-		    
-		    if (e != null) { 
-			((ISelectable) e).select();
-			Main.getInstance().getPlayer().selectedEntities.add(e);
-			
-			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
-			if (this.isAnyMovableEntitySelected) {
-			    if (this.mouseOverEntity == e && (e instanceof IDeployable)) {
-				if (((IDeployable) e).canDeploy()) {
-				    Main.getInstance().setCursorType(CursorType.CURSOR_DEPLOY);
-				} else {
-				    Main.getInstance().setCursorType(CursorType.CURSOR_NO_DEPLOY);
-				}
-			    } else {
-				setGotoCursorIfCellPassable(x, y);
-			    }
-			} else {
-			    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-			}
-		    } else {
-			Main.getInstance().getPlayer().selectedEntities.clear();
-			this.isAnyMovableEntitySelected = false;
-			Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-		    }
-		} else if (button == 1) {
-		    Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
-		    
-		    if (e != null) { 
-			this.isAnyMovableEntitySelected = (e != null && e instanceof IMovable);
-			
-			if (this.mouseOverEntity == e && (e instanceof IDeployable) && (e.isSelected)) {
-			    if (((IDeployable) e).canDeploy()) { 
-				((IDeployable) e).deploy();
-
-				this.isAnyMovableEntitySelected = false;
-				this.mouseOverEntity = null;
-
-				Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
-			    }
-			}
-		    } else {
-			if (this.isAnyMovableEntitySelected && Main.getInstance().getCursor() != CursorType.CURSOR_NO_GOTO) {
-			    float destX = -Main.getInstance().getCamera().getOffsetX() + x;
-			    float destY = -Main.getInstance().getCamera().getOffsetY() + y;
-
-			    Main.getInstance().getPlayer().postMoveOrder(destX, destY);			    
-			}
-		    }
-		}
+    @Override
+    public final void mousePressed(final int button, final int x, final int y) {
+	if (button == 0) { 
+	    this.pressStart.setLocation(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
 	}
 
-	@Override
-	public final void mousePressed(final int button, final int x, final int y) {
-	    	if (button == 0) { 
-	    	    this.pressStart.setLocation(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
-	    	}
-	    	
-		Main.getInstance().getController().mousePressed(button, x, y);
+	Main.getInstance().getController().mousePressed(button, x, y);
+    }
+
+    @Override
+    public final void mouseReleased(final int button, final int x, final int y) {
+	Main.getInstance().getController().mouseReleased(button, x, y);
+
+	if (button == 0 && this.selectionRectVisible) {
+	    this.selectionRectVisible = false;
+
+	    if (this.selectionRect.getWidth() * this.selectionRect.getHeight() > 4) {
+		Main.getInstance().getWorld().cancelAllSelection();
+		LinkedList<Entity> entities = Main.getInstance().getWorld().selectMovableEntitiesInsideBox(this.selectionRect);
+
+		Main.getInstance().getPlayer().selectedEntities.addAll(entities);
+	    }
+	}
+    }
+
+    @Override
+    public void mouseWheelMoved(final int arg0) {
+
+    }
+
+    @Override
+    public void inputEnded() {
+
+    }
+
+    @Override
+    public void inputStarted() {
+
+    }
+
+    @Override
+    public final boolean isAcceptingInput() {
+	return true;
+    }
+
+    @Override
+    public void setInput(final Input arg0) {
+
+    }
+
+    @Override
+    public final void keyPressed(final int arg0, final char arg1) {
+	if (this.container.getInput().isKeyDown(Input.KEY_ESCAPE)) {
+	    Main.getInstance().enterState(StatePauseMenu.STATE_ID);
+	}
+    }
+
+    @Override
+    public void keyReleased(final int arg0, final char arg1) {
+
+    }
+
+    @Override
+    public void controllerButtonPressed(final int arg0, final int arg1) {
+
+    }
+
+    @Override
+    public void controllerButtonReleased(final int arg0, final int arg1) {
+
+    }
+
+    @Override
+    public void controllerDownPressed(final int arg0) {
+
+    }
+
+    @Override
+    public void controllerDownReleased(final int arg0) {
+
+    }
+
+    @Override
+    public void controllerLeftPressed(final int arg0) {
+
+    }
+
+    @Override
+    public void controllerLeftReleased(final int arg0) {
+
+    }
+
+    @Override
+    public void controllerRightPressed(final int arg0) {
+
+
+    }
+
+    @Override
+    public void controllerRightReleased(final int arg0) {
+
+    }
+
+    @Override
+    public void controllerUpPressed(final int arg0) {
+
+
+    }
+
+    @Override
+    public void controllerUpReleased(final int arg0) {
+
+
+    }
+
+    @Override
+    public void enter(final GameContainer c, final StateBasedGame sbg)
+	    throws SlickException {
+    }
+
+    @Override
+    public final int getID() {
+	return this.STATE_ID;
+    }
+
+    @Override
+    public void init(final GameContainer arg0, final StateBasedGame arg1)
+	    throws SlickException {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void leave(final GameContainer arg0, final StateBasedGame arg1)
+	    throws SlickException {
+    }
+
+    @Override
+    public final void render(final GameContainer arg0, final StateBasedGame arg1, final Graphics g)
+	    throws SlickException {
+	Main.getInstance().getWorld().render(g);
+
+	if (this.selectionRectVisible) {
+	    g.setLineWidth(2);
+	    g.setColor(Color.white);
+	    g.draw(selectionRect);
+
+	    g.setColor(this.selectionFillColor);
+	    g.fillRect(selectionRect.getMinX() + 2, selectionRect.getMinY() + 2, selectionRect.getWidth() - 2, selectionRect.getHeight() - 2);
 	}
 
-	@Override
-	public final void mouseReleased(final int button, final int x, final int y) {
-	    Main.getInstance().getController().mouseReleased(button, x, y);
+	Main.getInstance().getCamera().renderFinish(container, g);
+
+	Main.getInstance().getSideBar().render(g);
+    }
+
+    @Override
+    public final void update(final GameContainer arg0, final StateBasedGame arg1, final int delta)
+	    throws SlickException {
+
+	Main.getInstance().getController().update(container, delta);
+	Main.getInstance().getCamera().update(container, delta);
+	updateCursor();
+
+	Main.getInstance().getWorld().update(delta);
+	Main.getInstance().getSideBar().update(delta);
+    }
+
+    private void updateCursor() {
+	int x = Main.getInstance().getContainer().getInput().getMouseX();
+	int y = Main.getInstance().getContainer().getInput().getMouseY();
+	Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
+
+	// Is there entity under mouse
+	Target target;
+	if (e != null) {
+	    if (this.mouseOverEntity != null) {
+		this.mouseOverEntity.isMouseOver = false;
+	    }
 	    
-	    if (button == 0 && this.selectionRectVisible) {
-		this.selectionRectVisible = false;
-		
-		if (this.selectionRect.getWidth() * this.selectionRect.getHeight() > 4) {
-		    LinkedList<Entity> entities = Main.getInstance().getWorld().selectMovableEntitiesInsideBox(this.selectionRect);
-		    
-		    Main.getInstance().getPlayer().selectedEntities.addAll(entities);
-		    
-		    for (Entity e : entities) {
-			if (e instanceof IMovable) {
-			    this.isAnyMovableEntitySelected = true;
-			    setGotoCursorIfCellPassable(x, y);
-			    return;
-			}
-		    }
-		    
-		    
-		    this.isAnyMovableEntitySelected = false;
-		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);    
+	    this.mouseOverEntity = e;
+	    e.isMouseOver = true;
+	    
+	    target = new Target(e);
+	} else {
+	    if (this.mouseOverEntity != null) {
+		this.mouseOverEntity.isMouseOver = false;
+		this.mouseOverEntity = null;
+	    }
+	    
+	    target = new Target(new Point((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
+	}
+
+	// We have no selected entities
+	if (Main.getInstance().getPlayer().selectedEntities.isEmpty()) {
+	    if (target.isEntityTarget()) {
+		Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
+	    } else {
+		Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    }
+	} else if (!Main.getInstance().getPlayer().selectedEntities.isEmpty()) {
+	    OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(target);
+
+	    if (targeterForEntity != null) {
+		Main.getInstance().setCursorType(targeterForEntity.getCursorForTarget(targeterForEntity.entity, target));
+	    } else {
+		if (e != null) {
+		    Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
+		} else {
+		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 		}
 	    }
 	}
-
-	private void setGotoCursorIfCellPassable(int mouseX, int mouseY) {
-		int cellX = (int) (-Main.getInstance().getCamera().getOffsetX() + mouseX) / 24;
-		int cellY = (int) (-Main.getInstance().getCamera().getOffsetY() + mouseY) / 24;
-
-		if (Main.getInstance().getWorld().isCellPassable(cellX, cellY)) {
-		    Main.getInstance().setCursorType(CursorType.CURSOR_GOTO);
-		} else {
-		    Main.getInstance().setCursorType(CursorType.CURSOR_NO_GOTO);
-		}	    
-	}
-	
-	@Override
-	public void mouseWheelMoved(final int arg0) {
-		
-	}
-
-	@Override
-	public void inputEnded() {
-		
-	}
-
-	@Override
-	public void inputStarted() {
-		
-	}
-
-	@Override
-	public final boolean isAcceptingInput() {
-		return true;
-	}
-
-	@Override
-	public void setInput(final Input arg0) {
-		
-	}
-
-	@Override
-	public final void keyPressed(final int arg0, final char arg1) {
-		if (this.container.getInput().isKeyDown(Input.KEY_ESCAPE)) {
-			Main.getInstance().enterState(StatePauseMenu.STATE_ID);
-		}
-	}
-
-	@Override
-	public void keyReleased(final int arg0, final char arg1) {
-
-	}
-
-	@Override
-	public void controllerButtonPressed(final int arg0, final int arg1) {
-		
-	}
-
-	@Override
-	public void controllerButtonReleased(final int arg0, final int arg1) {
-		
-	}
-
-	@Override
-	public void controllerDownPressed(final int arg0) {
-		
-	}
-
-	@Override
-	public void controllerDownReleased(final int arg0) {
-		
-	}
-
-	@Override
-	public void controllerLeftPressed(final int arg0) {
-		
-	}
-
-	@Override
-	public void controllerLeftReleased(final int arg0) {
-
-	}
-
-	@Override
-	public void controllerRightPressed(final int arg0) {
-
-		
-	}
-
-	@Override
-	public void controllerRightReleased(final int arg0) {
-
-	}
-
-	@Override
-	public void controllerUpPressed(final int arg0) {
-
-		
-	}
-
-	@Override
-	public void controllerUpReleased(final int arg0) {
-
-		
-	}
-
-	@Override
-	public void enter(final GameContainer c, final StateBasedGame sbg)
-			throws SlickException {
-	}
-
-	@Override
-	public final int getID() {
-		return this.STATE_ID;
-	}
-
-	@Override
-	public void init(final GameContainer arg0, final StateBasedGame arg1)
-			throws SlickException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void leave(final GameContainer arg0, final StateBasedGame arg1)
-			throws SlickException {
-	}
-
-	@Override
-	public final void render(final GameContainer arg0, final StateBasedGame arg1, final Graphics g)
-			throws SlickException {
-		Main.getInstance().getWorld().render(g);
-		
-		if (this.selectionRectVisible) {
-		    g.setLineWidth(2);
-		    g.setColor(Color.white);
-		    g.draw(selectionRect);
-		    
-		    g.setColor(this.selectionFillColor);
-		    g.fillRect(selectionRect.getMinX() + 2, selectionRect.getMinY() + 2, selectionRect.getWidth() - 2, selectionRect.getHeight() - 2);
-		}
-				
-		Main.getInstance().getCamera().renderFinish(container, g);
-		
-		Main.getInstance().getSideBar().render(g);
-	}
-
-	@Override
-	public final void update(final GameContainer arg0, final StateBasedGame arg1, final int delta)
-			throws SlickException {
-	    
-		Main.getInstance().getController().update(container, delta);
-		Main.getInstance().getCamera().update(container, delta);
-		Main.getInstance().getWorld().update(delta);
-
-		Main.getInstance().getSideBar().update(delta);
-	}
-
+    }
 }

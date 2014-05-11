@@ -9,11 +9,13 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Wait;
@@ -27,7 +29,12 @@ import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.main.CursorType;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.render.map.ResourcesLayer;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
@@ -47,38 +54,38 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     private static final int TEXTURE_WIDTH = 48;
     private static final int TEXTURE_HEIGHT = 48;
     private static final int SHROUD_REVEALING_RANGE = 5;
-    
+
     private static final int WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS = 30;
     private static final int WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS = 10;
-    
+
     private static final int PIP_COUNT = 7;
 
     private int updateTicks = 0;
 
     private boolean isHarvesting = false; // TODO: make harvesting animation
-    
+
     public EntityProc linkedProc;
     public Point lastOrderPoint;
     public Point lastHarvestedPoint;
-    
+
     public static final int SEARCH_RADIUS_FROM_PROC = 30;
     public static final int SEARCH_RADIUS_FROM_ORDER = 25;
-    
+
     private static final int CAPACITY = 20;
     public static final int LOAD_TICKS_PER_BALE = 7;
 
     private HashMap<Integer, Integer> contents;
     private int harvestingFrame;
-  
+
     private final static int HARVESTING_FRAMES = 8;
     private final static int HARVESTING_FRAMES_DELAY_TICKS = 1;
     private int harvestingTicks = HARVESTING_FRAMES_DELAY_TICKS;
-    
+
     public final static int DROPPING_FRAMES = 15;
     public final static int DROPPING_FRAMES_DELAY_TICKS = 2;
     private int droppingTicks = DROPPING_FRAMES_DELAY_TICKS;
     private int droppingFrame;
-    
+
     public EntityHarvester(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -88,10 +95,13 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	this.setHp(50);
 	this.setMaxHp(50);
-	
+
 	this.buildingSpeed = 80;
 
 	this.contents = new HashMap<>();
+
+	this.ordersList.add(new HarvestTargeter(this));
+	this.ordersList.add(new DeliverTargeter(this));
     }
 
     @Override
@@ -108,9 +118,9 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	} else if ((this.currentActivity instanceof DropResources)) {
 	    if (--this.droppingTicks <= 0) {
 		this.droppingTicks = this.DROPPING_FRAMES_DELAY_TICKS;
-		
+
 		this.droppingFrame++;
-		
+
 		// Repeat dropping sequence
 		if (this.droppingFrame == this.DROPPING_FRAMES) {
 		    this.droppingFrame = this.DROPPING_FRAMES - 5;
@@ -119,9 +129,9 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	} else if ((this.currentActivity instanceof FinishDrop)) {
 	    if (--this.droppingTicks <= 0) {
 		this.droppingTicks = this.DROPPING_FRAMES_DELAY_TICKS;
-		
+
 		this.droppingFrame++;
-		
+
 		if (this.droppingFrame >= this.DROPPING_FRAMES) {
 		    this.droppingFrame = this.DROPPING_FRAMES - 1;
 		}
@@ -132,30 +142,30 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     @Override
     public void renderEntity(Graphics g) {
 	super.renderEntity(g);
-	
+
 	if (Main.DEBUG_MODE) {
-	g.setLineWidth(1);
-	g.setColor(owner.playerColor);
-	g.draw(boundingBox);
-	//g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
+	    g.setLineWidth(1);
+	    g.setColor(owner.playerColor);
+	    g.draw(boundingBox);
+	    //g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
 	}
 
 	float tx = this.getTextureX();
 	float ty = this.getTextureY();
 
 	texture.startUse();
-	
+
 	if ((this.currentActivity instanceof Wait) || (this.currentActivity instanceof HarvestResource)) {
 	    texture.getSubImage(0, 32 + (HARVESTING_FRAMES * RotationUtil.quantizeHarvestingFacing(this.currentFacing) + harvestingFrame)).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT); 	    
 	} else if ((this.currentFacing == EntityProc.HARV_FACING) 
 		&& ((this.currentActivity instanceof DropResources) || (this.currentActivity instanceof FinishDrop))) {
 	    boolean isFinishing = (this.currentActivity instanceof FinishDrop);
-	    
+
 	    texture.getSubImage(0, 32 + (HARVESTING_FRAMES * 8) + ((isFinishing) ? DROPPING_FRAMES - this.droppingFrame :this.droppingFrame)).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	} else {
 	    texture.getSubImage(0, this.currentFacing).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	}
-	
+
 	texture.endUse();
 
 	drawPath(g);
@@ -179,7 +189,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     @Override
     public boolean moveTo(int tileX, int tileY) {
 	super.moveTo(new Point(tileX / 24, tileY / 24));
-	
+
 	return true;
     }
 
@@ -212,12 +222,12 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
 	return world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
     }
-    
+
     @Override
     public int getMinimumEnoughRange() {
 	return 3;
     }
-    
+
     @Override
     public boolean canEnterCell(Point cellPos) {
 	return world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
@@ -232,7 +242,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     public int getWaitSpreadTime() {
 	return this.WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS;
     }
-    
+
     public void acceptResource(int resourceType) {
 	if (!contents.containsKey(resourceType)) {
 	    contents.put(resourceType, 1);
@@ -241,25 +251,25 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	    contents.remove(resourceType);
 	    contents.put(resourceType, previousValue + 1);
 	}
-	
-	
+
+
     }
-    
+
     public boolean isFull() {
 	return getCapacity() >= this.CAPACITY;
     }
-    
+
     public boolean isEmpty() {
 	return getCapacity() == 0;
     }
-    
+
     public int getCapacity() {
 	int sum = 0;
-	
+
 	for (Integer value : this.contents.values()) {
 	    sum += value;
 	}
-	
+
 	return sum;
     }
 
@@ -269,7 +279,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 		this.linkedProc.acceptResources(((x == 1) ? 25 : 50) * this.contents.get(x));
 	    }
 	}
-	
+
 	this.contents.clear();
     }
 
@@ -284,7 +294,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	for (Integer x : this.contents.keySet()) {
 	    int value = this.contents.get(x);
-	    
+
 	    if (n < value) {
 		return (x == 1) ? Color.yellow : Color.red;
 	    } else {
@@ -294,4 +304,83 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	return null;
     }
+
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (targeter.orderString.equals("Harvest") && ia.mouseButton == 1) {
+	    return new Order("Harvest", null, target.getTargetCell());
+	} else if (targeter.orderString.equals("Deliver") && ia.mouseButton == 1) {
+	    return new Order("Deliver", null, null, target.getTargetEntity());
+	}
+
+	return super.issueOrder(self, targeter, target, ia);
+    }
+
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Harvest")) {
+	    this.lastHarvestedPoint = order.targetPosition;
+	    
+	    cancelActivity();
+	    
+	    this.moveTo(order.targetPosition);
+	    queueActivity(new FindResources());
+	} else if (order.orderString.equals("Deliver")) {
+	    Entity e = order.targetEntity;
+	    
+	    if (e != null && (e instanceof EntityProc)) {
+		this.linkedProc = (EntityProc) e;
+		
+		if (isIdle() || (!(this.currentActivity instanceof DropResources) && !(this.currentActivity instanceof FinishDrop))) { 
+		    cancelActivity();
+		}
+		
+		queueActivity(new DeliverResources());
+	    }
+	} else {
+	    super.resolveOrder(order);
+	}
+    }    
+
+    private class HarvestTargeter extends OrderTargeter {
+	public HarvestTargeter(EntityActor ent) {
+	    super("Harvest", 6, true, false, ent);
+	}
+
+	@Override
+	public boolean canTarget(Entity self, Target target) {
+	    return target.isCellTarget() && (self instanceof EntityHarvester) && !self.world.getMap().getResourcesLayer().isCellEmpty(target.getTargetCell());
+	}
+
+	@Override
+	public CursorType getCursorForTarget(Entity self, Target target) {
+	    return CursorType.CURSOR_ATTACK;
+	}
+    }    
+
+    private class DeliverTargeter extends OrderTargeter {
+	public DeliverTargeter(EntityActor ent) {
+	    super("Deliver", 6, true, false, ent);
+	}
+
+	@Override
+	public boolean canTarget(Entity self, Target target) {
+	    Entity e = target.getTargetEntity();
+
+	    if (e == null || !(e instanceof EntityProc) || !canEnterProc(self, target.getTargetEntity())) {
+		return false;
+	    }
+	    
+	    return true;
+	}
+
+	private boolean canEnterProc(Entity self, Entity p) {
+	    return (p != null) && (p instanceof EntityProc) && ((EntityProc) p).isFrendlyTo((EntityActor) self);
+	}
+	
+	@Override
+	public CursorType getCursorForTarget(Entity self, Target target) {
+	    return canEnterProc(self, target.getTargetEntity()) ? CursorType.CURSOR_ENTER : CursorType.CURSOR_NO_ENTER;
+	}
+    }      
 }

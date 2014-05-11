@@ -29,6 +29,8 @@ import cr0s.javara.gameplay.BuildingOverlay;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.render.Controller;
 import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileMap;
@@ -62,6 +64,7 @@ public class Main extends StateBasedGame {
     private GameSideBar gsb;
     private ShroudRenderer observerShroudRenderer;
 
+    
     public Main() {
 	super("Java RA");
     }
@@ -209,6 +212,18 @@ public class Main extends StateBasedGame {
 		this.getContainer().setMouseCursor(ResourceManager.NO_DEPLOY_CURSOR, 16, 16);
 		break;
 
+	    case CURSOR_ENTER:
+		getContainer().setAnimatedMouseCursor(ResourceManager.ENTER_CURSOR, 16, 16, 32, 32, new int[] { 80, 80, 80 });
+		break;
+		
+	    case CURSOR_NO_ENTER:
+		this.getContainer().setMouseCursor(ResourceManager.NO_ENTER_CURSOR, 16, 16);
+		break;
+		
+	    case CURSOR_ATTACK:
+		getContainer().setAnimatedMouseCursor(ResourceManager.ATTACK_CURSOR, 16, 16, 32, 32, new int[] { 50, 50, 50, 50, 50, 50, 50, 50 });
+		break;
+		
 	    default:
 		break;
 	    }
@@ -229,5 +244,4 @@ public class Main extends StateBasedGame {
     public BuildingOverlay getBuildingOverlay() {
 	return this.bo;
     }
-  
 }

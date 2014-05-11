@@ -58,7 +58,8 @@ public class FindResources extends Activity {
 
 		@Override
 		public boolean isCellChoosable(Point cellPos) {
-		    if (harv.world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY()) && !harv.world.getMap().getResourcesLayer().isCellEmpty((int) cellPos.getX(), (int) cellPos.getY())) {
+		    boolean shroudObscures = harv.owner.getShroud() != null && !harv.owner.getShroud().isExplored(cellPos);
+		    if (!shroudObscures && harv.world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY()) && !harv.world.getMap().getResourcesLayer().isCellEmpty((int) cellPos.getX(), (int) cellPos.getY())) {
 			return true;
 		    }
 		    

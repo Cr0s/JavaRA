@@ -1,5 +1,7 @@
 package cr0s.javara.render.shrouds;
 
+import org.newdawn.slick.geom.Point;
+
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.render.World;
 
@@ -59,5 +61,9 @@ public class Shroud {
     
     public ShroudRenderer getRenderer() {
 	return this.sr;
+    }
+
+    public boolean isExplored(Point cellPos) {
+	return this.isExplored((int) cellPos.getX(), (int) cellPos.getY());
     }
 }

@@ -166,7 +166,7 @@ public class World implements TileBasedMap {
 		    
 		    e.updateEntity(delta);	
 		    
-		    // Lock next entity position. Or relock current, if position is not changed
+		    // Lock next entity position. Or re-lock current, if position is not changed
 		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
 		    
 		    // If entity moving, claim next cell for it
@@ -601,5 +601,9 @@ public class World implements TileBasedMap {
 	    }
 	    
 	});
+    }
+
+    public boolean isCellPassable(Point cellPos) {
+	return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
     }
 }

@@ -1,5 +1,7 @@
 package cr0s.javara.gameplay;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.newdawn.slick.Color;
@@ -7,9 +9,12 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.render.World;
 import cr0s.javara.render.shrouds.Shroud;
 
@@ -91,5 +96,60 @@ public class Player {
 	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
+    }
+    
+    public OrderTargeter getBestOrderTargeterForTarget(Target target) {
+	if (this.selectedEntities.isEmpty()) {
+	    return null;
+	}
+	
+	OrderTargeter bestTargeter = null;
+	for (Entity e : this.selectedEntities) {
+	    if (!(e instanceof EntityActor) || e.isDead() || !e.isSelected) {
+		continue;
+	    }
+	    
+	    EntityActor actor = (EntityActor) e;
+	    
+	    for (OrderTargeter ot : actor.getOrders()) {
+		if (bestTargeter == null || (ot.canTarget(e, target) && ot.priority > bestTargeter.priority)) {
+		    bestTargeter = ot;
+		}
+	    }
+	}
+	
+	return bestTargeter;
+    }
+
+    public void selectOneEntity(Entity e) {
+	this.selectedEntities.clear();
+	
+	if (e instanceof EntityActor && !e.isDead() && e.isVisible) {
+        	e.isSelected = true;
+        	this.selectedEntities.addFirst(e);
+	}
+    }    
+    
+    public boolean isAnyActorEntitySelected() {
+	boolean isAnySelected = false;
+	
+	for (Entity e : this.selectedEntities) {
+	    if (!e.isSelected && (e instanceof EntityActor && !e.isDead() && e.isVisible)) {
+		isAnySelected = true;
+	    }
+	}
+	
+	return isAnySelected;
+    }
+    
+    public void removeNotActuallySelectedEntities() {
+	LinkedList<Entity> list = new LinkedList<>();
+	for (Entity e : this.selectedEntities) {
+	    if (e.isSelected && !e.isDead() && e.isVisible) {
+		list.add(e);
+	    }
+	}
+	
+	this.selectedEntities = list;
     }
 }
