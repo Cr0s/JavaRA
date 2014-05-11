@@ -66,27 +66,32 @@ public abstract class Entity {
 	    g.setLineWidth(2);
 	    g.setColor(Color.white);
 	    
+	    float minX = this.boundingBox.getMinX();
+	    float minY = this.boundingBox.getMinY();
+	    float maxX = this.boundingBox.getMaxX();
+	    float maxY = this.boundingBox.getMaxY();
+	    
 	    int bbWidth = (int) (this.boundingBox.getWidth() + 2*SELECTION_BOX_ADD);
 	    int bbHeight = (int) (this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD);
 	    
-	    float cornerXUpLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD;
-	    float cornerYUpLeft = this.boundingBox.getMinY() - 2*SELECTION_BOX_ADD;
+	    float cornerXUpLeft = minX - 2*SELECTION_BOX_ADD;
+	    float cornerYUpLeft = minY - 2*SELECTION_BOX_ADD;
 	    g.drawLine(cornerXUpLeft, cornerYUpLeft, cornerXUpLeft + bbWidth / REDUCE, cornerYUpLeft);
 	    g.drawLine(cornerXUpLeft, cornerYUpLeft, cornerXUpLeft, cornerYUpLeft + bbHeight / REDUCE);
 	    
-	    float cornerXDownLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD;
-	    float cornerYDownLeft = this.boundingBox.getMinY() + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
+	    float cornerXDownLeft = minX - 2*SELECTION_BOX_ADD;
+	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
 	    g.drawLine(cornerXDownLeft, cornerYDownLeft, cornerXDownLeft + bbWidth / REDUCE, cornerYDownLeft);
 	    g.drawLine(cornerXDownLeft, cornerYDownLeft, cornerXDownLeft, cornerYDownLeft - bbHeight / REDUCE);
 	    
 	    // Right corners
-	    float cornerXUpRight = this.boundingBox.getMaxX() + 2*SELECTION_BOX_ADD;
-	    float cornerYUpRight = this.boundingBox.getMaxY() - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
+	    float cornerXUpRight = maxX + 2*SELECTION_BOX_ADD;
+	    float cornerYUpRight = maxY - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
 	    g.drawLine(cornerXUpRight, cornerYUpRight, cornerXUpRight - bbWidth / REDUCE, cornerYUpRight);
 	    g.drawLine(cornerXUpRight, cornerYUpRight, cornerXUpRight, cornerYUpRight + bbHeight / REDUCE);
 	    
-	    float cornerXDownRight = this.boundingBox.getMaxX() + 2*SELECTION_BOX_ADD;
-	    float cornerYDownRight = this.boundingBox.getMaxY() + 2*SELECTION_BOX_ADD;
+	    float cornerXDownRight = maxX + 2*SELECTION_BOX_ADD;
+	    float cornerYDownRight = maxY + 2*SELECTION_BOX_ADD;
 	    g.drawLine(cornerXDownRight, cornerYDownRight, cornerXDownRight - bbWidth / REDUCE, cornerYDownRight);
 	    g.drawLine(cornerXDownRight, cornerYDownRight, cornerXDownRight, cornerYDownRight - bbHeight / REDUCE);
 	    
@@ -99,14 +104,19 @@ public abstract class Entity {
 	public void drawHpBar(Graphics g) {
 	    final int BAR_COMPRESS = 3; // "Compress" bar by N pixels from left and right
 	    
-	    float cornerXUpLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD + BAR_COMPRESS;
-	    float cornerYUpLeft = this.boundingBox.getMinY() - 2*SELECTION_BOX_ADD;
-	    float cornerXDownLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD;
-	    float cornerYDownLeft = this.boundingBox.getMinY() + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
-	    float cornerXUpRight = this.boundingBox.getMaxX() + 2*SELECTION_BOX_ADD - BAR_COMPRESS;
-	    float cornerYUpRight = this.boundingBox.getMaxY() - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
-	    float cornerXDownRight = this.boundingBox.getMaxX() + 2*SELECTION_BOX_ADD;
-	    float cornerYDownRight = this.boundingBox.getMaxY() + 2*SELECTION_BOX_ADD;
+	    float minX = this.boundingBox.getMinX();
+	    float minY = this.boundingBox.getMinY();
+	    float maxX = this.boundingBox.getMaxX();
+	    float maxY = this.boundingBox.getMaxY();
+	    
+	    float cornerXUpLeft = minX - 2*SELECTION_BOX_ADD + BAR_COMPRESS;
+	    float cornerYUpLeft = minY - 2*SELECTION_BOX_ADD;
+	    float cornerXDownLeft = minX - 2*SELECTION_BOX_ADD;
+	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
+	    float cornerXUpRight = maxX + 2*SELECTION_BOX_ADD - BAR_COMPRESS;
+	    float cornerYUpRight = maxY - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
+	    float cornerXDownRight = maxX + 2*SELECTION_BOX_ADD;
+	    float cornerYDownRight = maxY + 2*SELECTION_BOX_ADD;
 	    
 	    float barWidth = (cornerXUpRight - cornerXUpLeft) - 1;
 	    
@@ -122,9 +132,9 @@ public abstract class Entity {
 	    g.drawLine(cornerXUpLeft + 1, cornerYUpLeft - 8, cornerXUpLeft + hpBarWidth + 1, cornerYUpRight - 8);	
 	    
 	    // Draw progress bar
-	    if (this instanceof EntityBuilding && ((EntityBuilding)this).getProgressValue() != -1) {
-		int total = ((EntityBuilding)this).getMaxProgress();
-		int ready = ((EntityBuilding)this).getProgressValue();
+	    if (this instanceof EntityBuilding && ((EntityBuilding) this).getProgressValue() != -1) {
+		int total = ((EntityBuilding) this).getMaxProgress();
+		int ready = ((EntityBuilding) this).getProgressValue();
 
 		float barWidthProgress = (ready / (float) total) * barWidth;
 		
@@ -223,7 +233,7 @@ public abstract class Entity {
 	}
 	
 	public void giveDamage(int amount) {
-		if (!isInvuln ) {
+		if (!isInvuln) {
 			this.setHp(this.getHp() - amount);
 			
 			if (this.getHp() <= 0) {

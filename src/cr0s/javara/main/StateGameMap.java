@@ -36,6 +36,9 @@ public class StateGameMap extends BasicGameState {
 
     private Entity mouseOverEntity = null;
 
+    private final int CURSOR_UPDATE_INTERVAL_TICKS = 20;
+    private int cursorUpdateTicks = CURSOR_UPDATE_INTERVAL_TICKS;
+
     public StateGameMap(final GameContainer container) {
 	this.container = container;
     }
@@ -140,7 +143,7 @@ public class StateGameMap extends BasicGameState {
 	    }
 
 	    Main.getInstance().getPlayer().removeNotActuallySelectedEntities();
-	    
+
 	    // No one entity left, set basic pointer cursor
 	    if (!Main.getInstance().getPlayer().isAnyActorEntitySelected()) {		
 		if (e != null && button == 0) {
@@ -321,6 +324,17 @@ public class StateGameMap extends BasicGameState {
     }
 
     private void updateCursor() {
+	if (--this.cursorUpdateTicks <= 0) {
+	    this.cursorUpdateTicks = this.CURSOR_UPDATE_INTERVAL_TICKS;
+	    return;
+	}
+
+	if (Main.getInstance().getSideBar().isMouseInsideBar() || Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
+	    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    return;
+	}
+	
+	this.cursorUpdateTicks = this.CURSOR_UPDATE_INTERVAL_TICKS;
 	int x = Main.getInstance().getContainer().getInput().getMouseX();
 	int y = Main.getInstance().getContainer().getInput().getMouseY();
 	Entity e = Main.getInstance().getWorld().getEntityInPoint(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y);
@@ -331,17 +345,17 @@ public class StateGameMap extends BasicGameState {
 	    if (this.mouseOverEntity != null) {
 		this.mouseOverEntity.isMouseOver = false;
 	    }
-	    
+
 	    this.mouseOverEntity = e;
 	    e.isMouseOver = true;
-	    
+
 	    target = new Target(e);
 	} else {
 	    if (this.mouseOverEntity != null) {
 		this.mouseOverEntity.isMouseOver = false;
 		this.mouseOverEntity = null;
 	    }
-	    
+
 	    target = new Target(new Point((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
 	}
 
