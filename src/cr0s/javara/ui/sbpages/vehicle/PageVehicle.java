@@ -59,11 +59,9 @@ public class PageVehicle extends SideBarPage {
 	    VehicleSidebarButton vsb = (VehicleSidebarButton) button;
 	    
 	    if (vsb.getTargetVehicle() != null) {
-		if (!Main.getInstance().getPlayer().getBase().isCurrentVehicleBuilding()) {
-		    Main.getInstance().getPlayer().getBase().startBuildVehicle(vsb);
-		    
-		    Main.getInstance().getSideBar().switchPage(GameSideBar.START_PAGE_NAME);
-		}
+		Main.getInstance().getPlayer().getBase().startBuildVehicle(vsb);
+
+		Main.getInstance().getSideBar().switchPage(GameSideBar.START_PAGE_NAME);
 	    }
 	}
     }

@@ -69,6 +69,7 @@ public class Base {
     public static final int VEHICLE_MAX_PROGRESS = 48;
     private boolean isCurrentVehicleReady;
     private boolean isCurrentVehicleHold;
+    private boolean isCurrentVehicleDeployed;
     private int currentVehicleProgressTicks;
     
     public static final int WAIT_BEFORE_DEPLOY_VEHICLE = 5;
@@ -105,28 +106,43 @@ public class Base {
 	return this.currentVehicleProgress;
     }
     
+    public boolean isCurrentVehicleDeployed() {
+	return this.isCurrentVehicleDeployed;
+    }
     
     public void startBuildVehicle(VehicleSidebarButton v) {
 	this.currentVehicleProgress = 0;
 	this.currentVehicleBuilding = v;
+	this.isCurrentVehicleReady = false;
+	this.currentVehicleProgressTicks = 0;
+	this.isCurrentVehicleHold = false;
+	this.isCurrentVehicleDeployed = false;
+	
+	getPrimaryWarFactory().setProgressValue(0);
+	getPrimaryWarFactory().setMaxProgress(VEHICLE_MAX_PROGRESS);
     }
     
     private void updateCurrentVehicleBuilding() {
 	if (this.currentVehicleBuilding != null) {
-	    if (!this.isCurrentVehicleHold && !this.isCurrentVehicleReady && this.currentVehicleProgressTicks++ > 80 - currentVehicleBuilding.getTargetVehicle().getBuildingSpeed()) {
+	    if (!this.isCurrentVehicleDeployed && !this.isCurrentVehicleHold && !this.isCurrentVehicleReady && this.currentVehicleProgressTicks++ > 80 - currentVehicleBuilding.getTargetVehicle().getBuildingSpeed()) {
 		this.currentVehicleProgressTicks = 0;
 		this.currentVehicleProgress++;
-	    }
-	    
-	    if (this.currentVehicleProgress == VEHICLE_MAX_PROGRESS) {
-		this.isCurrentVehicleReady = true;
-	    }
-	    
-	    if (this.isCurrentVehicleReady && this.waitDeployVehicleTicks++ > this.WAIT_BEFORE_DEPLOY_VEHICLE) {
-		this.waitDeployVehicleTicks = 0;
 		
+		getPrimaryWarFactory().setProgressValue(this.currentVehicleProgress);
+		
+		if (this.currentVehicleProgress == VEHICLE_MAX_PROGRESS) {
+		    this.isCurrentVehicleReady = true;
+		}
+	    }
+	    
+	    if (!this.isCurrentVehicleDeployed && this.isCurrentVehicleReady && this.waitDeployVehicleTicks++ > this.WAIT_BEFORE_DEPLOY_VEHICLE) {
+		this.waitDeployVehicleTicks = 0;
+		this.isCurrentVehicleHold = false;
+		this.isCurrentVehicleReady = false;	
+		this.isCurrentVehicleDeployed = true;
+
+		getPrimaryWarFactory().setProgressValue(-1);
 		this.deployBuildedVehicle(this.currentVehicleBuilding.getTargetVehicle());
-		cancelCurrentVehicle(false);
 	    }
 	}
     }
@@ -282,14 +298,19 @@ public class Base {
     }
 
     public void deployBuildedVehicle(EntityVehicle v) {
-	// Find primary war factory
+	getPrimaryWarFactory().deployEntity(EntityVehicle.newInstance(v));
+    }
+    
+    public EntityWarFactory getPrimaryWarFactory() {
 	for (EntityBuilding b : this.buildings) {
 	    if (b instanceof EntityWarFactory) {
 		if (b.isPrimary()) {
-		    ((EntityWarFactory)b).deployEntity(EntityVehicle.newInstance(v));
+		    return (EntityWarFactory) b;
 		}
 	    }
-	}
+	}	
+	
+	return null;
     }
 
     public void setPrimaryWarFactory(EntityWarFactory entityWarFactory) {
@@ -326,6 +347,8 @@ public class Base {
 	this.isCurrentVehicleReady = false;
 	this.currentVehicleProgress = 0;
 	this.currentVehicleProgressTicks = 0;
+	
+	getPrimaryWarFactory().setProgressValue(-1);
     }
 
     public void giveOre(int aCapacity) {
