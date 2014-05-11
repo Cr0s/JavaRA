@@ -37,6 +37,7 @@ import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.map.ResourcesLayer;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.RotationUtil;
 
 public class EntityHarvester extends EntityVehicle implements ISelectable, IShroudRevealer, IPips {
@@ -339,6 +340,21 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	    super.resolveOrder(order);
 	}
     }    
+    
+    public EntityProc findClosestProc() {
+	EntityProc closestProc = null;
+	
+	for (Entity e : world.getEntitiesList()) {
+	    if (e instanceof EntityProc) {
+		int distance = PointsUtil.distanceSq(this.getCenterPos(), new Point(e.boundingBox.getCenterX(), e.boundingBox.getCenterY()));
+		if (closestProc == null || distance < PointsUtil.distanceSq(this.getCenterPos(), new Point(closestProc.boundingBox.getCenterX(), closestProc.boundingBox.getCenterY()))) {
+		    closestProc = (EntityProc) e;
+		}
+	    }
+	}
+	
+	return closestProc;
+    }
 
     private class HarvestTargeter extends OrderTargeter {
 	public HarvestTargeter(EntityActor ent) {

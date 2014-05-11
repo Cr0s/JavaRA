@@ -18,8 +18,8 @@ public class DeliverResources extends Activity {
 	EntityHarvester harv = (EntityHarvester) a;
 	
 	Point procDestPoint = null;
-	if (harv.linkedProc == null) {
-	    // TODO: harv.linkedProc = harv.owner.getBase().findClosestProc(harv);
+	if (harv.linkedProc == null || harv.linkedProc.isDead() || harv.linkedProc.isDestroyed()) {
+	    harv.linkedProc = harv.findClosestProc();
 	}
 	
 	if (harv.linkedProc == null) {
