@@ -65,6 +65,9 @@ public class GameSideBar {
     private PowerBarRenderer powerBar;
 
     private static final int POWERBAR_WIDTH = 10;
+    
+    private final int MINIMAP_UPDATE_INTERVAL_TICKS = 10;
+    private int minimapUpdateTicks = MINIMAP_UPDATE_INTERVAL_TICKS;
 
     public GameSideBar(Team aTeam, Player aPlayer) {
 	try {
@@ -202,6 +205,12 @@ public class GameSideBar {
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
 
+	if (--this.minimapUpdateTicks <= 0) {
+	    this.minimapUpdateTicks = this.MINIMAP_UPDATE_INTERVAL_TICKS;
+	    
+	    this.minimap.update(this.getBackgroundColor());
+	}
+	
 	// Update current viewport rect
 	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
 	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	

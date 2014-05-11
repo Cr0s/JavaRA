@@ -16,46 +16,30 @@ public class MinimapRenderer {
     private int width, height;
     private World w;
 
+    private Image minimapImage;
+
     public MinimapRenderer(World aWorld, int aWidth, int aHeight) {
 	this.w = aWorld;
 
 	this.width = aWidth;
 	this.height = aHeight;
+
+	try {
+	    this.minimapImage = new Image(aWidth, aHeight);
+
+	    this.minimapImage.getGraphics().setColor(Color.black);
+	    this.minimapImage.getGraphics().fillRect(0, 0, width, height);
+	} catch (SlickException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     public void renderMinimap(Point minimapPos, Graphics gr, Color filterColor) {
 	int miniX = (int) minimapPos.getX();
 	int miniY = (int) minimapPos.getY();
 
-	final int ENTITY_ADDITIONAL_SIZE = 1; // grow entity rectangle point in pixels to see on mini map more clear
-	
-	if (Main.getInstance().getPlayer().getShroud() != null) {
-	    gr.setColor(Color.black.multiply(filterColor));
-	    gr.fillRect(miniX, miniY, width, height);
-	}
-	
-	// Render terrain
-	for (int x = 0; x < width; x++) {
-	    for (int y = 0; y < height; y++) {
-		int r, g, b;
-
-		Color targetColor = getMapCellColor((int) (w.getMap().getBounds().getMinX() / 24 + x), (int) (w.getMap().getBounds().getMinY() / 24 + y));
-
-		if (targetColor != null) {
-		    gr.setColor(targetColor.multiply(filterColor));
-		    gr.fillRect(miniX + x, miniY + y, 1, 1);
-		}
-	    }
-	}
-
-	for (Entity e : w.getEntitiesList()) {
-	    int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
-	    int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
-
-	    gr.setColor(e.owner.playerColor.multiply(filterColor));
-	    gr.fillRect(miniX + cellPosX - ENTITY_ADDITIONAL_SIZE, miniY + cellPosY - ENTITY_ADDITIONAL_SIZE, (int) e.sizeWidth / 24 + ENTITY_ADDITIONAL_SIZE, (int) e.sizeHeight / 24 + ENTITY_ADDITIONAL_SIZE);
-	}
-
+	this.minimapImage.draw(miniX, miniY, filterColor);
     }
 
     private Color getMapCellColor(int cellX, int cellY) {
@@ -70,6 +54,46 @@ public class MinimapRenderer {
 	    return c;
 	} else {
 	    return w.getMap().getTileSet().terrainColors.get(TileSet.SURFACE_CLEAR_ID);
+	}
+    }
+
+    public void update( Color filterColor) {
+	Graphics gr;
+	try {
+	    gr = this.minimapImage.getGraphics();
+
+
+	    final int ENTITY_ADDITIONAL_SIZE = 1; // grow entity rectangle point in pixels to see on mini map more clear
+
+	    if (Main.getInstance().getPlayer().getShroud() != null) {
+		gr.setColor(Color.black);
+		gr.fillRect(0, 0, width, height);
+	    }
+
+	    // Render terrain
+	    for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+		    int r, g, b;
+
+		    Color targetColor = getMapCellColor((int) (w.getMap().getBounds().getMinX() / 24 + x), (int) (w.getMap().getBounds().getMinY() / 24 + y));
+
+		    if (targetColor != null) {
+			gr.setColor(targetColor);
+			gr.fillRect(x, y, 1, 1);
+		    }
+		}
+	    }
+
+	    for (Entity e : w.getEntitiesList()) {
+		int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
+		int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
+
+		gr.setColor(e.owner.playerColor.multiply(filterColor));
+		gr.fillRect(cellPosX - ENTITY_ADDITIONAL_SIZE, cellPosY - ENTITY_ADDITIONAL_SIZE, (int) e.sizeWidth / 24 + ENTITY_ADDITIONAL_SIZE, (int) e.sizeHeight / 24 + ENTITY_ADDITIONAL_SIZE);
+	    }
+	} catch (SlickException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
 	}
     }
 }
