@@ -2,7 +2,7 @@ package cr0s.javara.util;
 
 import org.newdawn.slick.geom.Point;
 
-public class InterpolatePos {
+public class PointsUtil {
     public static Point interpolatePos(Point from, Point to, int mul, int div) {
 	int fx = (int) from.getX();
 	int fy = (int) from.getY();
@@ -21,4 +21,11 @@ public class InterpolatePos {
     {
 	return a + (b - a) * mul / div;
     }    
+    
+    public static int distanceSq(Point p1, Point p2) {
+	float dx = p1.getX() - p2.getX();
+	float dy = p1.getY() - p2.getY();
+	
+	return (int) Math.ceil(dx * dx + dy * dy);
+    }
 }

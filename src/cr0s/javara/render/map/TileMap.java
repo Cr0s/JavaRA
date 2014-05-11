@@ -330,12 +330,6 @@ public class TileMap {
 
     public boolean isInMap(float x, float y) {
 	return this.bounds.contains(x, y);
-	/*return (
-		(x >= this.bounds.getMinX()) 
-			&& (x <= this.bounds.getMaxX())
-		&& (y >= this.bounds.getMinY() 
-			&& (y <= this.bounds.getMaxY()))
-	);*/
     }
 
     public ArrayList<Point> getSpawnPoints() {

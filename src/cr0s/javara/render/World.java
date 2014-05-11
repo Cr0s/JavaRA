@@ -64,8 +64,8 @@ public class World implements TileBasedMap {
 
     private final int PASSES_COUNT = 3;
 
-    public int[][] blockingMap;
-    public int[][] blockingEntityMap;
+    public int blockingMap[][];
+    public int blockingEntityMap[][];
     
     boolean canRender = true;
     
@@ -73,6 +73,9 @@ public class World implements TileBasedMap {
     private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
     
     private Random random;
+    
+    private final int MAX_RANGE = 50;
+    private ArrayList<Point> pointsInRange[] = new ArrayList[MAX_RANGE + 1];
     
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
@@ -90,6 +93,21 @@ public class World implements TileBasedMap {
 	camera.map = map;
 
 	this.random = new Random(System.currentTimeMillis());
+	generateRangePoints();
+    }
+
+    private void generateRangePoints() {
+	for (int i = 0; i < MAX_RANGE + 1; i++) {
+	    pointsInRange[i] = new ArrayList<>();
+	}
+
+	for (int j = -MAX_RANGE; j <= MAX_RANGE; j++) {
+	    for (int i = -MAX_RANGE; i <= MAX_RANGE; i++) {
+		if (MAX_RANGE * MAX_RANGE >= i * i + j * j) {
+		    pointsInRange[(int)Math.ceil(Math.sqrt(i * i + j * j))].add(new Point(i, j));
+		}
+	    }
+	}
     }
 
     public void update(int delta) {
@@ -573,22 +591,20 @@ public class World implements TileBasedMap {
     
     public ArrayList<Point> chooseTilesInCircle(Point centerPos, int range, CellChooser chooser) {
 	ArrayList<Point> res = new ArrayList<Point>();
-	
-	for (int x = -range; x <= range; x++) {
-	    for (int y = -range; y <= range; y++) {
-		if (range * range < x * x + y * y) {
-		    int cellPosX = (int) centerPos.getX() + x;
-		    int cellPosY = (int) centerPos.getY() + y;
-		    
-		    Point cellPoint = new Point(cellPosX, cellPosY);
-		    
-		    if (chooser.isCellChoosable(cellPoint)) {
-			res.add(cellPoint);
-		    }
+
+	for (int i = 0; i <= range; i++) {
+	    for (Point p : this.pointsInRange[i]) {
+		int cellPosX = (int) (centerPos.getX() + p.getX());
+		int cellPosY = (int) (centerPos.getY() + p.getY());
+
+		Point cellPoint = new Point(cellPosX, cellPosY);
+
+		if (map.isInMap(cellPosX * 24, cellPosY * 24) && chooser.isCellChoosable(cellPoint)) {
+		    res.add(cellPoint);
 		}
 	    }
 	}
-	
+
 	return res;
     }
     

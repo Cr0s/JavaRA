@@ -5,7 +5,7 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
-import cr0s.javara.util.InterpolatePos;
+import cr0s.javara.util.PointsUtil;
 
 public class Drag extends Activity {
     
@@ -32,7 +32,7 @@ public class Drag extends Activity {
 	//Point currentPos = me.getPos();
 	Point nextPos;
 	if (lengthInTicks > 1) { 
-	    nextPos = InterpolatePos.interpolatePos(start, end, ticks, lengthInTicks - 1);
+	    nextPos = PointsUtil.interpolatePos(start, end, ticks, lengthInTicks - 1);
 	} else {
 	    nextPos = end;
 	}

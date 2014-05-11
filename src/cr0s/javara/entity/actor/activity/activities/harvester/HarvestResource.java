@@ -28,13 +28,13 @@ public class HarvestResource extends Activity {
 	
 	Point currentCell = harv.getCellPos();
 	
-	// Try to find resources if we not empty and there is no resources in current cell
-	if (harv.world.getMap().getResourcesLayer().isCellEmpty((int) currentCell.getX(), (int) currentCell.getY())) {
+	// Try to find resources if there is no resources in current cell
+	if (harv.world.getMap().getResourcesLayer().isCellEmpty(currentCell)) {
 	    return findResources(currentCell);
 	}
 	
 	// We have resources there, harvest it
-	int resourceType = harv.world.getMap().getResourcesLayer().harvestCell((int) currentCell.getX(), (int) currentCell.getY());
+	int resourceType = harv.world.getMap().getResourcesLayer().harvestCell(currentCell);
 	if (resourceType != -1) { 
 	    harv.acceptResource(resourceType);
 	    harv.lastHarvestedPoint = currentCell;

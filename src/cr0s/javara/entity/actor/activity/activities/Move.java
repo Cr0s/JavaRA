@@ -12,7 +12,7 @@ import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
-import cr0s.javara.util.InterpolatePos;
+import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.RotationUtil;
 
 public class Move extends Activity {
@@ -283,7 +283,7 @@ public class Move extends Activity {
 	    Point nextPos;
 
 	    if (lengthInTicks > 1) { 
-		nextPos = InterpolatePos.interpolatePos(start, end, ticks, lengthInTicks - 1);
+		nextPos = PointsUtil.interpolatePos(start, end, ticks, lengthInTicks - 1);
 	    } else {
 		nextPos = end;
 	    }
