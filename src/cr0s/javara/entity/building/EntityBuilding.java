@@ -15,6 +15,7 @@ import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
+import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.resources.SoundManager;
 
@@ -111,6 +112,8 @@ public abstract class EntityBuilding extends EntityActor {
 
 	this.blockingCells = new int[this.tileWidth][this.tileHeight];
 	generateCellsFromFootprint(aFootprint, this.blockingCells);
+	
+	this.fillsSpace = FillsSpace.ONE_OR_MORE_CELLS;
     }
 
     @Override

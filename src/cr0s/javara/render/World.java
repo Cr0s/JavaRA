@@ -39,6 +39,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.render.map.VehiclePathfinder;
@@ -56,39 +57,39 @@ public class World implements TileBasedMap {
     private Camera camera;
 
     private GameContainer container;
-    
+
     private VehiclePathfinder vp;
 
     private ArrayList<Player> players = new ArrayList<>();
-    
-    private ArrayList<Entity> entities = new ArrayList<>();
+
+    private LinkedList<Entity> entities = new LinkedList<>();
     private LinkedList<Entity> entitiesToAdd = new LinkedList<>();
 
     private final int PASSES_COUNT = 3;
 
     public int blockingMap[][];
-    public int blockingEntityMap[][];
-    
+    public EntityBlockingMap blockingEntityMap;
+
     boolean canRender = true;
-    
+
     private int removeDeadTicks = 0;
     private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
-    
+
     private Random random;
-    
+
     private final int MAX_RANGE = 50;
     private ArrayList<Point> pointsInRange[] = new ArrayList[MAX_RANGE + 1];
-    
+
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
 
 	this.blockingMap = new int[map.getWidth()][map.getHeight()];
-	this.blockingEntityMap = new int[map.getWidth()][map.getHeight()];
-	
+	this.blockingEntityMap = new EntityBlockingMap(this);
+
 	map.fillBlockingMap(this.blockingMap);
-	
+
 	this.vp = new VehiclePathfinder(this);
-	
+
 	this.container = c;
 
 	this.camera = camera;
@@ -118,20 +119,17 @@ public class World implements TileBasedMap {
 	} else {
 	    Main.getInstance().getObserverShroudRenderer().update(null);
 	}
-	
-	for (int i = 0; i < this.map.getHeight(); i++) {
-	    Arrays.fill(this.blockingEntityMap[i], 0);
-	}
-	
+
+
 	if (removeDeadTicks++ > REMOVE_DEAD_INTERVAL_TICKS) {
-	    ArrayList<Entity> list = new ArrayList<Entity>();
+	    LinkedList<Entity> list = new LinkedList<Entity>();
 	    for (Entity e : this.entities) {
 		if (!e.isDead()) {
 		    list.add(e);
 		}
 	    }
 	    this.entities = list;
-	    
+
 	    this.removeDeadTicks = 0;
 	}
 
@@ -146,26 +144,23 @@ public class World implements TileBasedMap {
 		    }
 		}
 	    }
-	    
+
 	    this.entities.add(e);
 	}
 	entitiesToAdd.clear();          
+
+	this.blockingEntityMap.update();
 	
 	// Update all entities
 	for (Entity e : this.entities) {
 	    if (!e.isDead()) { 
 		// Set up blocking map parameters
 		if (e instanceof MobileEntity) {
-		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
-		    
-		    // If entity moving, claim next cell for it
-		    if (((MobileEntity) e).isMovingToCell) {
-			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 1;
-		    }
+		    this.blockingEntityMap.occupyForMobileEntity((MobileEntity) e);
 		}
 	    }
 	}
-	
+
 	for (Entity e : this.entities) {
 	    if (!e.isDead()) { 
 		// Reveal shroud
@@ -174,45 +169,30 @@ public class World implements TileBasedMap {
 			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX() / 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer)e).getRevealingRange());
 		    }
 		}
-		
-		
+
+
 		// For mobile entities, after entity updated, update it's blocking map state to avoid entity movement collisions
 		if (e instanceof MobileEntity) {
-		    // Unlock current entity position
-		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 0;
-		    if (((MobileEntity) e).isMovingToCell) {
-			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 0;
-		    }
-		    
+		    this.blockingEntityMap.freeForMobileEntity((MobileEntity) e);
+
 		    e.updateEntity(delta);	
-		    
-		    if (e instanceof ITargetLines && e.isSelected) {
-			for (TargetLine tl : ((ITargetLines)e).getTargetLines()) {
-			    tl.update(delta);
-			}
-		    }
-		    
+
 		    // Lock next entity position. Or re-lock current, if position is not changed
-		    this.blockingEntityMap[(int) ((MobileEntity) e).getCellPos().getX()][(int) ((MobileEntity) e).getCellPos().getY()] = 1;
-		    
-		    // If entity moving, claim next cell for it
-		    if (((MobileEntity) e).isMovingToCell) {
-			this.blockingEntityMap[((MobileEntity) e).targetCellX][((MobileEntity) e).targetCellY] = 1;
-		    }
+		    this.blockingEntityMap.occupyForMobileEntity((MobileEntity) e);
 		} else {
-		    e.updateEntity(delta);
-		    
-		    if (e instanceof ITargetLines && e.isSelected) {
-			for (TargetLine tl : ((ITargetLines)e).getTargetLines()) {
-			    tl.update(delta);
-			}
-		    }		    
+		    e.updateEntity(delta);		    
+		}
+
+		if (e instanceof ITargetLines && e.isSelected) {
+		    for (TargetLine tl : ((ITargetLines) e).getTargetLines()) {
+			tl.update(delta);
+		    }
 		}
 	    }
 	}  	
-	
+
 	updatePlayersBases();
-	
+
 	Main.getInstance().getBuildingOverlay().update(delta);
     }
 
@@ -235,7 +215,7 @@ public class World implements TileBasedMap {
 
 	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
-	
+
 	// Render bibs
 	for (Entity e : this.entities) {		    
 	    if (!e.isDead() && e.isVisible && camera.isEntityInsideViewport(e)) { 
@@ -244,13 +224,13 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}
-	
+
 	// Make rendering passes
 	for (int i = -1; i < PASSES_COUNT; i++) {
 	    for (Entity e : this.entities) {		    
 		if (!e.isDead() && e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
 		    e.renderEntity(g);
-		    
+
 		    if (e instanceof ITargetLines && e.isSelected) {
 			for (TargetLine tl : ((ITargetLines) e).getTargetLines()) {
 			    tl.render(g);
@@ -261,12 +241,12 @@ public class World implements TileBasedMap {
 	}	
 
 	map.renderMapEntities(container, g, camera);
-	
+
 	// Debug: render blocked cells
 	if (Main.DEBUG_MODE) {
-	    for (int y = 0; y < map.getHeight(); y++) {
-		for (int x = 0; x < map.getWidth(); x++) {
-		    if (blockingEntityMap[x][y] != 0) {
+	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
+		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
+		    if (!this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) {
 			g.setColor(blockedColor);
 			g.fillRect(x * 24, y * 24, 24, 24);
 			g.setColor(pColor);
@@ -274,15 +254,15 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}	
-	
+
 	renderSelectionBoxes(g);
-	
+
 	if (Main.getInstance().getPlayer().getShroud() != null) {
 	    Main.getInstance().getPlayer().getShroud().getRenderer().renderShrouds(g);
 	} else {
 	    Main.getInstance().getObserverShroudRenderer().renderShrouds(g);
 	}
-	
+
 	Main.getInstance().getBuildingOverlay().render(g);
     }
 
@@ -292,34 +272,34 @@ public class World implements TileBasedMap {
      */
     private void renderEntityBib(final EntityBuilding b) {
 	BibType bt = b.getBibType();
-	
+
 	SpriteSheet bibSheet = ResourceManager.getInstance().getBibSheet(bt);
 	if (bt == BibType.NONE || bibSheet == null) {
 	    return;
 	}
-	
+
 	bibSheet.startUse();
 	int x = (int) b.posX, y = (int) b.posY;
 	int bibCount = 0;
-	
+
 	switch (bt) { 
 	case SMALL:
 	    bibCount = 2;
 	    break;
-	    
+
 	case MIDDLE:
 	    bibCount = 3;
 	    break;
-	    
+
 	case BIG:
 	    bibCount = 4;
 	    break;
-	    
+
 	default:
 	    bibSheet.endUse();
 	    return;
 	}
-	
+
 	if (bibCount > 1) {
 	    for (int bibY = 0; bibY < 2; bibY++) {
 		for (int bibX = 0; bibX < bibCount; bibX++) {
@@ -329,10 +309,10 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}
-	    
+
 	bibSheet.endUse();
     }
-    
+
     private void renderSelectionBoxes(Graphics g) {
 	for (Entity e : this.entities) {
 	    if (!e.isDead() && e.isVisible && camera.isEntityInsideViewport(e)) {
@@ -384,7 +364,7 @@ public class World implements TileBasedMap {
 
     public void cancelAllSelection() {
 	Main.getInstance().getPlayer().selectedEntities.clear();
-	
+
 	for (Entity e : this.entities) {
 	    if (e instanceof ISelectable) {
 		((ISelectable) e).cancelSelect();
@@ -401,8 +381,8 @@ public class World implements TileBasedMap {
     public Entity getEntityInPoint(float x, float y) {
 	return getEntityInPoint(x, y, false);
     }
-    
-    
+
+
     /**
      * Returns only non-building entity, located in point.
      * @param x point X
@@ -412,7 +392,7 @@ public class World implements TileBasedMap {
     public Entity getEntityNonBuildingInPoint(float x, float y) {
 	return getEntityInPoint(x, y, true);
     }
-    
+
     private Entity getEntityInPoint(float x, float y, boolean onlyNonBuildings) {
 	// First check non-buildings entities
 	for (Entity e : this.entities) {
@@ -436,63 +416,63 @@ public class World implements TileBasedMap {
 
 	return null;
     }
-    
+
     private void updatePlayersBases() {
 	for (Player p : this.players) {
 	    p.getBase().update();
 	}
     }
-    
+
     public void addBuildingTo(EntityBuilding b) {
 	EntityBuildingProgress ebp = new EntityBuildingProgress(b);
-	
+
 	ebp.isVisible = true;
-	
+
 	this.spawnEntityInWorld(ebp);
     }
-    
+
     public boolean isCellPassable(int x, int y) {
 	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
 	    return false;
 	}
-	
+
 	if (x < 0 || y < 0) {
 	    return false;
 	}
-	
+
 	if (!this.map.isInMap(x * 24, y * 24)) {
 	    return false;
 	}
-	
-	return (blockingEntityMap[x][y] == 0) && (blockingMap[x][y] == 0 
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BUILDING_CLEAR_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROUGH_ID);
+
+	return (this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) && (blockingMap[x][y] == 0 
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BUILDING_CLEAR_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROUGH_ID);
     }
-    
+
     public boolean isCellBuildable(int x, int y) {
 	return isCellBuildable(x, y, false);
     }
-    
+
     public boolean isCellBuildable(int x, int y, boolean isMcvDeploy) {
 	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
 	    return false;
 	}
-	
+
 	if (x < 0 || y < 0) {
 	    return false;
 	}
-	
+
 	if (!this.map.isInMap(x * 24, y * 24)) {
 	    return false;
 	}
-	
-	return (isMcvDeploy || blockingEntityMap[x][y] == 0) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
-		    || this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
+
+	return (isMcvDeploy || this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
+		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
     }
 
     @Override
@@ -519,35 +499,35 @@ public class World implements TileBasedMap {
     @Override
     public void pathFinderVisited(int arg0, int arg1) {
     }
-    
+
     public VehiclePathfinder getVehiclePathfinder() {
 	return this.vp;
     }
-    
+
     public void occupyRandomSpawnForPlayer(Player p) {
 	ArrayList<Point> spawns = this.map.getSpawnPoints();
 	Random r = new Random(System.currentTimeMillis());
-	
+
 	if (spawns.size() > 0) {
 	    int randomSpawnIndex = r.nextInt(spawns.size());
 	    Point spawnPoint = spawns.get(randomSpawnIndex);
-	    
+
 	    spawns.remove(randomSpawnIndex);
-	    
+
 	    p.setSpawn((int) spawnPoint.getX(), (int) spawnPoint.getY());
 	}
     }
-    
+
     public void addPlayer(Player p) {
 	this.players.add(p);
-	
+
 	occupyRandomSpawnForPlayer(p);
 	p.spawn();
     }
-    
+
     public boolean isPossibleToBuildHere(int x, int y, EntityBuilding eb) {
 	int[][] blockingCells = eb.getBlockingCells();
-	
+
 	for (int bX = 0; bX < eb.getWidthInTiles(); bX++) {
 	    for (int bY = 0; bY < eb.getHeight(); bY++) {
 		if (blockingCells[bX][bY] != TileSet.SURFACE_BUILDING_CLEAR_ID && !isCellBuildable(x + bX, y + bY)) {
@@ -559,14 +539,14 @@ public class World implements TileBasedMap {
 	return true;
     }
 
-    public ArrayList<Entity> getEntitiesList() {
+    public LinkedList<Entity> getEntitiesList() {
 	return this.entities;
     }
-    
+
     public EntityBuilding getBuildingInCell(Point cellPos) {
 	float worldX = cellPos.getX() * 24;
 	float worldY = cellPos.getY() * 24;
-	
+
 	for (Entity e : this.entities) {
 	    if (e instanceof EntityBuilding) {
 		if (e.boundingBox.contains(worldX, worldY)) {
@@ -574,14 +554,14 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}
-	
+
 	return null;
     }
-    
+
     public MobileEntity getMobileEntityInCell(Point cellPos) {
 	float worldX = cellPos.getX() * 24 + 12; // center of cell
 	float worldY = cellPos.getY() * 24 + 12; // center of cell
-	
+
 	for (Entity e : this.entities) {
 	    if (e instanceof MobileEntity) {
 		if (e.boundingBox.contains(worldX, worldY)) {
@@ -589,21 +569,21 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}
-	
+
 	return null;
     }
-    
+
     public boolean isCellBlockedByEntity(Point cellPos) {
 	int x = (int) cellPos.getX();
 	int y = (int) cellPos.getY();
-	
-	return (this.blockingEntityMap[x][y] != 0);
+
+	return !this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL);
     }
-    
+
     public int getRandomInt(int from, int to) {
 	return from + random.nextInt(to);
     }
-    
+
     public ArrayList<Point> chooseTilesInCircle(Point centerPos, int range, CellChooser chooser) {
 	ArrayList<Point> res = new ArrayList<Point>();
 
@@ -622,7 +602,7 @@ public class World implements TileBasedMap {
 
 	return res;
     }
-    
+
     public ArrayList<Point> choosePassableCellsInCircle(Point centerPos, int range) {
 	return this.chooseTilesInCircle(centerPos, range, new CellChooser() {
 
@@ -630,7 +610,7 @@ public class World implements TileBasedMap {
 	    public boolean isCellChoosable(Point cellPos) {
 		return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
 	    }
-	    
+
 	});
     }
 

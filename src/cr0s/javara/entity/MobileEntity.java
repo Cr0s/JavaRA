@@ -27,6 +27,7 @@ import cr0s.javara.order.MoveOrderTargeter;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.util.RotationUtil;
 
 public abstract class MobileEntity extends EntityActor implements Mover, IMovable, INotifyBlockingMove {
@@ -36,6 +37,8 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     public boolean isMovingToCell;   
     
     public int goalX, goalY;
+    public SubCell currentSubcell;
+    public SubCell desiredSubcell;
     
     public MobileEntity(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {

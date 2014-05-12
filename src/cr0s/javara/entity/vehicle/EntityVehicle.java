@@ -20,6 +20,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.Order;
+import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.util.RotationUtil;
 
@@ -54,6 +55,8 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	this.orderSounds.put("ugotit", new Integer[] { 1, 3 });
 	
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3
+	
+	this.fillsSpace = FillsSpace.ONE_CELL;
     }
 
     @Override

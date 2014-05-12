@@ -8,6 +8,7 @@ import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.World;
 
 public abstract class Entity {
@@ -39,6 +40,8 @@ public abstract class Entity {
 	
 	public float updateDelta;
 	
+	public FillsSpace fillsSpace;
+	
 	public Entity (float posX, float posY, Team team, Player owner, float aSizeWidth, float aSizeHeight) {
 		this.posX = posX;
 		this.posY = posY;
@@ -51,6 +54,8 @@ public abstract class Entity {
 		
 		this.team = team;
 		this.owner = owner;
+		
+		this.fillsSpace = FillsSpace.DONT_FILLS;
 	}
 	
 	public void setWorld(World w) {
