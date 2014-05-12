@@ -84,6 +84,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
     public final static int DROPPING_FRAMES = 15;
     public final static int DROPPING_FRAMES_DELAY_TICKS = 2;
+    private static final int MAX_FACINGS = 8;
     private int droppingTicks = DROPPING_FRAMES_DELAY_TICKS;
     private int droppingFrame;
 
@@ -157,7 +158,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	texture.startUse();
 
 	if ((this.currentActivity instanceof Wait) || (this.currentActivity instanceof HarvestResource)) {
-	    texture.getSubImage(0, 32 + (HARVESTING_FRAMES * RotationUtil.quantizeHarvestingFacing(this.currentFacing) + harvestingFrame)).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT); 	    
+	    texture.getSubImage(0, 32 + (HARVESTING_FRAMES * RotationUtil.quantizeFacings(this.currentFacing, this.MAX_FACINGS) + harvestingFrame)).drawEmbedded(tx, ty, TEXTURE_WIDTH, TEXTURE_HEIGHT); 	    
 	} else if ((this.currentFacing == EntityProc.HARV_FACING) 
 		&& ((this.currentActivity instanceof DropResources) || (this.currentActivity instanceof FinishDrop))) {
 	    boolean isFinishing = (this.currentActivity instanceof FinishDrop);

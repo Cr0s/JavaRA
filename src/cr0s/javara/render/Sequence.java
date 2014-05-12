@@ -2,7 +2,10 @@ package cr0s.javara.render;
 
 import org.newdawn.slick.Color;
 
+import cr0s.javara.entity.actor.activity.activities.Turn;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.RotationUtil;
 
 public class Sequence {
     private ShpTexture tex;
@@ -18,12 +21,23 @@ public class Sequence {
     private int currentFacing;
     
     private Color remapColor;
+    private boolean isLoop;
     
     public Sequence(ShpTexture t, int startIndex, int facingsCount, int len, int delayTicks, Color remap) {
 	this.tex = t;
 	this.start = startIndex;
 	this.facings = facingsCount;
-	this.length = len;
+	
+	if (this.facings == 0) {
+	    this.facings = 1;
+	}
+	
+	if (len > 0) {
+	    this.length = len;
+	} else {
+	    this.length = 1;
+	}
+	
 	this.ticks = delayTicks;
 	
 	this.remapColor = remap;
@@ -36,19 +50,30 @@ public class Sequence {
 	    this.currentTicks = this.ticks;
 	    
 	    if (this.length > 0) {
-		this.currentFrame++;
-
 		if (this.currentFrame >= length) {
-		    this.isFinished = true;
+		    this.currentFrame = 0;
+		    this.isFinished = !isLoop;
+		    return;
 		}
+		
+		this.currentFrame++;
+	    } else {
+		this.currentFrame = 0;
 	    }
 	}
-	
-	
     }
     
     public void render(float x, float y) {
-	this.tex.getAsImage(this.start + (this.length * this.currentFacing) + this.currentFrame, remapColor).draw(x, y);
+	int f = 0;
+	if (this.facings < 8) { 
+	    f = RotationUtil.quantizeFacings(this.currentFacing, this.facings);
+	} else {
+	    f = this.currentFacing;
+	}
+	
+	int i = this.start + (f * this.length) + (this.currentFrame % this.length);
+	
+	this.tex.getAsImage(i, remapColor).draw(x, y);
     }
 
     public boolean isFinished() {
@@ -60,5 +85,9 @@ public class Sequence {
 	this.currentTicks = 0;
 	
 	this.isFinished = false;
+    }
+    
+    public void setIsLoop(boolean loop) {
+	this.isLoop = loop;
     }
 }

@@ -329,13 +329,15 @@ public class Move extends Activity {
 	}
 
 	private void turnFacing() {
+	    int oldFacing = me.currentFacing;
+	    
 	    int newFacing = me.currentFacing;
 	    if (this.rotationDirection == RotationDirection.LEFT) {
 		newFacing = (me.currentFacing + 1) % Turn.MAX_FACING;
 	    } else if (this.rotationDirection == RotationDirection.RIGHT) {
 		newFacing = (me.currentFacing - 1) % Turn.MAX_FACING;
 	    }
-
+	    
 	    // Turn by circle
 	    if (newFacing < 0) {
 		newFacing = Turn.MAX_FACING - 1;

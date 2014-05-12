@@ -278,10 +278,10 @@ public class MoveInfantry extends Activity {
 	    this.end = new Point((aDestCell.getX() * 24) + subOffsetXnext, (aDestCell.getY() * 24) + subOffsetYnext);
 	    this.start = aStart;
 
-	    this.lengthInTicks = (int) (20 - (10 * me.getMoveSpeed()));
+	    this.lengthInTicks = (int) (40 - (10 * me.getMoveSpeed()));
 
-	    this.desiredFacing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY()) % EntityInfantry.MAX_FACING;
-	    this.desiredFacing = RotationUtil.quantizeInfantryFacing(this.desiredFacing);
+	    int facing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY()) % Turn.MAX_FACING;
+	    this.desiredFacing = RotationUtil.quantizeFacings(facing, EntityInfantry.MAX_FACING);
 	}
 
 	@Override

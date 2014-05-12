@@ -16,12 +16,6 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
 public class EntityRiffleTrooper extends EntityInfantry implements ISelectable {
-    
-    private Sequence standSequence;
-    private Sequence runSequence;
-    private ArrayList<Sequence> idleSequences = new ArrayList<>();
-
-    private int randomTicksBeforeIdleSeq = 0;
 
     public EntityRiffleTrooper(float posX, float posY, Team team, Player owner,
 	    SubCell sub) {
@@ -36,43 +30,15 @@ public class EntityRiffleTrooper extends EntityInfantry implements ISelectable {
 
 	this.standSequence = new Sequence(texture, 0, 8, 0, 0, owner.playerColor);
 	this.runSequence = new Sequence(texture, 16, 8, 6, 10, owner.playerColor);
+	this.runSequence.setIsLoop(true);
 
 	this.idleSequences.add(new Sequence(texture, 256, 0, 16, 5, owner.playerColor));
-	this.idleSequences.add(new Sequence(texture, 128, 0, 16, 5, owner.playerColor));
+	this.idleSequences.add(new Sequence(texture, 272, 0, 16, 5, owner.playerColor));
     }
 
     @Override 
     public void updateEntity(int delta) {	
 	super.updateEntity(delta);
-
-	if (this.currentActivity instanceof MoveInfantry || this.currentActivity instanceof MoveInfantry.MovePart) {
-	    this.currentSequence = this.runSequence;
-
-	    if (this.currentSequence.isFinished()) {
-		this.currentSequence.reset();
-	    }
-	} else if (isIdle()) {
-	    if (--this.randomTicksBeforeIdleSeq <= 0) {
-		this.randomTicksBeforeIdleSeq = world.getRandomInt(350, 700);
-		
-		if (this.currentSequence == null || this.currentSequence == this.standSequence || this.currentSequence.isFinished()) {
-
-		    if (this.currentSequence != null) { 
-			this.currentSequence.reset();
-		    }
-
-		    this.currentSequence = this.idleSequences.get(world.getRandomInt(0, this.idleSequences.size()));
-		}
-	    } else {
-		if (this.currentSequence == null || this.currentSequence.isFinished()) {
-		    if (this.currentSequence != null) { 
-			this.currentSequence.reset();
-		    }
-		    
-		    this.currentSequence = this.standSequence;
-		}
-	    }
-	}	
     }
 
     @Override

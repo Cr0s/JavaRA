@@ -13,6 +13,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.activities.AttackInfantry;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.building.EntityBuilding;
@@ -49,6 +50,20 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     protected int currentFrame;
     
     protected Sequence currentSequence;
+    protected Sequence standSequence;
+    protected Sequence runSequence;    
+    protected Sequence attackingSequence;
+    protected ArrayList<Sequence> idleSequences = new ArrayList<>();
+
+    private int randomTicksBeforeIdleSeq = 0;
+    
+    public enum AnimationState { IDLE, ATTACKING, MOVING, IDLE_ANIMATING };
+    protected AnimationState currentAnimationState;
+
+
+    
+    private final static int MIN_IDLE_DELAY_TICKS = 350;
+    private final static int MAX_IDLE_DELAY_TICKS = 900;
     
     public EntityInfantry(float posX, float posY, Team team, Player owner, SubCell sub) {
 	super(posX, posY, team, owner, WIDTH, HEIGHT);
@@ -59,6 +74,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.posY += subcellOffsets[sub.ordinal()].getY();
 	
 	this.fillsSpace = FillsSpace.ONE_SUBCELL;
+	
+	this.currentAnimationState = AnimationState.IDLE;
     }
     
     @Override
@@ -111,6 +128,34 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	}
 	
 	this.boundingBox.setBounds(this.posX + this.texture.width / 3 + 2, this.posY + this.texture.height / 2 - 15, 13, 18);
+	if (this.currentActivity instanceof MoveInfantry || this.currentActivity instanceof MoveInfantry.MovePart) {
+	    this.currentAnimationState = AnimationState.MOVING;
+	    this.currentSequence = this.runSequence;
+	} else if (currentActivity instanceof AttackInfantry) {
+	    this.currentAnimationState = AnimationState.ATTACKING;
+	    this.currentSequence = this.attackingSequence;
+	} else if (this.isIdle()) {
+	    if (this.currentAnimationState != AnimationState.IDLE && this.currentAnimationState != AnimationState.IDLE_ANIMATING) {
+		this.currentAnimationState = AnimationState.IDLE;
+		this.currentSequence = this.standSequence;
+	    } else if (this.currentAnimationState == AnimationState.IDLE) {
+		if (--this.randomTicksBeforeIdleSeq <= 0) {
+		    this.randomTicksBeforeIdleSeq = world.getRandomInt(this.MIN_IDLE_DELAY_TICKS, this.MAX_IDLE_DELAY_TICKS);
+		    
+		    if (this.idleSequences.size() > 0) {
+			this.currentSequence = this.idleSequences.get(world.getRandomInt(0, this.idleSequences.size()));
+			this.currentAnimationState = AnimationState.IDLE_ANIMATING;
+		    }
+		} else { // Waiting for idle animation in stand state
+		    this.currentSequence = this.standSequence;
+		}
+	    } else if (this.currentAnimationState == AnimationState.IDLE_ANIMATING) {
+		if (this.currentSequence.isFinished()) {
+		    this.currentAnimationState = AnimationState.IDLE;
+		    this.currentSequence.reset();
+		}
+	    }
+	}
     }
     
     @Override

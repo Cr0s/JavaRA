@@ -10,17 +10,28 @@ public class RotationUtil {
 	return (int) rot / 11;
     }
     
-    public static int quantizeHarvestingFacing(int facing) {
-	int step = 32 / 8; // harvester texture has 8 frames for each harvesting facings
+    public static int quantizeFacings(int facing, int max) {
+	int step = 32 / max;
 	int a = (facing + step / 2);
 	
 	return a / step;	
     }
-
-    public static int quantizeInfantryFacing(int facing) {
-	int step = 32 / 8; // infantry texture has 8 frames for each harvesting facings
-	int a = (facing + step / 2);
+    
+    /*public static int getFacingForInfantryFromDir(Point start, Point end) {
+	Point vec = new Point(end.getX() - start.getX(), end.getY() - start.getY());
 	
-	return a / step;
-    }
+	if (vec.getX() == 1 && vec.getY() == 0) {
+	    return 6; // right
+	} else if (vec.getX() == -1 && vec.getY() == 0) {
+	    return 2; // left
+	} else if (vec.getX() == 0 && vec.getY() == 1) {
+	    return 7; // down
+	} else if (vec.getX() == 0 && vec.getY() == -1) {
+	    return 0;
+	} else if (vec.getX() == -1 && vec.getY() == -1) {
+	    return 1; // top left diag
+	} else if (vec.getX() == 1 && vec.getY() == -1) {
+	    return 6; // top right diag
+	}
+    }*/
 }
