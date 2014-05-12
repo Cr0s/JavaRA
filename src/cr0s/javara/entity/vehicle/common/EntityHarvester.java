@@ -188,13 +188,6 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     }
 
     @Override
-    public boolean moveTo(int tileX, int tileY) {
-	super.moveTo(new Point(tileX / 24, tileY / 24));
-
-	return true;
-    }
-
-    @Override
     public boolean shouldRenderedInPass(int passNum) {
 	return passNum == 1;
     }
@@ -227,11 +220,6 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     @Override
     public int getMinimumEnoughRange() {
 	return 3;
-    }
-
-    @Override
-    public boolean canEnterCell(Point cellPos) {
-	return world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
     }
 
     @Override

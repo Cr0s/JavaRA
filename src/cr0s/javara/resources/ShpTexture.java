@@ -116,14 +116,14 @@ public class ShpTexture {
     
 
     public Image getAsCombinedImage(Color remapColor) {
-	return getAsCombinedImage(remapColor, false);
+	return getAsCombinedImage(remapColor, false, 0, 0);
     }
     /**
      * Gets combined image by height of all .SHP frames
      * @param remapColor
      * @return
      */
-    public Image getAsCombinedImage(Color remapColor, boolean isShadowSprite) {
+    public Image getAsCombinedImage(Color remapColor, boolean isShadowSprite, int startFrame, int endFrame) {
 	int combinedHeight = this.height * this.numImages;
 	int combinedWidth = this.width;
 
@@ -136,7 +136,11 @@ public class ShpTexture {
 	// Create big sized common image, which will combine all frames of source .SHP
 	ImageBuffer imgBuf = new ImageBuffer(combinedWidth, combinedHeight);
 
-	for (int i = 0; i < this.numImages; i++) {
+	if (endFrame == 0) {
+	    endFrame = this.numImages;
+	}
+	
+	for (int i = startFrame; i < endFrame; i++) {
 	    ImageBuffer frameBuf = null;
 	    if (!isShadowSprite) { 
 		frameBuf = remapShpFrame(i, remapColor); 

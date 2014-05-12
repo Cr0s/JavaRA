@@ -30,7 +30,7 @@ import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.util.RotationUtil;
 
-public abstract class MobileEntity extends EntityActor implements Mover, IMovable, INotifyBlockingMove {
+public abstract class MobileEntity extends EntityActor implements Mover, INotifyBlockingMove {
     protected float moveSpeed = 0.1f;
    
     public int targetCellX, targetCellY;
@@ -214,7 +214,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
 	if (pointToGetOut != null && availCells.size() != 0) {
 	    this.cancelActivity();
 	    
-	    this.queueActivity(new Move(this, pointToGetOut));
+	    this.moveTo(pointToGetOut);
 	} else { 
 	    // All cells seems to be blocked, lets try to nudge someone around
 	    // Check depth to avoid stack overflow if we fall into recursion
@@ -273,8 +273,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     public abstract float getTextureX();
     public abstract float getTextureY();    
     public abstract int getMinimumEnoughRange();
-    public abstract boolean canEnterCell(Point cellPos);
-    
+    public abstract boolean canEnterCell(Point cellPos);    
     public abstract int getWaitAverageTime();
     public abstract int getWaitSpreadTime();
     

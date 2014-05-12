@@ -8,6 +8,7 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 
 public class EntityBlockingMap {
     private World world;
@@ -120,7 +121,7 @@ public class EntityBlockingMap {
 	    this.blockingMap[(int) cellPos.getX()][(int) cellPos.getY()] = infList;
 	}
 	
-	infList.add(new Influence(SubCell.FULL_CELL, e));
+	infList.add(new Influence(sc, e));
     }    
     
     public void occupyCell(Point cellPos, Entity e) {
@@ -131,26 +132,46 @@ public class EntityBlockingMap {
     }
     
     public boolean isSubcellFree(Point pos, SubCell sub) {
+	if (sub == null) {
+	    System.out.println("ERR: null subcell!");
+	    return false;
+	}
+	
 	// Whole cell is free
 	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null) {
 	    return true;
 	}
 	
-	boolean isFree = false;
+	// Cell 100% occupied, but we need whole cell, so this cell absolutely is not free
+	if (!this.blockingMap[(int) pos.getX()][(int) pos.getY()].isEmpty() && sub == SubCell.FULL_CELL) {
+	    return false;
+	}
+	
 	for (Influence cellInf : this.blockingMap[(int) pos.getX()][(int) pos.getY()]) {
-	    if (cellInf.subcell == SubCell.FULL_CELL) {
-		return sub != SubCell.FULL_CELL;
-	    } else {
-		if (cellInf.subcell == sub) {
-		    isFree = true;
-		}
+	    if (cellInf.subcell == sub || cellInf.subcell == SubCell.FULL_CELL) {
+		return false;
 	    }
 	}
 	
-	return isFree;
+	return true;
     }
     
-    private class Influence {
+    public boolean isFullCellOccupied(Point pos) {
+	// Whole cell is free
+	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null) {
+	    return false;
+	}
+	
+	for (Influence cellInf : this.blockingMap[(int) pos.getX()][(int) pos.getY()]) {
+	    if (cellInf.subcell == SubCell.FULL_CELL) {
+		return true;
+	    } 
+	}
+	
+	return false;
+    }    
+    
+    public class Influence {
 	public SubCell subcell;
 	public Entity entity;
 	
@@ -158,5 +179,27 @@ public class EntityBlockingMap {
 	    this.subcell = sc;
 	    this.entity = e;
 	}
+    }
+
+    public SubCell getFreeSubCell(Point pos, SubCell currentSubcell) {
+	if (this.isSubcellFree(pos, currentSubcell)) {
+	    return currentSubcell;
+	}
+	
+	if (isFullCellOccupied(pos)) {
+	    return null;
+	}
+	
+	for (SubCell sc : SubCell.values()) {
+	    if (this.isSubcellFree(pos, sc)) {
+		return sc;
+	    }
+	}
+	
+	return null;
+    }
+
+    public LinkedList<Influence> getCellInfluences(Point pos) {
+	return this.blockingMap[(int) pos.getX()][(int) pos.getY()];
     }
 }

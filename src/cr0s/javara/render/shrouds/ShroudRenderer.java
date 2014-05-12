@@ -32,7 +32,7 @@ public class ShroudRenderer {
 	    }
 	}	
 	
-	this.shroudsSheet = new SpriteSheet(ResourceManager.getInstance().getConquerTexture("shadow.shp").getAsCombinedImage(null, true), 24, 24);
+	this.shroudsSheet = new SpriteSheet(ResourceManager.getInstance().getConquerTexture("shadow.shp").getAsCombinedImage(null, true, 0, 0), 24, 24);
 	System.out.println("Loaded shroud sheet: " + shroudsSheet.toString());
 	
 	spriteMap = new short[256];

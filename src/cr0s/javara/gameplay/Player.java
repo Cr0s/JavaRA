@@ -8,9 +8,10 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
-import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.infantry.EntityRiffleTrooper;
+import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -18,6 +19,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.World;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.shrouds.Shroud;
 import cr0s.javara.resources.SoundManager;
 
@@ -50,14 +52,6 @@ public class Player {
 	this.world = w;
 	this.base = new Base(team, this);
 	this.playerShroud = new Shroud(w, this);
-    }
-
-    public void postMoveOrder(float destX, float destY) {
-	for (Entity e : this.selectedEntities) {
-	    if (!e.isDead() && (e instanceof IMovable)) {
-		((IMovable)e).moveTo((int)destX, (int)destY);
-	    }
-	}
     }
 
     public Alignment getAlignment() {
@@ -99,6 +93,28 @@ public class Player {
 	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
+
+	int n = this.world.getRandomInt(15, 50);
+
+	for (int i = 0; i < n; i++) {
+	    int rx = this.spawnX + (this.world.getRandomInt(-10, 10));
+	    int ry = this.spawnY + (this.world.getRandomInt(-10, 10));
+
+	    Point randomPoint = new Point(rx, ry);
+
+	    if (!world.isCellPassable(randomPoint)) {
+		continue;
+	    }
+	    
+	    if (this.world.getRandomInt(0, 10) > 5) {
+		EntityRiffleTrooper e1 = new EntityRiffleTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		e1.isVisible = true; this.world.spawnEntityInWorld(e1);
+	    } else {
+		EntityRocketTrooper e2 = new EntityRocketTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		e2.isVisible = true; this.world.spawnEntityInWorld(e2);
+	    }
+	}
+
     }
 
     public OrderTargeter getBestOrderTargeterForTarget(Target target) {
@@ -130,11 +146,11 @@ public class Player {
 	if (e instanceof EntityActor && !e.isDead() && e.isVisible) {
 	    e.isSelected = true;
 	    this.selectedEntities.addFirst(e);
-	    
+
 	    if (e instanceof INotifySelected) {
 		((INotifySelected) e).notifySelected();
 	    }
-	    
+
 	    if (e.owner == this) { 
 		((EntityActor) e).playSelectedSound();
 	    }

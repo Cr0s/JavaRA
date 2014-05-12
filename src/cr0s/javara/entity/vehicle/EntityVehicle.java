@@ -13,7 +13,6 @@ import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.Entity;
-import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.gameplay.Player;
@@ -68,11 +67,6 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     @Override
     public void renderEntity(Graphics g) {
 	super.renderEntity(g);
-	
-	//if (this.isMovingToCell) {
-	//    g.setColor(this.nextColor);
-	//    g.fillRect(this.targetCellX * 24, this.targetCellY * 24, 24, 24);
-	//}
     }
 
     public static EntityVehicle newInstance(EntityVehicle b) {
@@ -94,10 +88,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     public int getBuildingSpeed() {
 	return this.buildingSpeed;
     }	
-    
-    @Override
-    public abstract boolean canEnterCell(Point cellPos);
-    
+
     @Override
     public void notifySelected() {
     }
@@ -162,5 +153,10 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	} else {
 	    SoundManager.getInstance().playUnitSoundGlobal(this, "affirm1", this.unitVersion);
 	}	
+    }
+    
+    @Override
+    public boolean canEnterCell(Point cellPos) {
+	return world.isCellPassable(cellPos);
     }
 }

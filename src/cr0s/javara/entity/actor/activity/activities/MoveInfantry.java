@@ -11,12 +11,13 @@ import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
-import cr0s.javara.render.EntityBlockingMap.Influence;
+import cr0s.javara.render.World;
 import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.RotationUtil;
 
-public class Move extends Activity {
+public class MoveInfantry extends Activity {
 
     private Point destCell;
     private int destRange;
@@ -34,7 +35,7 @@ public class Move extends Activity {
     private boolean isNewPath;
     private int randomWaitTicks;
 
-    public Move(MobileEntity me, Point destinationCell) {
+    public MoveInfantry(MobileEntity me, Point destinationCell) {
 	this.destCell = destinationCell;
 
 	this.randomWaitTicks = me.world.getRandomInt(1, 3);
@@ -42,19 +43,19 @@ public class Move extends Activity {
 	chooseNewPath(me);
     }
 
-    public Move(MobileEntity me, Point destinationCell, int enoughRange) {
+    public MoveInfantry(MobileEntity me, Point destinationCell, int enoughRange) {
 	this(me, destinationCell);
 
 	this.destRange = enoughRange;
     }
 
-    public Move(MobileEntity me, Point destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
+    public MoveInfantry(MobileEntity me, Point destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
 	this(me, destinationCell, enoughRange);
 
 	this.ignoreBuilding = aIgnoreBuilding;
     }
 
-    public Move(MobileEntity me, Path scriptedPath, Point destinationCell, EntityBuilding aIgnoreBuilding) {
+    public MoveInfantry(MobileEntity me, Path scriptedPath, Point destinationCell, EntityBuilding aIgnoreBuilding) {
 	this(me, destinationCell, 0);
 
 	this.currentPath = scriptedPath;
@@ -75,7 +76,17 @@ public class Move extends Activity {
 
 	Point nextCell = new Point(px, py);
 
-	if (!me.canEnterCell(nextCell) && me.world.isCellBlockedByEntity(nextCell)) {
+
+	me.desiredSubcell = me.currentSubcell;
+	if (!me.world.blockingEntityMap.isSubcellFree(nextCell, me.desiredSubcell)) {
+	    me.desiredSubcell = me.world.blockingEntityMap.getFreeSubCell(nextCell, me.currentSubcell);
+
+	    if (me.desiredSubcell == null) {
+		me.desiredSubcell = me.currentSubcell;
+	    }	    
+	}	
+
+	if (!me.canEnterCell(nextCell)) {
 	    // This building we ignore
 	    if (this.ignoreBuilding != null && me.world.getBuildingInCell(nextCell) == this.ignoreBuilding) {
 		this.hasNotifiedBlocker = false;
@@ -96,17 +107,12 @@ public class Move extends Activity {
 		return null;
 	    }
 
-	    // Notify all friendly blockers inside cell
-	    if (!hasNotifiedBlocker) {
-		for (Influence i : me.world.blockingEntityMap.getCellInfluences(nextCell)) {
-		    MobileEntity blocker = (MobileEntity) i.entity;
 
-		    // Notify blocker 
-		    if (blocker != null && blocker.isFrendlyTo(me)) {
-			blocker.notifyBlocking(me);
-		    }
-		}
-		
+	    MobileEntity blocker = me.world.getMobileEntityInCell(nextCell);
+
+	    // Notify blocker 
+	    if (blocker != null && !hasNotifiedBlocker) {
+		blocker.notifyBlocking(me);
 		this.hasNotifiedBlocker = true;
 	    }
 
@@ -243,7 +249,7 @@ public class Move extends Activity {
 
     public class MovePart extends Activity {
 
-	public Move parentMove;
+	public MoveInfantry parentMove;
 	private MobileEntity me;
 	private Point start;
 	private Point end;
@@ -256,32 +262,26 @@ public class Move extends Activity {
 
 	private boolean isNewPath;
 
-	public MovePart(Move aParentMove, MobileEntity aMe, Point aStart, Point aDestCell) {
+	public MovePart(MoveInfantry aParentMove, MobileEntity aMe, Point aStart, Point aDestCell) {
 	    this.parentMove = aParentMove;
 
 	    this.me = aMe;
 	    this.me.targetCellX = (int) aDestCell.getX();
 	    this.me.targetCellY = (int) aDestCell.getY();
 
-	    this.end = new Point(aDestCell.getX() * 24, aDestCell.getY() * 24);
+	    int subOffsetXnext = (int) EntityInfantry.subcellOffsets[this.me.desiredSubcell.ordinal()].getX();
+	    int subOffsetYnext = (int) EntityInfantry.subcellOffsets[this.me.desiredSubcell.ordinal()].getY();
+	    
+	    int subOffsetXcurr = (int) EntityInfantry.subcellOffsets[this.me.currentSubcell.ordinal()].getX();
+	    int subOffsetYcurr = (int) EntityInfantry.subcellOffsets[this.me.currentSubcell.ordinal()].getY();
+	    
+	    this.end = new Point((aDestCell.getX() * 24) + subOffsetXnext, (aDestCell.getY() * 24) + subOffsetYnext);
 	    this.start = aStart;
 
 	    this.lengthInTicks = (int) (20 - (10 * me.getMoveSpeed()));
 
-	    this.desiredFacing = RotationUtil.getRotationFromXY(start.getX() + 12, start.getY() + 12, end.getX() + 12, end.getY() + 12) % Turn.MAX_FACING;
-	    this.startFacing = me.currentFacing;
-
-	    if (me.currentFacing >= 24 && desiredFacing <= 8) {
-		this.rotationDirection = RotationDirection.LEFT;
-	    } else if (me.currentFacing <= 8 && desiredFacing >= 24) {
-		this.rotationDirection = RotationDirection.RIGHT;
-	    } else {
-		if (me.currentFacing < desiredFacing) {
-		    this.rotationDirection = RotationDirection.LEFT;
-		} else if (me.currentFacing > desiredFacing){
-		    this.rotationDirection = RotationDirection.RIGHT;
-		}
-	    }	    
+	    this.desiredFacing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY()) % EntityInfantry.MAX_FACING;
+	    this.desiredFacing = RotationUtil.quantizeInfantryFacing(this.desiredFacing);
 	}
 
 	@Override
@@ -295,7 +295,7 @@ public class Move extends Activity {
 	    }
 
 	    if (me.currentFacing != this.desiredFacing) {
-		turnFacing();
+		me.currentFacing = this.desiredFacing % EntityInfantry.MAX_FACING;
 
 		// Don't move while our turn is not finished for new direction
 		if (isNewPath) { 
@@ -310,11 +310,12 @@ public class Move extends Activity {
 	    ticks++;
 	    // If move is finished, return control to parent activity
 	    if ((me.getPos().getX() == end.getX() && me.getPos().getY() == end.getY()) || ticks >= lengthInTicks) {
-		me.currentFacing = this.desiredFacing % Turn.MAX_FACING; // how rough!
+		me.currentFacing = this.desiredFacing % EntityInfantry.MAX_FACING;
+		me.currentSubcell = me.desiredSubcell;
 		me.finishMoving();
 
 		// Parent Move activity is cancelled, lets switch to next activity (user send move order when Move/PartMove activity is working)
-		if (this.nextActivity instanceof Move || parentMove.isCancelled()) {
+		if (this.nextActivity instanceof MoveInfantry || parentMove.isCancelled()) {
 		    return this.nextActivity;
 		} else {
 		    return parentMove;
@@ -326,22 +327,6 @@ public class Move extends Activity {
 
 	public void setIsNewPath(boolean aIsNewPath) {
 	    this.isNewPath = aIsNewPath;
-	}
-
-	private void turnFacing() {
-	    int newFacing = me.currentFacing;
-	    if (this.rotationDirection == RotationDirection.LEFT) {
-		newFacing = (me.currentFacing + 1) % Turn.MAX_FACING;
-	    } else if (this.rotationDirection == RotationDirection.RIGHT) {
-		newFacing = (me.currentFacing - 1) % Turn.MAX_FACING;
-	    }
-
-	    // Turn by circle
-	    if (newFacing < 0) {
-		newFacing = Turn.MAX_FACING - 1;
-	    }
-
-	    me.currentFacing = newFacing % Turn.MAX_FACING;
 	}
     }
 }

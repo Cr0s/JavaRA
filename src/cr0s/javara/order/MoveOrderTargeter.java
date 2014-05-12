@@ -3,6 +3,7 @@ package cr0s.javara.order;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.main.CursorType;
 
@@ -29,7 +30,7 @@ public class MoveOrderTargeter extends OrderTargeter {
 	    return CursorType.CURSOR_POINTER;
 	}
 	
-	return self.world.isCellPassable(cellPos) ? CursorType.CURSOR_GOTO : CursorType.CURSOR_NO_GOTO;
+	return ((MobileEntity) self).canEnterCell(cellPos) ? CursorType.CURSOR_GOTO : CursorType.CURSOR_NO_GOTO;
     }
 
 }

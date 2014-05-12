@@ -12,11 +12,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-import soundly.Soundly;
 import cr0s.javara.entity.Entity;
-import cr0s.javara.entity.IDeployable;
-import cr0s.javara.entity.IMovable;
-import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;

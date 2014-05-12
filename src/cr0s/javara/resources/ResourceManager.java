@@ -21,6 +21,7 @@ import java.util.List;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.util.WaveData;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
@@ -338,5 +339,32 @@ public class ResourceManager {
 	}
 	
 	return loadSound(mixname, name);
+    }
+
+    public ShpTexture getInfantryTexture(String name) {
+	MixFile mix = mixes.get("hires.mix");
+
+	// Check texture sources cache
+	if (commonTextureSources.containsKey(name)) {
+	    return commonTextureSources.get(name);
+	}
+
+	if (mix != null) {
+	    MixRecord rec = mix.getEntry(name);
+
+	    if (rec != null) {
+		ReadableByteChannel rbc = mix.getEntryData(rec);
+		
+		ShpFileCnc shp = new ShpFileCnc(name, rbc);
+		ShpTexture shpTexture = new ShpTexture(shp);
+		commonTextureSources.put(name, shpTexture);
+		return shpTexture;
+	    } else {
+		System.out.println("HIRES: " + name + " not found");
+		return null;
+	    }
+	}
+
+	return null;
     }
 }

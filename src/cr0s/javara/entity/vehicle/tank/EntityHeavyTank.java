@@ -11,7 +11,6 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
-import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Drag;
@@ -26,7 +25,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMovable, Mover {
+public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover {
 
     private String TEXTURE_NAME = "3tnk.shp";
     private SpriteSheet texture;
@@ -190,13 +189,6 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     }
 
     @Override
-    public boolean moveTo(int tileX, int tileY) {
-	super.moveTo(new Point(tileX / 24, tileY / 24));
-	
-	return true;
-    }
-
-    @Override
     public boolean shouldRenderedInPass(int passNum) {
 	return passNum == 1;
     }
@@ -229,11 +221,6 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, IMova
     @Override
     public int getMinimumEnoughRange() {
 	return 2;
-    }    
-    
-    @Override
-    public boolean canEnterCell(Point cellPos) {
-	return world.isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
     }    
     
     @Override

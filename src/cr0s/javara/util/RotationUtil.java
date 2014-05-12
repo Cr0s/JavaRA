@@ -16,4 +16,11 @@ public class RotationUtil {
 	
 	return a / step;	
     }
+
+    public static int quantizeInfantryFacing(int facing) {
+	int step = 32 / 8; // infantry texture has 8 frames for each harvesting facings
+	int a = (facing + step / 2);
+	
+	return a / step;
+    }
 }

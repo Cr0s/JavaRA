@@ -1,53 +1,36 @@
 package cr0s.javara.render;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Animation;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.AppletGameContainer.Container;
-import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.pathfinding.Path;
-import org.newdawn.slick.util.pathfinding.Path.Step;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 import cr0s.javara.entity.Entity;
-import cr0s.javara.entity.IMovable;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
-import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
+import cr0s.javara.render.map.InfantryPathfinder;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.render.map.VehiclePathfinder;
-import cr0s.javara.render.shrouds.Shroud;
-import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
-import cr0s.javara.resources.TmpTexture;
 import cr0s.javara.util.CellChooser;
 
 import org.newdawn.slick.geom.Point;
@@ -59,6 +42,7 @@ public class World implements TileBasedMap {
     private GameContainer container;
 
     private VehiclePathfinder vp;
+    private InfantryPathfinder ip;
 
     private ArrayList<Player> players = new ArrayList<>();
 
@@ -89,6 +73,7 @@ public class World implements TileBasedMap {
 	map.fillBlockingMap(this.blockingMap);
 
 	this.vp = new VehiclePathfinder(this);
+	this.ip = new InfantryPathfinder(this);
 
 	this.container = c;
 
@@ -166,7 +151,7 @@ public class World implements TileBasedMap {
 		// Reveal shroud
 		if (e instanceof IShroudRevealer) {
 		    if (e.owner.getShroud() != null) {
-			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX() / 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer)e).getRevealingRange());
+			e.owner.getShroud().exploreRange((int) e.boundingBox.getCenterX() / 24, (int) e.boundingBox.getCenterY() / 24, ((IShroudRevealer) e).getRevealingRange());
 		    }
 		}
 
@@ -243,7 +228,7 @@ public class World implements TileBasedMap {
 	map.renderMapEntities(container, g, camera);
 
 	// Debug: render blocked cells
-	if (Main.DEBUG_MODE) {
+	//if (Main.DEBUG_MODE) {
 	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
 		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
 		    if (!this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) {
@@ -253,7 +238,7 @@ public class World implements TileBasedMap {
 		    }		
 		}
 	    }
-	}	
+	//}	
 
 	renderSelectionBoxes(g);
 
@@ -347,7 +332,7 @@ public class World implements TileBasedMap {
 	LinkedList<Entity> selectedEntities = new LinkedList<>();
 
 	for (Entity e : this.entities) {
-	    if (!e.isDead() && (e instanceof ISelectable) && (e instanceof IMovable)) {
+	    if (!e.isDead() && (e instanceof ISelectable) && (e instanceof MobileEntity)) {
 		if (boundingBox.intersects(e.boundingBox)) { 
 		    ((ISelectable) e).select();
 
@@ -432,6 +417,10 @@ public class World implements TileBasedMap {
     }
 
     public boolean isCellPassable(int x, int y) {
+	return isCellPassable(x, y, SubCell.FULL_CELL);
+    }
+    
+    public boolean isCellPassable(int x, int y, SubCell sub) {
 	if (x >= this.map.getWidth() || y >= this.map.getHeight()) {
 	    return false;
 	}
@@ -444,7 +433,7 @@ public class World implements TileBasedMap {
 	    return false;
 	}
 
-	return (this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) && (blockingMap[x][y] == 0 
+	return (this.blockingEntityMap.isSubcellFree(new Point(x, y), sub)) && (blockingMap[x][y] == 0 
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BUILDING_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
@@ -477,7 +466,7 @@ public class World implements TileBasedMap {
 
     @Override
     public boolean blocked(PathFindingContext arg0, int x, int y) {
-	return !this.isCellPassable(x, y);
+	return !((MobileEntity) arg0.getMover()).canEnterCell(new Point(x, y));
     }
 
     // TODO: add lower costs to roads and higher to beaches, roughs
@@ -502,6 +491,10 @@ public class World implements TileBasedMap {
 
     public VehiclePathfinder getVehiclePathfinder() {
 	return this.vp;
+    }
+    
+    public InfantryPathfinder getInfantryPathfinder() {
+	return this.ip;
     }
 
     public void occupyRandomSpawnForPlayer(Player p) {
@@ -579,9 +572,16 @@ public class World implements TileBasedMap {
 
 	return !this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL);
     }
+    
+    public boolean isCellBlockedByEntity(Point cellPos, SubCell sub) {
+	int x = (int) cellPos.getX();
+	int y = (int) cellPos.getY();
+
+	return !this.blockingEntityMap.isSubcellFree(new Point(x, y), sub);
+    }    
 
     public int getRandomInt(int from, int to) {
-	return from + random.nextInt(to);
+	return from + random.nextInt(to - from);
     }
 
     public ArrayList<Point> chooseTilesInCircle(Point centerPos, int range, CellChooser chooser) {
@@ -616,5 +616,9 @@ public class World implements TileBasedMap {
 
     public boolean isCellPassable(Point cellPos) {
 	return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
+    }
+
+    public boolean isCellPassable(Point cellPos, SubCell subCell) {
+	return isCellPassable((int) cellPos.getX(), (int) cellPos.getY(), subCell);
     }
 }

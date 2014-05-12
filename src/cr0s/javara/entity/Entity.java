@@ -6,6 +6,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityWarFactory;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
@@ -32,7 +33,7 @@ public abstract class Entity {
 
 	private boolean isInvuln = false;
 
-	private static final int SELECTION_BOX_ADD = 5;
+	private int SELECTION_BOX_ADD = 5;
 	
 	public float sizeWidth, sizeHeight;
 	
@@ -67,7 +68,7 @@ public abstract class Entity {
 	public abstract boolean shouldRenderedInPass(int passNum);
 	
 	public void drawSelectionBox(Graphics g) {
-	    final int REDUCE = 8;
+	    int REDUCE = 8;
 	    g.setLineWidth(2);
 	    g.setColor(Color.white);
 	    
@@ -76,8 +77,13 @@ public abstract class Entity {
 	    float maxX = this.boundingBox.getMaxX();
 	    float maxY = this.boundingBox.getMaxY();
 	    
-	    int bbWidth = (int) (this.boundingBox.getWidth() + 2*SELECTION_BOX_ADD);
-	    int bbHeight = (int) (this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD);
+	    int bbWidth = (int) (this.boundingBox.getWidth() + 2 * SELECTION_BOX_ADD);
+	    int bbHeight = (int) (this.boundingBox.getHeight() + 2 * SELECTION_BOX_ADD);
+	    
+	    if (this instanceof EntityInfantry) {
+		this.SELECTION_BOX_ADD = 0;
+		REDUCE = 10;
+	    }
 	    
 	    float cornerXUpLeft = minX - 2*SELECTION_BOX_ADD;
 	    float cornerYUpLeft = minY - 2*SELECTION_BOX_ADD;
@@ -108,6 +114,10 @@ public abstract class Entity {
 	
 	public void drawHpBar(Graphics g) {
 	    final int BAR_COMPRESS = 3; // "Compress" bar by N pixels from left and right
+	    
+	    if (this instanceof EntityInfantry) {
+		this.SELECTION_BOX_ADD = 0;
+	    }
 	    
 	    float minX = this.boundingBox.getMinX();
 	    float minY = this.boundingBox.getMinY();
