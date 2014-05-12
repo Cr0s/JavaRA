@@ -16,6 +16,7 @@ import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileSet;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.sbpages.vehicle.VehicleSidebarButton;
 /**
  * Describes player's base.
@@ -142,6 +143,11 @@ public class Base {
 		this.isCurrentVehicleDeployed = true;
 
 		getPrimaryWarFactory().setProgressValue(-1);
+		// Its player base
+		if (Main.getInstance().getPlayer().getBase() == this) { 
+		    SoundManager.getInstance().playSpeechSoundGlobal("unitrdy1");
+		}
+		
 		this.deployBuildedVehicle(this.currentVehicleBuilding.getTargetVehicle());
 	    }
 	}

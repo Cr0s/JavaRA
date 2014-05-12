@@ -5,8 +5,11 @@ import org.newdawn.slick.Image;
 
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.resources.SoundManager;
 
 public class EntityBuildingProgress extends EntityBuilding implements ISelectable, IShroudRevealer {
 
@@ -35,6 +38,12 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	
 	this.setMaxProgress(makeTexture.numImages - 1);
 	this.setProgressValue(0);
+	
+	// Play "building" sound
+	if (this.owner == Main.getInstance().getPlayer() && !(aTargetBuilding instanceof EntityConstructionYard)) {
+	    SoundManager.getInstance().playSfxGlobal("placbldg", 0.1f); // Placed building
+	    SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+	}
     }
 
     @Override

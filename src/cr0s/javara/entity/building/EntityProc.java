@@ -67,6 +67,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     @Override
     public void onBuildFinished() {
+	super.onBuildFinished();
 	spawnHarvester();
     }
     

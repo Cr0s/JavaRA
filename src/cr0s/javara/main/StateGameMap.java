@@ -12,6 +12,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import soundly.Soundly;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IMovable;
@@ -21,6 +22,7 @@ import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
+import cr0s.javara.resources.SoundManager;
 
 public class StateGameMap extends BasicGameState {
     public static final int STATE_ID = 1;
@@ -36,7 +38,7 @@ public class StateGameMap extends BasicGameState {
 
     private Entity mouseOverEntity = null;
 
-    private final int CURSOR_UPDATE_INTERVAL_TICKS = 20;
+    private final int CURSOR_UPDATE_INTERVAL_TICKS = 100;
     private int cursorUpdateTicks = CURSOR_UPDATE_INTERVAL_TICKS;
 
     public StateGameMap(final GameContainer container) {
@@ -138,6 +140,11 @@ public class StateGameMap extends BasicGameState {
 			}
 		    }
 		}
+		
+		// Play sound only if order given
+		if (button == 1) { 
+		    targeterForEntity.entity.playOrderSound();
+		}
 	    } else {
 		Main.getInstance().getWorld().cancelAllSelection();
 	    }
@@ -176,6 +183,15 @@ public class StateGameMap extends BasicGameState {
 		LinkedList<Entity> entities = Main.getInstance().getWorld().selectMovableEntitiesInsideBox(this.selectionRect);
 
 		Main.getInstance().getPlayer().selectedEntities.addAll(entities);
+		
+		OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(new Target(new Point(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y)));
+		if (targeterForEntity != null) {
+		    targeterForEntity.entity.playSelectedSound();
+		} else {
+		    if (!entities.isEmpty()) { 
+			((EntityActor) entities.get(0)).playSelectedSound();
+		    }
+		}
 	    }
 	}
     }
@@ -321,6 +337,12 @@ public class StateGameMap extends BasicGameState {
 
 	Main.getInstance().getWorld().update(delta);
 	Main.getInstance().getSideBar().update(delta);
+	
+	SoundManager.getInstance().update(delta);
+        //if (!Main.getInstance().speech.isPlaying() && Main.getInstance().speech.isWithinEarshot()) {
+        //    System.out.println("Queued sound");
+       //     Main.getInstance().speech.queue();
+        //}
     }
 
     private void updateCursor() {

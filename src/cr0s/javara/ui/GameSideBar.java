@@ -16,6 +16,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.MinimapRenderer;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.sbpages.building.PageBuildingSoviet;
 import cr0s.javara.ui.sbpages.vehicle.PageVehicle;
 import cr0s.javara.ui.sbpages.SideBarPage;
@@ -68,6 +69,11 @@ public class GameSideBar {
     
     private final int MINIMAP_UPDATE_INTERVAL_TICKS = 10;
     private int minimapUpdateTicks = MINIMAP_UPDATE_INTERVAL_TICKS;
+    
+    private int lowPowerAdviceTicks = 0;
+    private int LOW_POWER_ADVICE_INTERVAL = 250;
+    
+    private boolean wasLowPower = false;
 
     public GameSideBar(Team aTeam, Player aPlayer) {
 	try {
@@ -202,6 +208,32 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
+	if (Main.getInstance().getPlayer().getBase().isLowPower()) {
+	    if (--this.lowPowerAdviceTicks <= 0) {
+		this.lowPowerAdviceTicks = this.LOW_POWER_ADVICE_INTERVAL;
+		
+		SoundManager.getInstance().playSpeechSoundGlobal("lopower1");
+	    }
+	    
+	    if (!wasLowPower) {
+		this.wasLowPower = true;
+		
+		// If power down occured with radar, play radar disabling sound
+		if (Main.getInstance().getPlayer().getBase().isRadarDomePresent) {
+		    SoundManager.getInstance().playSfxGlobal("radardn1", 0.9f);
+		}
+	    }
+	} else {
+	    if (wasLowPower) {
+		this.wasLowPower = false;
+		
+		// If power up occured with radar, play radar enabling sound
+		if (Main.getInstance().getPlayer().getBase().isRadarDomePresent) {
+		    SoundManager.getInstance().playSfxGlobal("radaron2", 0.9f);
+		}		
+	    }
+	}
+
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
 
@@ -279,6 +311,7 @@ public class GameSideBar {
 		    if (this.player.getAlignment() == Alignment.SOVIET) {
 			// TODO: add allied building page
 			if (this.sideBarCategoriesOpened[0][1]) {
+			    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 			    switchPage(PAGE_BUILDING_SOVIET);
 			}
 		    }
@@ -287,14 +320,18 @@ public class GameSideBar {
 		case 1:
 		    if ((!player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleHold())) {
 			if (this.sideBarCategoriesOpened[1][0]) {
+			    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 			    switchPage(PAGE_VEHICLE);
 			}
-		    } else if (player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleDeployed()) { // continue holded building
+		    } else if (player.getBase().isCurrentVehicleBuilding() && player.getBase().isCurrentVehicleHold()  && !player.getBase().isCurrentVehicleDeployed()) { // continue holded building
 			player.getBase().setCurrentVehicleHold(false);
+			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
 		    } else if (player.getBase().isCurrentVehicleBuilding() && player.getBase().isCurrentVehicleDeployed()) { 
 			player.getBase().startBuildVehicle(player.getBase().getCurrentVehicleButton());
-		    } else {
-			// TODO: unable to comply, building in progress
+			SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+		    } else if (player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleDeployed()) {
+			SoundManager.getInstance().playSpeechSoundGlobal("progres1");
 		    }
 		}
 	    }
@@ -306,10 +343,13 @@ public class GameSideBar {
 		    if (player.getBase().isCurrentVehicleBuilding()) {
 			if (!player.getBase().isCurrentVehicleHold() && !player.getBase().isCurrentVehicleReady() && !player.getBase().isCurrentVehicleDeployed()) {
 			    player.getBase().setCurrentVehicleHold(true);
+			    SoundManager.getInstance().playSpeechSoundGlobal("onhold1");
 			} else if ((player.getBase().isCurrentVehicleReady() && !player.getBase().isCurrentVehicleDeployed()) || player.getBase().isCurrentVehicleHold()) {
+			    SoundManager.getInstance().playSpeechSoundGlobal("cancld1");
 			    player.getBase().cancelCurrentVehicle(true);
 			} else if (player.getBase().isCurrentVehicleReady() || player.getBase().isCurrentVehicleDeployed()) {
 			    if (this.sideBarCategoriesOpened[1][0]) { 
+				SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 				switchPage(PAGE_VEHICLE); 
 			    }
 			}
@@ -336,6 +376,7 @@ public class GameSideBar {
 	    startPageClick(button, buttonX, buttonY);
 	} else {
 	    if (button == 1) {
+		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 		switchPage("start");
 		return;
 	    }
@@ -343,6 +384,7 @@ public class GameSideBar {
 	    buttonX = 1- (barX / 64);
 	    buttonY = barY / 48;
 
+	    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 	    this.currentPage.mouseClick(buttonX, buttonY);
 	}
 

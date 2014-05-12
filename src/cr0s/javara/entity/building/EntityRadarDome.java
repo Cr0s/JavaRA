@@ -13,6 +13,7 @@ import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.resources.SoundManager;
 
 public class EntityRadarDome extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer {
     private Image normal, corrupted;
@@ -114,4 +115,13 @@ public class EntityRadarDome extends EntityBuilding implements ISelectable, IPow
     public int getConsumptionLevel() {
 	return this.POWER_CONSUMPTION_LEVEL;
     }      
+    
+    @Override
+    public void onBuildFinished() {
+	super.onBuildFinished();
+	
+	if (!Main.getInstance().getPlayer().getBase().isLowPower()) {
+	    SoundManager.getInstance().playSfxGlobal("radaron2", 0.9f);
+	}
+    }
 }

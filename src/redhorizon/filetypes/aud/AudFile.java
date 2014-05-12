@@ -30,6 +30,7 @@ import static redhorizon.filetypes.SoundChannels.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.Pipe;
 import java.nio.channels.ReadableByteChannel;
@@ -75,6 +76,8 @@ public class AudFile extends AbstractFile implements SoundFile {
 
 		// AUD file header
 		ByteBuffer headerbytes = ByteBuffer.allocate(AudFileHeader.HEADER_SIZE);
+		headerbytes.order(ByteOrder.LITTLE_ENDIAN);
+		
 		try {
 			bytechannel.read(headerbytes);
 		} catch (IOException e) {
@@ -194,6 +197,7 @@ public class AudFile extends AbstractFile implements SoundFile {
 
 			// Build buffers from chunk header
 			ByteBuffer source = ByteBuffer.allocate(chunkheader.filesize & 0xffff);
+			source.order(ByteOrder.LITTLE_ENDIAN);
 			try {
 				inputchannel.read(source);
 			} catch (IOException e) {
@@ -202,7 +206,8 @@ public class AudFile extends AbstractFile implements SoundFile {
 			}
 			source.rewind();
 			ByteBuffer dest = ByteBuffer.allocate(chunkheader.datasize & 0xffff);
-
+			dest.order(ByteOrder.LITTLE_ENDIAN);
+			
 			// Decode
 			switch (audheader.type) {
 			case TYPE_WS_ADPCM:
@@ -222,6 +227,7 @@ public class AudFile extends AbstractFile implements SoundFile {
 		protected void decode() {
 
 			ByteBuffer chunkheaderbytes = ByteBuffer.allocate(AudChunkHeader.CHUNK_HEADER_SIZE);
+			chunkheaderbytes.order(ByteOrder.LITTLE_ENDIAN);
 			int[] update = new int[2];
 
 			// Decompress the aud file data by chunks
@@ -239,6 +245,7 @@ public class AudFile extends AbstractFile implements SoundFile {
 				}
 				chunkheaderbytes.rewind();
 				ByteBuffer chunkbytes = decodeChunk(new AudChunkHeader(chunkheaderbytes), update);
+				chunkbytes.order(ByteOrder.LITTLE_ENDIAN);
 				try {
 					outputchannel.write(chunkbytes);
 				} catch (IOException e) {

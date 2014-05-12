@@ -1,8 +1,11 @@
 package cr0s.javara.resources;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -17,18 +20,23 @@ import java.util.List;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
+import org.lwjgl.util.WaveData;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.opengl.CursorLoader;
 import org.newdawn.slick.opengl.Texture;
 
 import cr0s.javara.entity.building.BibType;
+import cr0s.javara.gameplay.Team.Alignment;
+import redhorizon.filetypes.aud.AudFile;
 import redhorizon.filetypes.mix.MixFile;
 import redhorizon.filetypes.mix.MixRecord;
 import redhorizon.filetypes.pal.PalFile;
 import redhorizon.filetypes.shp.ShpFile;
 import redhorizon.filetypes.shp.ShpFileCnc;
 import redhorizon.filetypes.tmp.TmpFileRA;
+import soundly.XSound;
 
 public class ResourceManager {
 
@@ -69,6 +77,7 @@ public class ResourceManager {
     private HashMap<String, ShpTexture> shpTextureSources = new HashMap<>();
     private HashMap<String, TmpTexture> templatesTexureSources = new HashMap<>();
     private HashMap<String, PalFile> palettes = new HashMap<>();
+    private HashMap<String, XSound> sounds = new HashMap<>();
 
     private SpriteSheet bib1, bib2, bib3;
     
@@ -174,7 +183,7 @@ public class ResourceManager {
 
 	    if (rec != null) {
 		ReadableByteChannel rbc = mix.getEntryData(rec);
-
+		
 		ShpFileCnc shp = new ShpFileCnc(name, rbc);
 		ShpTexture shpTexture = new ShpTexture(shp);
 		commonTextureSources.put(name, shpTexture);
@@ -185,6 +194,46 @@ public class ResourceManager {
 	}
 
 	return null;
+    }
+    
+    public XSound loadSpeechSound(String name) {
+	return loadSound("speech.mix", name + ".aud");
+    }
+    
+    public XSound loadSound(String mixname, String name) {
+	MixFile mix = mixes.get(mixname);
+
+	// Check texture sources cache
+	if (this.sounds.containsKey(name)) {
+	    return sounds.get(name);
+	}
+
+	if (mix != null) {
+	    MixRecord rec = mix.getEntry(name);
+
+	    if (rec != null) {
+		ReadableByteChannel rbc = mix.getEntryData(rec);
+		AudFile aud = new AudFile(name, rbc);
+
+		XSound sound = null;
+		try {
+		    sound = new XSound(name, new BufferedInputStream(Channels.newInputStream(aud.getSoundData())));
+		} catch (SlickException e) {
+		    e.printStackTrace();
+		}
+		//aud.close();
+		
+		if (sound != null) {
+		    this.sounds.put(name, sound);
+		}
+		
+		return sound;
+	    } else {
+		return null;
+	    }
+	}
+
+	return null;	
     }
     
     public ShpTexture getTemplateShpTexture(String tileSetName, String name) {
@@ -278,6 +327,16 @@ public class ResourceManager {
 	} catch (DirectoryIteratorException ex) {
 	    throw ex.getCause();
 	}
+	
 	return result;
+    }
+
+    public XSound loadUnitSound(Alignment alignment, String name) {
+	String mixname = "allies.mix";
+	if (alignment == Alignment.SOVIET) {
+	    mixname = "russian.mix";
+	}
+	
+	return loadSound(mixname, name);
     }
 }

@@ -131,7 +131,7 @@ public class ResourcesLayer {
     }
 
     public boolean isCellEmpty(int x, int y) {
-	return this.resources[x][y] == null;
+	return !Main.getInstance().getWorld().getMap().isInMap(x * 24, y * 24) || this.resources[x][y] == null;
     }
     
     public int harvestCell(int x, int y) {

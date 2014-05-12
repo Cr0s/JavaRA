@@ -317,6 +317,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
     @Override
     public void resolveOrder(Order order) {
+	super.resolveOrder(order);
+	
 	if (order.orderString.equals("Harvest")) {
 	    this.lastOrderPoint = order.targetPosition;
 	    
@@ -336,8 +338,6 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 		
 		queueActivity(new DeliverResources());
 	    }
-	} else {
-	    super.resolveOrder(order);
 	}
     }    
     

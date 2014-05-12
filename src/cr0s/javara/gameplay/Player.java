@@ -9,14 +9,17 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IMovable;
+import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.main.Main;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.World;
 import cr0s.javara.render.shrouds.Shroud;
+import cr0s.javara.resources.SoundManager;
 
 public class Player {
     public String name;
@@ -38,7 +41,7 @@ public class Player {
 
     private Shroud playerShroud;
     private World world;
-    
+
     public Player(World w, String name, Alignment side, Color color) {
 	this.name = name;
 	this.side = side;
@@ -73,7 +76,7 @@ public class Player {
     public Shroud getShroud() {
 	return this.playerShroud;
     }
-    
+
     public void setShroud(Shroud s) {
 	this.playerShroud = s;
     }
@@ -82,7 +85,7 @@ public class Player {
 	this.spawnX = x;
 	this.spawnY = y;
     }
-    
+
     public Point getPlayerSpawnPoint() {
 	return new Point(this.spawnX, this.spawnY);
     }
@@ -90,58 +93,66 @@ public class Player {
     public void spawn() {
 	EntityMcv mcv = new EntityMcv(24.0f * this.spawnX, 24.0f * this.spawnY, team, this);
 	mcv.isVisible = true;
-	
+
 	this.world.spawnEntityInWorld(mcv);
-	
+
 	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
     }
-    
+
     public OrderTargeter getBestOrderTargeterForTarget(Target target) {
 	if (this.selectedEntities.isEmpty()) {
 	    return null;
 	}
-	
+
 	OrderTargeter bestTargeter = null;
 	for (Entity e : this.selectedEntities) {
-	    if (!(e instanceof EntityActor) || e.isDead() || !e.isSelected) {
+	    if (!(e instanceof EntityActor) || e.isDead() || !e.isSelected || e.owner != this) {
 		continue;
 	    }
-	    
+
 	    EntityActor actor = (EntityActor) e;
-	    
+
 	    for (OrderTargeter ot : actor.getOrders()) {
 		if (bestTargeter == null || (ot.canTarget(e, target) && ot.priority > bestTargeter.priority)) {
 		    bestTargeter = ot;
 		}
 	    }
 	}
-	
+
 	return bestTargeter;
     }
 
     public void selectOneEntity(Entity e) {
 	this.selectedEntities.clear();
-	
+
 	if (e instanceof EntityActor && !e.isDead() && e.isVisible) {
-        	e.isSelected = true;
-        	this.selectedEntities.addFirst(e);
+	    e.isSelected = true;
+	    this.selectedEntities.addFirst(e);
+	    
+	    if (e instanceof INotifySelected) {
+		((INotifySelected) e).notifySelected();
+	    }
+	    
+	    if (e.owner == this) { 
+		((EntityActor) e).playSelectedSound();
+	    }
 	}
     }    
-    
+
     public boolean isAnyActorEntitySelected() {
 	boolean isAnySelected = false;
-	
+
 	for (Entity e : this.selectedEntities) {
 	    if (!e.isSelected && (e instanceof EntityActor && !e.isDead() && e.isVisible)) {
 		isAnySelected = true;
 	    }
 	}
-	
+
 	return isAnySelected;
     }
-    
+
     public void removeNotActuallySelectedEntities() {
 	LinkedList<Entity> list = new LinkedList<>();
 	for (Entity e : this.selectedEntities) {
@@ -149,7 +160,7 @@ public class Player {
 		list.add(e);
 	    }
 	}
-	
+
 	this.selectedEntities = list;
     }
 }

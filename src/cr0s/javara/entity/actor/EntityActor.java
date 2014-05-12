@@ -1,10 +1,12 @@
 package cr0s.javara.entity.actor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.newdawn.slick.Graphics;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -15,16 +17,20 @@ import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 
-public abstract class EntityActor extends Entity implements IOrderIssuer, IOrderResolver {
+public abstract class EntityActor extends Entity implements IOrderIssuer, IOrderResolver, INotifySelected {
 
     public Activity currentActivity;
     protected ArrayList<OrderTargeter> ordersList;
+    protected HashMap<String, Integer[]> selectedSounds;
+    
+    protected int unitVersion = 0; // for same voice per unit
     
     public EntityActor(float posX, float posY, Team team, Player owner,
 	    final float aSizeWidth, final float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
 	
 	this.ordersList = new ArrayList<>();
+	this.selectedSounds = new HashMap<>();
     }
 
     @Override
@@ -80,4 +86,22 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
 
     @Override
     public abstract Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia);
+    
+    @Override
+    public void notifySelected() {
+    }
+    
+    public HashMap<String, Integer[]> getSounds() {
+	return this.selectedSounds;
+    }
+    
+    public String getSelectSound() {
+	return "";
+    }
+    
+    public void playSelectedSound() {	
+    }
+
+    public void playOrderSound() {
+    }
 }

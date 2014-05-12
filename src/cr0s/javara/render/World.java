@@ -276,7 +276,6 @@ public class World implements TileBasedMap {
 	}	
 	
 	renderSelectionBoxes(g);
-	renderHpBars(g);
 	
 	if (Main.getInstance().getPlayer().getShroud() != null) {
 	    Main.getInstance().getPlayer().getShroud().getRenderer().renderShrouds(g);
@@ -336,16 +335,12 @@ public class World implements TileBasedMap {
     
     private void renderSelectionBoxes(Graphics g) {
 	for (Entity e : this.entities) {
-	    if (!e.isDead() && e.isVisible && (e instanceof ISelectable) && (e.isSelected) && camera.isEntityInsideViewport(e)) { 
-		e.drawSelectionBox(g);
-	    }
-	}		    
-    }
-
-    private void renderHpBars(Graphics g) {
-	for (Entity e : this.entities) {
-	    if (!e.isDead() && e.isVisible && (e instanceof ISelectable) && !(e.isSelected) && (e.isMouseOver) && camera.isEntityInsideViewport(e)) { 
-		e.drawHpBar(g);
+	    if (!e.isDead() && e.isVisible && camera.isEntityInsideViewport(e)) {
+		if ((e instanceof ISelectable) && (e.isSelected)) { 
+		    e.drawSelectionBox(g);
+		} else if (e.isMouseOver) {
+		    e.drawHpBar(g);
+		}
 	    }
 	}		    
     }

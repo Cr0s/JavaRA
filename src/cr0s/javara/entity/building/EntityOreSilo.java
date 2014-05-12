@@ -52,10 +52,6 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
     }
-
-    @Override
-    public void onBuildFinished() {
-    }
     
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);

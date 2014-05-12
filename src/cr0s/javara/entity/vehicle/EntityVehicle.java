@@ -2,6 +2,7 @@ package cr0s.javara.entity.vehicle;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
@@ -18,6 +19,8 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.Order;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.util.RotationUtil;
 
 public abstract class EntityVehicle extends MobileEntity implements IShroudRevealer {
@@ -29,9 +32,28 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 
     protected int buildingSpeed;
     Color nextColor = new Color(0, 255, 0, 64);
-
+    
+    private final String SELECTED_SOUND = "vehic1";
+    private HashMap<String, Integer[]> orderSounds;
+    private final int MAX_VERSIONS = 4;
+    
     public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
 	super(posX, posY, team, player, sizeWidth, sizeHeight);
+	
+	this.selectedSounds.put(SELECTED_SOUND, new Integer[] { 0, 2 } );
+	this.selectedSounds.put("await1", new Integer[] { 0, 1, 2, 3 } );
+	this.selectedSounds.put("yessir1", new Integer[] { 0, 1, 2, 3 } );
+	
+	this.orderSounds = new HashMap<>();
+	this.orderSounds.put("ackno", new Integer[] { 0, 1, 2, 3 });
+	this.orderSounds.put("affirm1", new Integer[] { 0, 1, 2, 3 });
+	this.orderSounds.put("noprob", new Integer[] { 1, 3 });
+	this.orderSounds.put("overout", new Integer[] { 1, 3 });
+	this.orderSounds.put("ritaway", new Integer[] { 1, 3 });
+	this.orderSounds.put("roger", new Integer[] { 1, 3 });
+	this.orderSounds.put("ugotit", new Integer[] { 1, 3 });
+	
+	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3
     }
 
     @Override
@@ -55,7 +77,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	try {
 	    ctor = (b.getClass()).getDeclaredConstructor(Float.class, Float.class, Team.class, Player.class);
 	    ctor.setAccessible(true);
-	    EntityVehicle newEntityVehicle = ((EntityVehicle)ctor.newInstance(b.posX, b.posY, b.team, b.owner));
+	    EntityVehicle newEntityVehicle = ((EntityVehicle) ctor.newInstance(b.posX, b.posY, b.team, b.owner));
 
 	    return newEntityVehicle;
 	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
@@ -72,4 +94,70 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     
     @Override
     public abstract boolean canEnterCell(Point cellPos);
+    
+    @Override
+    public void notifySelected() {
+    }
+    
+    public String getSelectSound() {
+	return SELECTED_SOUND;
+    }
+    
+    @Override
+    public void playSelectedSound() {
+	for (String s : this.selectedSounds.keySet()) {
+	    Integer[] versions = this.selectedSounds.get(s);
+	    
+	    boolean canPlay = false;
+	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+		if (versions[i] == this.unitVersion) {
+		    canPlay = true;
+		    break;
+		}
+	    }
+	    
+	    if (SoundManager.getInstance().r.nextBoolean() && canPlay) {
+		SoundManager.getInstance().playUnitSoundGlobal(this, s, this.unitVersion);
+		return;
+	    }
+	}
+	
+	SoundManager.getInstance().playUnitSoundGlobal(this, SELECTED_SOUND, 0);
+    }
+    
+    @Override
+    public void resolveOrder(Order order) {
+	super.resolveOrder(order);
+    }    
+    
+    @Override
+    public void playOrderSound() {
+	// Play order sound
+	for (String s : this.orderSounds.keySet()) {
+	    Integer[] versions = this.orderSounds.get(s);
+	    
+	    if (this.unitVersion >= versions.length) {
+		continue;
+	    }
+	    
+	    boolean canPlay = false;
+	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+		if (versions[i] == this.unitVersion) {
+		    canPlay = true;
+		    break;
+		}
+	    }
+	    
+	    if (SoundManager.getInstance().r.nextBoolean() && canPlay) {
+		SoundManager.getInstance().playUnitSoundGlobal(this, s, this.unitVersion);
+		return;
+	    }
+	}
+	
+	if (SoundManager.getInstance().r.nextBoolean()) {
+	    SoundManager.getInstance().playUnitSoundGlobal(this, "ackno", this.unitVersion);
+	} else {
+	    SoundManager.getInstance().playUnitSoundGlobal(this, "affirm1", this.unitVersion);
+	}	
+    }
 }

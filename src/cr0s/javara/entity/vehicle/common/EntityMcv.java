@@ -240,9 +240,9 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     
     @Override
     public void resolveOrder(Order order) {
-	if (order.orderString.equals("Move") && order.targetPosition != null) {
-	    this.moveTo(order.targetPosition);
-	} else if (order.orderString.equals("Deploy")) {
+	super.resolveOrder(order);
+	
+	if (order.orderString.equals("Deploy")) {
 	    this.deploy();
 	}
     }

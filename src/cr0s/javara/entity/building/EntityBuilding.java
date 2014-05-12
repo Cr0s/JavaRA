@@ -16,6 +16,7 @@ import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.map.TileSet;
+import cr0s.javara.resources.SoundManager;
 
 /**
  * Abstract class for any buildings in game.
@@ -313,6 +314,9 @@ public abstract class EntityBuilding extends EntityActor {
     }
 
     public void onBuildFinished() {
+	if (!(this instanceof EntityConstructionYard)) { 
+	    SoundManager.getInstance().playSpeechSoundGlobal("conscmp1");
+	}
     }
 
     @Override

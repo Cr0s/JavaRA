@@ -10,6 +10,7 @@ import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileSet;
+import cr0s.javara.resources.SoundManager;
 
 public class BuildingOverlay {
     private Player player;
@@ -55,7 +56,7 @@ public class BuildingOverlay {
 	    
 	    // War Factory workaround: WF texture consist from two textures: bottom and top, we need draw both to get full image of WF
 	    if (this.targetBuilding instanceof EntityWarFactory) { 
-		((EntityWarFactory)this.targetBuilding).getBottomTexture().draw(cellX * 24, cellY * 24, filterColor);
+		((EntityWarFactory) this.targetBuilding).getBottomTexture().draw(cellX * 24, cellY * 24, filterColor);
 	    }
 	    
 	    this.targetBuilding.getTexture().draw(cellX * 24, cellY * 24, filterColor);	    
@@ -94,6 +95,9 @@ public class BuildingOverlay {
 	    
 	    if (result) {
 		this.resetBuildingMode();
+	    } else {
+		// "Cannot deploy here"
+		SoundManager.getInstance().playSpeechSoundGlobal("nodeply1");
 	    }
 	} else if (button == 1 && targetBuilding != null) {
 	    this.resetBuildingMode();

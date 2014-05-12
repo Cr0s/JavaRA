@@ -2,6 +2,7 @@ package cr0s.javara.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.newdawn.slick.Color;
@@ -35,8 +36,6 @@ public abstract class MobileEntity extends EntityActor implements Mover, IMovabl
     public boolean isMovingToCell;   
     
     public int goalX, goalY;
-
-    protected ArrayList<OrderTargeter> ordersList;
     
     public MobileEntity(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {

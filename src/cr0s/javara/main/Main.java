@@ -1,23 +1,29 @@
 package cr0s.javara.main;
 import java.util.Random;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.MouseListener;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.Log;
 
+import soundly.Soundly;
+import soundly.XSound;
 import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityConstructionYard;
 import cr0s.javara.entity.building.EntityPowerPlant;
@@ -38,6 +44,7 @@ import cr0s.javara.render.shrouds.Shroud;
 import cr0s.javara.render.shrouds.ShroudRenderer;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.GameSideBar;
 
 public class Main extends StateBasedGame {
@@ -63,10 +70,10 @@ public class Main extends StateBasedGame {
 
     private GameSideBar gsb;
     private ShroudRenderer observerShroudRenderer;
-
     
     public Main() {
 	super("Java RA");
+	SoundStore.get().init();
     }
 
     public static Main getInstance() {
@@ -161,7 +168,7 @@ public class Main extends StateBasedGame {
 	w.addPlayer(player);
 
 	Point playerSpawn = player.getPlayerSpawnPoint();	
-	
+
 	this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
 
 	this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
