@@ -75,9 +75,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	if (world == null) {
 	    return;
 	}
-	
-	System.out.println("Spawning harvester");
-	
+		
 	Point harvCell = getHarvesterCell();
 	EntityHarvester harv = new EntityHarvester(harvCell.getX() * 24f, harvCell.getY() * 24f, team, owner);
 	

@@ -6,6 +6,7 @@ import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.main.Main;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.GameSideBar;
 import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.ui.sbpages.SideBarPage;
@@ -59,6 +60,7 @@ public class PageVehicle extends SideBarPage {
 	    VehicleSidebarButton vsb = (VehicleSidebarButton) button;
 	    
 	    if (vsb.getTargetVehicle() != null) {
+		SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
 		Main.getInstance().getPlayer().getBase().startBuildVehicle(vsb);
 
 		Main.getInstance().getSideBar().switchPage(GameSideBar.START_PAGE_NAME);

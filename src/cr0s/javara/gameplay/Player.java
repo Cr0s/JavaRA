@@ -10,6 +10,8 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.infantry.EntityRiffleTrooper;
 import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
@@ -106,13 +108,22 @@ public class Player {
 		continue;
 	    }
 	    
-	    if (this.world.getRandomInt(0, 10) > 5) {
-		EntityRiffleTrooper e1 = new EntityRiffleTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
-		e1.isVisible = true; this.world.spawnEntityInWorld(e1);
-	    } else {
-		EntityRocketTrooper e2 = new EntityRocketTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
-		e2.isVisible = true; this.world.spawnEntityInWorld(e2);
+	    EntityInfantry e = null;
+	    switch (this.world.getRandomInt(0, 3)) {
+	    case 0:
+		e = new EntityRiffleTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		break;
+		
+	    case 1:
+		e = new EntityRocketTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		break;
+		
+	    case 2:
+		e = new EntityGrenadeTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		break;
 	    }
+	    
+	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}
 
     }

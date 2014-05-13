@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.newdawn.slick.BigImage;
 import org.newdawn.slick.Graphics;
@@ -24,6 +25,7 @@ import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.Sequence;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.resources.SoundManager;
 
 public abstract class EntityInfantry extends MobileEntity implements IShroudRevealer {
 
@@ -61,9 +63,12 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     protected AnimationState currentAnimationState;
 
 
-    
     private final static int MIN_IDLE_DELAY_TICKS = 350;
     private final static int MAX_IDLE_DELAY_TICKS = 900;
+
+    private final String SELECTED_SOUND = "ready";
+    private HashMap<String, Integer[]> orderSounds;
+    private final int MAX_VERSIONS = 4;    
     
     public EntityInfantry(float posX, float posY, Team team, Player owner, SubCell sub) {
 	super(posX, posY, team, owner, WIDTH, HEIGHT);
@@ -76,6 +81,21 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.fillsSpace = FillsSpace.ONE_SUBCELL;
 	
 	this.currentAnimationState = AnimationState.IDLE;
+	
+	this.selectedSounds.put(SELECTED_SOUND, new Integer[] { 1, 3 } );
+	this.selectedSounds.put("report1", new Integer[] { 0, 1, 2, 3 } );
+	this.selectedSounds.put("yessir1", new Integer[] { 0, 1, 2, 3 } );
+	
+	this.orderSounds = new HashMap<>();
+	this.orderSounds.put("ackno", new Integer[] { 0, 1, 2, 3 });
+	this.orderSounds.put("affirm1", new Integer[] { 0, 1, 2, 3 });
+	this.orderSounds.put("noprob", new Integer[] { 1, 3 });
+	this.orderSounds.put("overout", new Integer[] { 1, 3 });
+	this.orderSounds.put("ritaway", new Integer[] { 1, 3 });
+	this.orderSounds.put("roger", new Integer[] { 1, 3 });
+	this.orderSounds.put("ugotit", new Integer[] { 1, 3 });
+	
+	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3	
     }
     
     @Override
@@ -205,4 +225,61 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public float getCenterPosY() {
 	return this.boundingBox.getCenterY();
     }	
+    
+    public String getSelectSound() {
+	return SELECTED_SOUND;
+    }    
+    
+    @Override
+    public void playSelectedSound() {
+	for (String s : this.selectedSounds.keySet()) {
+	    Integer[] versions = this.selectedSounds.get(s);
+	    
+	    boolean canPlay = false;
+	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+		if (versions[i] == this.unitVersion) {
+		    canPlay = true;
+		    break;
+		}
+	    }
+	    
+	    if (SoundManager.getInstance().r.nextBoolean() && canPlay) {
+		SoundManager.getInstance().playUnitSoundGlobal(this, s, this.unitVersion);
+		return;
+	    }
+	}
+	
+	SoundManager.getInstance().playUnitSoundGlobal(this, SELECTED_SOUND, 1);
+    }    
+    
+    @Override
+    public void playOrderSound() {
+	// Play order sound
+	for (String s : this.orderSounds.keySet()) {
+	    Integer[] versions = this.orderSounds.get(s);
+	    
+	    if (this.unitVersion >= versions.length) {
+		continue;
+	    }
+	    
+	    boolean canPlay = false;
+	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+		if (versions[i] == this.unitVersion) {
+		    canPlay = true;
+		    break;
+		}
+	    }
+	    
+	    if (SoundManager.getInstance().r.nextBoolean() && canPlay) {
+		SoundManager.getInstance().playUnitSoundGlobal(this, s, this.unitVersion);
+		return;
+	    }
+	}
+	
+	if (SoundManager.getInstance().r.nextBoolean()) {
+	    SoundManager.getInstance().playUnitSoundGlobal(this, "ackno", this.unitVersion);
+	} else {
+	    SoundManager.getInstance().playUnitSoundGlobal(this, "affirm1", this.unitVersion);
+	}	
+    }    
 }

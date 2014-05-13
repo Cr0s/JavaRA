@@ -381,7 +381,7 @@ public class GameSideBar {
 		return;
 	    }
 
-	    buttonX = 1- (barX / 64);
+	    buttonX = 1 - (barX / 64);
 	    buttonY = barY / 48;
 
 	    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);

@@ -18,31 +18,35 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 
     private final int FRAME_DELAY_TICKS = 1; // In ticks, will be multiplied by 1/buildSpeed
     private int updateTicks = 2;
-    
+
     private Image currentFrameImage;
-    
+
     public EntityBuildingProgress(EntityBuilding aTargetBuilding) {
 	super(aTargetBuilding.getTileX(), aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight(), aTargetBuilding.getFootprint());
-    
+
 	this.targetBuilding = aTargetBuilding;
 	this.targetBuilding.posX = this.posX;
 	this.targetBuilding.posY = this.posY;
-	
+
 	makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);
 	this.currentFrameImage = makeTexture.getAsImage(0, this.owner.playerColor);
-	
+
 	setBibType(this.targetBuilding.getBibType());
-	
+
 	this.setMaxHp(10);
 	this.setHp(10);
-	
+
 	this.setMaxProgress(makeTexture.numImages - 1);
 	this.setProgressValue(0);
-	
+
 	// Play "building" sound
-	if (this.owner == Main.getInstance().getPlayer() && !(aTargetBuilding instanceof EntityConstructionYard)) {
-	    SoundManager.getInstance().playSfxGlobal("placbldg", 0.1f); // Placed building
-	    SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+	if (this.owner == Main.getInstance().getPlayer()) {
+	    if (!(aTargetBuilding instanceof EntityConstructionYard)) {
+		SoundManager.getInstance().playSfxGlobal("placbldg", 0.1f); // Placed building
+		SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+	    } else {
+		SoundManager.getInstance().playSfxGlobal("build5", 0.7f); // MVC deploying sound
+	    }
 	}
     }
 
@@ -51,20 +55,20 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 	if (updateTicks++ < FRAME_DELAY_TICKS * (100 - Math.max(1, targetBuilding.buildingSpeed))) { 
 	    return;
 	}
-	
+
 	updateTicks = 0;
 	this.setProgressValue(this.getProgressValue() + 1);
-	
+
 	this.currentFrameImage = makeTexture.getAsImage(this.getProgressValue(), this.owner.playerColor);
-	
+
 	if (this.getProgressValue() == this.getMaxProgress()) {
 	    setDead();
-	    
+
 	    this.owner.getBase().addBuilding(this.targetBuilding);
-	    
+
 	    this.targetBuilding.isVisible = true;
 	    world.spawnEntityInWorld(this.targetBuilding);
-	    
+
 	    this.targetBuilding.onBuildFinished();
 	}
     }
