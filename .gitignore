@@ -4,8 +4,6 @@
 
 *.pydevproject
 bin/
-tmp/
-*.tmp
 *.bak
 *.swp
 *~.nib
