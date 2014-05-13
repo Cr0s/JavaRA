@@ -29,7 +29,7 @@ public class EntityRiffleTrooper extends EntityInfantry implements ISelectable {
 	this.currentFrame = 0;
 
 	this.standSequence = new Sequence(texture, 0, 8, 0, 0, owner.playerColor);
-	this.runSequence = new Sequence(texture, 16, 8, 6, 10, owner.playerColor);
+	this.runSequence = new Sequence(texture, 16, 8, 6, 5, owner.playerColor);
 	this.runSequence.setIsLoop(true);
 
 	this.idleSequences.add(new Sequence(texture, 256, 0, 16, 5, owner.playerColor));
