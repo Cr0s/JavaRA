@@ -149,7 +149,7 @@ public class Main extends StateBasedGame {
 	}
 
 	controller = new Controller(null, camera, this.getContainer().getInput());	
-	w = new World("haos-ridges",
+	w = new World("forest-path",
 		this.getContainer(), camera);		
 
 	initGame();

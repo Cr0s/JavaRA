@@ -123,6 +123,7 @@ public class Player {
 		break;
 	    }
 	    
+	    e.currentFacing = this.world.getRandomInt(0, EntityInfantry.MAX_FACING);
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}
 

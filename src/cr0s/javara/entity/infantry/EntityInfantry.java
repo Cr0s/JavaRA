@@ -96,6 +96,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.orderSounds.put("ugotit", new Integer[] { 1, 3 });
 	
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3	
+	
+	this.randomTicksBeforeIdleSeq = (int) (this.MIN_IDLE_DELAY_TICKS + Math.random() % (this.MAX_IDLE_DELAY_TICKS - this.MIN_IDLE_DELAY_TICKS));
     }
     
     @Override
@@ -116,6 +118,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	    e.printStackTrace();
 	}
 
+
+	
 	return null;
     }
    
