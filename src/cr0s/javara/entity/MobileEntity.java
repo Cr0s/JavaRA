@@ -302,4 +302,10 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	    this.moveTo(order.targetPosition);
 	}
     }
+
+
+    public void setCellPos(Point exitPoint) {
+	this.posX = exitPoint.getX() * 24;
+	this.posY = exitPoint.getY() * 24;
+    }
 }

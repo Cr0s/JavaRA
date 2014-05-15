@@ -42,6 +42,10 @@ public class Production {
 
     private SideBarItemsButton button;
 
+    private boolean notifiedNoFunds = false;
+    private final int NO_FUNDS_INTERVAL = 300;
+    private int ticksBeforeNotifyNoFunds = NO_FUNDS_INTERVAL;
+    
     public Production(Player p) {
 	this.player = p;
     }
@@ -65,7 +69,7 @@ public class Production {
 	this.isDeployed = false;
     }
 
-    public void update() {	
+    public void update() {
 	if (this.isBuilding && !this.isReady) {
 	    if (this.isOnHold) {
 		return;
@@ -77,9 +81,14 @@ public class Production {
 
 	    // Insufficient funds
 	    if (cashPerTick != 0 && !this.player.getBase().takeCash(cashPerTick)) {
+		if (!this.notifiedNoFunds) {
+		    SoundManager.getInstance().playSpeechSoundGlobal("nofunds1");
+		    this.notifiedNoFunds = true;
+		}
 		return;
 	    }
 
+	    this.notifiedNoFunds = false;
 	    this.cashSpent += cashPerTick;
 	    this.buildedTicks++;
 
@@ -117,10 +126,11 @@ public class Production {
 	if (this.targetActor instanceof EntityVehicle) {
 	    this.isReady = false;
 	    this.isDeployed = true;
-	    System.out.println("Deploying vehicle");
 	    this.player.getBase().deployBuildedVehicle((EntityVehicle) targetActor);
 	} else if (this.targetActor instanceof EntityInfantry) {
-
+	    this.isReady = false;
+	    this.isDeployed = true;
+	    this.player.getBase().deployTrainedInfantry((EntityInfantry) targetActor);
 	}
     }
 

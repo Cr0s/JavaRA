@@ -6,6 +6,7 @@ import org.newdawn.slick.BigImage;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.gameplay.Player;
@@ -15,9 +16,15 @@ import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityRocketTrooper extends EntityInfantry implements ISelectable {
+public class EntityRocketTrooper extends EntityInfantry implements ISelectable, IHaveCost {
     
-    public EntityRocketTrooper(float posX, float posY, Team team, Player owner,
+    private int BUILD_COST = 300;
+    
+    public EntityRocketTrooper(Float posX, Float posY, Team team, Player owner) {
+	this(posX, posY, team, owner, SubCell.CENTER);
+    }    
+    
+    public EntityRocketTrooper(Float posX, Float posY, Team team, Player owner,
 	    SubCell sub) {
 	super(posX, posY, team, owner, sub);
 	
@@ -29,11 +36,11 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable {
 	this.currentFrame = 0;
 	
 	this.standSequence = new Sequence(texture, 0, 8, 0, 0, owner.playerColor);
-	this.runSequence = new Sequence(texture, 16, 8, 6, 5, owner.playerColor);
+	this.runSequence = new Sequence(texture, 16, 8, 6, 2, owner.playerColor);
 	this.runSequence.setIsLoop(true);
 
-	this.idleSequences.add(new Sequence(texture, 272, 0, 14, 10, owner.playerColor));
-	this.idleSequences.add(new Sequence(texture, 287, 0, 16, 10, owner.playerColor));	
+	this.idleSequences.add(new Sequence(texture, 272, 0, 14, 2, owner.playerColor));
+	this.idleSequences.add(new Sequence(texture, 287, 0, 16, 2, owner.playerColor));	
     }
 
     @Override 
@@ -77,5 +84,10 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable {
     @Override
     public boolean isSelected() {
 	return this.isSelected;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return BUILD_COST;
     }
 }

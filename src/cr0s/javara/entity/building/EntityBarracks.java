@@ -1,20 +1,28 @@
 package cr0s.javara.entity.building;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.CellChooser;
 
 public class EntityBarracks extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost {
 
@@ -37,7 +45,10 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
     private static final int SHROUD_REVEALING_RANGE = 10;
 
     private static final int BUILDING_COST = 400;
-
+    
+    private Point rallyPoint;
+    private Point exitPoint;
+    
     public EntityBarracks(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
@@ -144,5 +155,52 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
     @Override
     public int getBuildingCost() {
 	return BUILDING_COST;
+    }
+
+    public void deployEntity(EntityActor newInstance) {
+	if (newInstance instanceof MobileEntity) {
+	    final MobileEntity me = (MobileEntity) newInstance;
+	    
+	    me.isVisible = true;	    
+	    newInstance.setWorld(this.world);
+	  
+	    world.spawnEntityInWorld(newInstance);
+	    
+	    Path p = new Path();
+	    p.appendStep((int) exitPoint.getX(), (int) exitPoint.getY());
+	    p.appendStep((int) rallyPoint.getX(), (int) rallyPoint.getY());
+	    
+	    SubCell freeSubCell = world.blockingEntityMap.getFreeSubCell(rallyPoint, SubCell.CENTER);
+	    if (freeSubCell != null) {
+		me.currentSubcell = freeSubCell;
+		me.desiredSubcell = freeSubCell;
+		me.setCellPos(exitPoint);
+		
+		me.startMovingByPath(p, this);
+	    } else {
+		SubCell sc = SubCell.CENTER;
+
+		MobileEntity blocker = world.getMobileEntityInCell(exitPoint);
+		if (blocker != null) {
+		    blocker.nudge(me, true);
+		}
+		
+		blocker = world.getMobileEntityInCell(rallyPoint);
+		if (blocker != null) {
+		    blocker.nudge(me, true);
+		}
+		
+		me.setCellPos(exitPoint);
+		me.currentSubcell = sc;
+		me.desiredSubcell = sc;
+		me.startMovingByPath(p, this);
+	    }
+	}
+    }
+    
+    @Override
+    public void onBuildFinished() {
+	this.exitPoint = new Point((posX) / 24, (posY + 1 * 24) / 24);
+	this.rallyPoint = new Point((posX + 24) / 24, (posY + 2 * 24) / 24);	
     }
 }

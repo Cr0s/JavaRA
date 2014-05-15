@@ -12,6 +12,7 @@ import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.infantry.EntityInfantry;
+import cr0s.javara.entity.infantry.EntityInfantry.AnimationState;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.render.World;
 import cr0s.javara.util.PointsUtil;
@@ -115,17 +116,17 @@ public class MoveInfantry extends Activity {
 		blocker.notifyBlocking(me);
 		this.hasNotifiedBlocker = true;
 	    }
-
+	    
 	    // Wait a bit
 	    if (!this.hasWaited) {
 		this.waitTicksRemaining = me.getWaitAverageTime() + me.world.getRandomInt(-me.getWaitSpreadTime(), me.getWaitSpreadTime());
 
 		//System.out.println("Waiting time: " + this.waitTicksRemaining);
 		this.hasWaited = true;
+		((EntityInfantry) me).setCurrentAnimationState(AnimationState.WAITING);
 	    }
 
 	    if (--this.waitTicksRemaining >= 0) { // We're waiting now
-		//System.out.println("\tWaiting ticks: " + this.waitTicksRemaining);
 		return null;
 	    }
 
@@ -134,6 +135,8 @@ public class MoveInfantry extends Activity {
 
 	    return null;
 	}
+	
+	((EntityInfantry) me).setCurrentAnimationState(AnimationState.MOVING);
 
 	if (--this.ticksBeforeRepath <= 0) {
 	    this.ticksBeforeRepath = this.REPATHING_INTERVAL_TICKS;

@@ -15,6 +15,7 @@ import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.entity.building.IOreCapacitor;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
@@ -179,6 +180,10 @@ public class Base {
 		} else if (((EntityConstructionYard) b).getAlignment() == Alignment.SOVIET) {
 		    this.isSovietCYPresent = true;
 		}
+	    } else if (b instanceof EntityBarracks) {
+		this.isBarracksPresent = true;
+	    //} else if (b instanceof EntityTent) {
+		//this.isTentPresent = true;
 	    } else if (b instanceof EntityWarFactory) {
 		if (((EntityWarFactory) b).getAlignment() == Alignment.ALLIED) {
 		    this.isAlliedWarFactoryPresent = true;
@@ -214,6 +219,8 @@ public class Base {
 	
 	if (building instanceof EntityWarFactory) {
 	    building.setPrimary(!isMoreThanOneWarFactory());
+	} else if (building instanceof EntityBarracks /*|| building instanceof EntityTent*/) {
+	    building.setPrimary(!isMoreThanOneTentOrBarrack());
 	}
     }
 
@@ -293,6 +300,52 @@ public class Base {
 	getPrimaryWarFactory().deployEntity(EntityVehicle.newInstance(v));
     }
     
+    public EntityBuilding getPrimaryBarrackOrTent() {
+	for (EntityBuilding b : this.buildings) {
+	    if (b instanceof EntityBarracks /*|| b instanceof EntityTent*/) {
+		if (b.isPrimary()) {
+		    return b;
+		}
+	    }
+	}	
+	
+	return null;
+    }
+
+    public void setPrimaryTentOrBarrack(EntityBuilding b) {
+	for (EntityBuilding eb : this.buildings) {
+	    if (eb instanceof EntityBarracks/* || eb instanceof EntityTent*/) {
+		eb.setPrimary(eb == b);
+	    }
+	}
+    }
+
+    public boolean isMoreThanOneTentOrBarrack() {
+	int count = 0;
+
+	for (EntityBuilding eb : this.buildings) {
+	    if (eb instanceof EntityBarracks/* || eb instanceof EntityTent*/) {
+		count++;
+		if (count > 1) {
+		    return true;
+		}
+	    }
+	}	
+
+	return false;
+    }
+
+    public void deployTrainedInfantry(EntityInfantry i) {
+	EntityBuilding b = getPrimaryBarrackOrTent();
+	if (b != null) {
+	    if (b instanceof EntityBarracks) {
+		((EntityBarracks) b).deployEntity(i.newInstance());
+	    }/* else if (b instanceof EntityTent) {
+		((EntityTent) b).deployEntity(i.newInstance());
+	    }*/
+	}
+    }
+    
     public EntityWarFactory getPrimaryWarFactory() {
 	for (EntityBuilding b : this.buildings) {
 	    if (b instanceof EntityWarFactory) {
@@ -327,7 +380,8 @@ public class Base {
 
 	return false;
     }
-
+    
+    
     public void giveOre(int aCapacity) {
 	if (this.ore + aCapacity > 0.8f * this.oreCapacity) {
 	    if (this.owner == Main.getInstance().getPlayer()) {

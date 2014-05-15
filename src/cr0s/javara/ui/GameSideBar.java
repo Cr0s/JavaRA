@@ -11,6 +11,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.gameplay.Base;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Production;
@@ -21,6 +22,7 @@ import cr0s.javara.render.map.MinimapRenderer;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.sbpages.building.PageBuildingSoviet;
+import cr0s.javara.ui.sbpages.infantry.PageInfantry;
 import cr0s.javara.ui.sbpages.vehicle.PageVehicle;
 import cr0s.javara.ui.sbpages.SideBarPage;
 
@@ -57,7 +59,8 @@ public class GameSideBar {
     public static final String START_PAGE_NAME = "start";
     public static final String PAGE_BUILDING_SOVIET = "sovbuild";
     public static final String PAGE_VEHICLE = "vehicle";
-
+    public static final String PAGE_INFANTRY = "infantry";
+    
     private Rectangle currentViewportRect = new Rectangle(0, 0, 0, 0);
     private Rectangle radarRect = new Rectangle(0, 0, 0, 0);
     private float previewScale;
@@ -109,6 +112,7 @@ public class GameSideBar {
 	if (this.sideBarPages.isEmpty()) {
 	    this.sideBarPages.put(PAGE_BUILDING_SOVIET, new PageBuildingSoviet(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
 	    this.sideBarPages.put(PAGE_VEHICLE, new PageVehicle(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
+	    this.sideBarPages.put(PAGE_INFANTRY, new PageInfantry(new Point(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1, BAR_SPACING_H + 1)));
 	}
     }
 
@@ -347,9 +351,14 @@ public class GameSideBar {
 			production.restartBuilding();
 		    } 
 		} else {
+		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		    
 		    if (!production.isReady() && !production.isBuilding()) {
-			SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+			if (!(production.getTargetActor() instanceof EntityInfantry)) { 
+			    SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+			} else {
+			    SoundManager.getInstance().playSpeechSoundGlobal("train1");
+			}
 			production.restartBuilding();
 		    } 
 		}
@@ -400,7 +409,8 @@ public class GameSideBar {
 		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 		switchPage(PAGE_VEHICLE);
 	    } else if (buttonX == 1) {
-
+		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		switchPage(PAGE_INFANTRY);
 	    }
 
 	    break;
@@ -431,6 +441,16 @@ public class GameSideBar {
 
 		if (buildingActor != null) {
 		    Production production = player.getBase().getProductionQueue().getCurrentVehicleProduction();
+
+		    productionButtonClick(production, button, buttonX, buttonY);
+		} else {
+		    openPageByClick(buttonX, buttonY);
+		}		
+	    } else {
+		EntityActor buildingActor = player.getBase().getProductionQueue().getCurrentInfantryProduction().getTargetActor();
+
+		if (buildingActor != null) {
+		    Production production = player.getBase().getProductionQueue().getCurrentInfantryProduction();
 
 		    productionButtonClick(production, button, buttonX, buttonY);
 		} else {

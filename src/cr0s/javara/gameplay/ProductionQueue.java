@@ -12,12 +12,21 @@ import cr0s.javara.entity.building.EntityPowerPlant;
 import cr0s.javara.entity.building.EntityProc;
 import cr0s.javara.entity.building.EntityRadarDome;
 import cr0s.javara.entity.building.EntityWarFactory;
+import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
 import cr0s.javara.entity.infantry.EntityInfantry;
+import cr0s.javara.entity.infantry.EntityRiffleTrooper;
+import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.EntityVehicle;
+import cr0s.javara.entity.vehicle.common.EntityHarvester;
+import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.ui.sbpages.building.BuildingSidebarButton;
+import cr0s.javara.ui.sbpages.infantry.InfantrySidebarButton;
+import cr0s.javara.ui.sbpages.vehicle.VehicleSidebarButton;
 
 public class ProductionQueue {
     private Base base;
@@ -96,7 +105,34 @@ public class ProductionQueue {
 	this.alliedBuildings.put("weapicon.shp", new EntityWarFactory(0f, 0f, this.player.getTeam(), this.player));
 	this.alliedBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
 	
-	this.buildables.put("powricon.shp", this.sovietBuildings.get("powricon.shp"));
+	//this.buildables.put("powricon.shp", this.sovietBuildings.get("powricon.shp"));
+	
+	this.sovietVehicles.put("harvicon.shp", new EntityHarvester(0.0f, 0.0f, this.player.getTeam(), this.player));
+	this.sovietVehicles.put("3tnkicon.shp", new EntityHeavyTank(0.0f, 0.0f, this.player.getTeam(), this.player));
+	this.sovietVehicles.put("mcvcon.shp", new EntityMcv(0.0f, 0.0f, this.player.getTeam(), this.player));
+	
+	/*
+	 	addButton(new InfantrySidebarButton("", "shokicon.shp", this.getPosition(), 0, 4, false, null));
+	
+	//addButton(new InfantrySidebarButton("", "icon.shp", this.getPosition(), 1, 5, false, null));
+	//addButton(new InfantrySidebarButton("", "icon.shp", this.getPosition(), 1, 5, false, null));
+	
+	addButton(new InfantrySidebarButton("", "e4icon.shp", this.getPosition(), 0, 6, false, null));
+	//addButton(new InfantrySidebarButton("", "icon.shp", this.getPosition(), 1, 6, false, null));
+	
+	addButton(new InfantrySidebarButton("", "e3icon.shp", this.getPosition(), 0, 7, false, null));
+	addButton(new InfantrySidebarButton("", "e7icon.shp", this.getPosition(), 1, 7, false, null));
+	
+	addButton(new InfantrySidebarButton("", "e2icon.shp", this.getPosition(), 0, 8, false, null));
+	//addButton(new InfantrySidebarButton("", "icon.shp", this.getPosition(), 1, 8, false, null));
+	
+	addButton(new InfantrySidebarButton("", "e1icon.shp", this.getPosition(), 0, 9, false, null));
+	addButton(new InfantrySidebarButton("", "e6icon.shp", this.getPosition(), 1, 9, false, null));
+	 */
+	this.sovietInfantry.put("e1icon.shp", new EntityRiffleTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
+	//this.sovietInfantry.put("e6icon.shp", new EntityEngineer(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
+	this.sovietInfantry.put("e2icon.shp", new EntityGrenadeTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
+	this.sovietInfantry.put("e3icon.shp", new EntityRocketTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
     }
 
     public EntityActor getBuildableActor(SideBarItemsButton texture) {
@@ -224,7 +260,7 @@ public class ProductionQueue {
     }
     
     public boolean isBuildable(String name) {
-	if ( this.buildables == null || this.buildables.isEmpty()) {
+	if (this.buildables == null || this.buildables.isEmpty()) {
 	    return false;
 	}
 	

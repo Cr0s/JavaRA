@@ -92,7 +92,7 @@ public class Player {
 
 	this.world.spawnEntityInWorld(mcv);
 
-	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
+	/*EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
 
@@ -125,7 +125,7 @@ public class Player {
 	    
 	    e.currentFacing = this.world.getRandomInt(0, EntityInfantry.MAX_FACING);
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
-	}
+	}*/
 
 	this.base.gainCash(5000);
     }
