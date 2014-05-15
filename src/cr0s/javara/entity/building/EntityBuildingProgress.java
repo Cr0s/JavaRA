@@ -38,6 +38,7 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 
 	// Play "building" sound
 	if (this.owner == Main.getInstance().getPlayer()) {
+	    SoundManager.getInstance().playSfxGlobal("placbldg", 0.7f);
 	    SoundManager.getInstance().playSfxGlobal("build5", 0.7f);
 	}
     }

@@ -201,6 +201,6 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
     @Override
     public void onBuildFinished() {
 	this.exitPoint = new Point((posX) / 24, (posY + 1 * 24) / 24);
-	this.rallyPoint = new Point((posX + 24) / 24, (posY + 2 * 24) / 24);	
+	this.rallyPoint = new Point((posX) / 24, (posY + 2 * 24) / 24);	
     }
 }
