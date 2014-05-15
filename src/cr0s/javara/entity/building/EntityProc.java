@@ -11,6 +11,7 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -18,13 +19,14 @@ import cr0s.javara.entity.actor.activity.activities.harvester.FindResources;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor, ITargetLines {
+public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor, ITargetLines, IHaveCost {
 
     private SpriteSheet sheet;
 
@@ -51,7 +53,9 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     
     private LinkedList<TargetLine> targetLines = new LinkedList<>();
     
-    public EntityProc(Integer tileX, Integer tileY, Team team, Player player) {
+    private static final int BUILDING_COST = 1400;
+    
+    public EntityProc(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
 
 	setBibType(BibType.MIDDLE);
@@ -63,6 +67,9 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	this.buildingSpeed = 80;//20;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
+	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+	this.requiredToBuild.add(EntityPowerPlant.class);
     }
 
     @Override
@@ -181,7 +188,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     @Override
     public Color getPipColorAt(int i) {
-	return (owner.getBase().oreValue * this.PIPS_COUNT > i * owner.getBase().oreCapacity) ? Color.yellow : null;
+	return (owner.getBase().ore * this.PIPS_COUNT > i * owner.getBase().oreCapacity) ? Color.yellow : null;
     }
 
     @Override
@@ -206,5 +213,10 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	}
 	
 	return this.targetLines;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return BUILDING_COST;
     }        
 }

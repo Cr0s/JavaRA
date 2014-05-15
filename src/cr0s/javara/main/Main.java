@@ -95,7 +95,8 @@ public class Main extends StateBasedGame {
 	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 800,
 		    600, false);
 
-	    container.setMinimumLogicUpdateInterval(20);
+	    container.setMinimumLogicUpdateInterval(50);
+	    container.setMaximumLogicUpdateInterval(50);
 	    //container.setShowFPS(false);
 	    //container.setSmoothDeltas(true);
 	    //container.setVSync(true);
@@ -149,7 +150,7 @@ public class Main extends StateBasedGame {
 	}
 
 	controller = new Controller(null, camera, this.getContainer().getInput());	
-	w = new World("forest-path",
+	w = new World("haos-ridges",
 		this.getContainer(), camera);		
 
 	initGame();
@@ -162,7 +163,8 @@ public class Main extends StateBasedGame {
 	
 	team = new Team();
 	player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
-
+	player.setTeam(team);
+	
 	bo = new BuildingOverlay(player, w);
 
 	w.addPlayer(player);
@@ -181,7 +183,7 @@ public class Main extends StateBasedGame {
     }
 
     public Team getTeam() {
-	return this.team;
+	return this.player.getTeam();
     }
 
     public CursorType getCursor() {

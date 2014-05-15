@@ -6,15 +6,17 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
+public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer, IHaveCost {
     private Image normal, corrupted;
     private final String TEXTURE_NAME = "apwr.shp";
     private final String MAKE_TEXTURE_NAME = "apwrmake.shp";
@@ -25,8 +27,9 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
     private static final int POWER_PRODUCTION_LEVEL = 60;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
+    private static final int BUILDING_COST = 500;
 
-    public EntityAdvPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
+    public EntityAdvPowerPlant(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xxx xxx xxx ~~~");
 
 	setBibType(BibType.MIDDLE);
@@ -38,6 +41,10 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 	this.buildingSpeed = 35;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
+	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.requiredToBuild.add(EntityRadarDome.class);
     }
 
     private void initTextures() {
@@ -115,5 +122,10 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
     @Override
     public Image getTexture() {
 	return normal;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return BUILDING_COST;
     }        
 }

@@ -11,57 +11,42 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.resources.SoundManager;
 
-public class EntityBuildingProgress extends EntityBuilding implements ISelectable, IShroudRevealer {
+public class EntityBuildingProgress extends EntityBuilding implements IShroudRevealer {
 
     private EntityBuilding targetBuilding;
     private ShpTexture makeTexture;
 
-    private final int FRAME_DELAY_TICKS = 1; // In ticks, will be multiplied by 1/buildSpeed
-    private int updateTicks = 2;
+    private int ticksRemaining;
 
-    private Image currentFrameImage;
+    private int currentFrame;
 
     public EntityBuildingProgress(EntityBuilding aTargetBuilding) {
-	super(aTargetBuilding.getTileX(), aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight(), aTargetBuilding.getFootprint());
+	super((float) aTargetBuilding.getTileX(), (float) aTargetBuilding.getTileY(), aTargetBuilding.team, aTargetBuilding.owner, aTargetBuilding.getWidth(), aTargetBuilding.getHeight(), aTargetBuilding.getFootprint());
 
 	this.targetBuilding = aTargetBuilding;
 	this.targetBuilding.posX = this.posX;
 	this.targetBuilding.posY = this.posY;
 
 	makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);
-	this.currentFrameImage = makeTexture.getAsImage(0, this.owner.playerColor);
 
+	this.ticksRemaining = makeTexture.numImages - 1;
+	
 	setBibType(this.targetBuilding.getBibType());
 
 	this.setMaxHp(10);
 	this.setHp(10);
 
-	this.setMaxProgress(makeTexture.numImages - 1);
-	this.setProgressValue(0);
-
 	// Play "building" sound
 	if (this.owner == Main.getInstance().getPlayer()) {
-	    if (!(aTargetBuilding instanceof EntityConstructionYard)) {
-		SoundManager.getInstance().playSfxGlobal("placbldg", 0.1f); // Placed building
-		SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
-	    } else {
-		SoundManager.getInstance().playSfxGlobal("build5", 0.7f); // MVC deploying sound
-	    }
+	    SoundManager.getInstance().playSfxGlobal("build5", 0.7f);
 	}
     }
 
     @Override
     public void updateEntity(int delta) {
-	if (updateTicks++ < FRAME_DELAY_TICKS * (100 - Math.max(1, targetBuilding.buildingSpeed))) { 
-	    return;
-	}
-
-	updateTicks = 0;
-	this.setProgressValue(this.getProgressValue() + 1);
-
-	this.currentFrameImage = makeTexture.getAsImage(this.getProgressValue(), this.owner.playerColor);
-
-	if (this.getProgressValue() == this.getMaxProgress()) {
+	this.currentFrame++;
+	
+	if (--this.ticksRemaining <= 0) {
 	    setDead();
 
 	    this.owner.getBase().addBuilding(this.targetBuilding);
@@ -75,27 +60,12 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
 
     @Override
     public void renderEntity(Graphics g) {
-	this.currentFrameImage.draw(this.posX, this.posY);
+	this.makeTexture.getAsImage(this.currentFrame, this.owner.playerColor).draw(this.posX, this.posY);
     }
 
     @Override
     public boolean shouldRenderedInPass(int passNum) {
-	return this.targetBuilding.shouldRenderedInPass(passNum);// && passNum == -1) ? true : passNum == 0;
-    }
-
-    @Override
-    public void select() {
-	this.isSelected = true;
-    }
-
-    @Override
-    public void cancelSelect() {
-	this.isSelected = false;
-    }
-
-    @Override
-    public boolean isSelected() {
-	return this.isSelected;
+	return this.targetBuilding.shouldRenderedInPass(passNum);
     }
 
     @Override
@@ -111,7 +81,7 @@ public class EntityBuildingProgress extends EntityBuilding implements ISelectabl
     @Override
     public int getRevealingRange() {
 	if (this.targetBuilding instanceof IShroudRevealer) {
-	    return ((IShroudRevealer)targetBuilding).getRevealingRange() / 2;
+	    return ((IShroudRevealer) targetBuilding).getRevealingRange() / 2;
 	} else {
 	    return 0;
 	}

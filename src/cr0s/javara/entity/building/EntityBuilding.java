@@ -11,6 +11,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.main.Main;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
@@ -90,7 +91,7 @@ public abstract class EntityBuilding extends EntityActor {
      * @param aSizeWidth width of building boundaries in pixels.
      * @param aSizeHeight height of building boundaries in pixels.
      */
-    public EntityBuilding(final int aTileX, final int aTileY, 
+    public EntityBuilding(final Float aTileX, final Float aTileY, 
 	    final Team aTeam, 
 	    final Player aPlayer, 
 	    final float aSizeWidth, 
@@ -99,8 +100,8 @@ public abstract class EntityBuilding extends EntityActor {
 
 	super(aTileX, aTileY, aTeam, aPlayer, aSizeWidth, aSizeHeight);
 
-	this.tileX = aTileX;
-	this.tileY = aTileY;
+	this.tileX = aTileX.intValue();
+	this.tileY = aTileY.intValue();
 
 	this.width = aSizeWidth;
 	this.height = aSizeHeight;
@@ -114,6 +115,8 @@ public abstract class EntityBuilding extends EntityActor {
 	generateCellsFromFootprint(aFootprint, this.blockingCells);
 	
 	this.fillsSpace = FillsSpace.ONE_OR_MORE_CELLS;
+	
+	requiredToBuild.add(EntityConstructionYard.class);
     }
 
     @Override
@@ -299,27 +302,8 @@ public abstract class EntityBuilding extends EntityActor {
 	return this.getTexture().getHeight();
     }
 
-    public static EntityBuilding newInstance(EntityBuilding b) {
-	// public EntityBarracks(int tileX, int tileY, Team team, Player player)
-	Constructor ctor;
-	try {
-	    ctor = (b.getClass()).getDeclaredConstructor(Integer.class, Integer.class, Team.class, Player.class);
-	    ctor.setAccessible(true);
-	    EntityBuilding newEntityBuilding = ((EntityBuilding)ctor.newInstance(b.getTileX(), b.getTileY(), b.team, b.owner));
-
-	    return newEntityBuilding;
-	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-		| IllegalArgumentException | InvocationTargetException e) {
-	    e.printStackTrace();
-	}
-
-	return null;
-    }
-
     public void onBuildFinished() {
-	if (!(this instanceof EntityConstructionYard)) { 
-	    SoundManager.getInstance().playSpeechSoundGlobal("conscmp1");
-	}
+
     }
 
     @Override

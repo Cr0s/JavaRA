@@ -79,6 +79,10 @@ public class BuildingOverlay {
     public void update(int delta) {
 	cellX = (int) (-Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getInput().getMouseX()) / 24;
 	cellY = (int) (-Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getInput().getMouseY()) / 24;
+	
+	if (!Main.getInstance().getPlayer().getBase().getProductionQueue().canBuild(this.targetBuilding)) {
+	    resetBuildingMode();
+	}
     }
 
     public void setBuildingMode(EntityBuilding eb) {

@@ -1,7 +1,10 @@
 package cr0s.javara.gameplay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityConstructionYard;
@@ -17,6 +20,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.resources.SoundManager;
+import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.ui.sbpages.vehicle.VehicleSidebarButton;
 /**
  * Describes player's base.
@@ -61,119 +65,107 @@ public class Base {
 
     private int powerLevel = 0;
     private int powerConsumptionLevel = 0;
-
-    private int currentOreValue = 0;
-    private int maxOreValue = 0;
-
-    private VehicleSidebarButton currentVehicleBuilding;
-    private int currentVehicleProgress;
-    public static final int VEHICLE_MAX_PROGRESS = 48;
-    private boolean isCurrentVehicleReady;
-    private boolean isCurrentVehicleHold;
-    private boolean isCurrentVehicleDeployed;
-    private int currentVehicleProgressTicks;
     
-    public static final int WAIT_BEFORE_DEPLOY_VEHICLE = 5;
-    private int waitDeployVehicleTicks;
+    public int oreCapacity, ore, displayOre;
     
-    public int oreCapacity, oreValue;
+    private ProductionQueue queue;
     
-    public Base(Team team, Player owner) {
+    private int cash;
+    private int displayCash;
+    
+    private final int TICKS_WAIT_CASH = 2;
+    private int ticksWaitCash = 0;
 
+    private final int TICKS_WAIT_ORE = 2;
+    private int ticksWaitOre = 0;    
+    
+    private Player owner;
+    
+    private float DISPLAY_FRAC_CASH_PER_TICK = 0.07f;
+    private int DISPLAY_CASH_DELTA_PER_TICK = 37;
+    
+    private HashSet<Class> buildingClasses = new HashSet<>();
+    
+    public Base(Team team, Player aOwner) {
+	this.owner = aOwner;
+	
+	this.queue = new ProductionQueue(this.owner);
     }
 
     public void update() {
 	updateBuildings();
-	updateCurrentVehicleBuilding();
-    }
-
-    public VehicleSidebarButton getCurrentVehicleButton() {
-	return this.currentVehicleBuilding;
-    }
-    
-    public boolean isCurrentVehicleBuilding() {
-	return (this.currentVehicleBuilding != null);
-    }
-    
-    public boolean isCurrentVehicleHold() {
-	return this.isCurrentVehicleHold;
-    }
-    
-    public boolean isCurrentVehicleReady() {
-	return this.isCurrentVehicleReady;
-    }
-    
-    public int getCurrentVehicleProgress() {
-	return this.currentVehicleProgress;
-    }
-    
-    public boolean isCurrentVehicleDeployed() {
-	return this.isCurrentVehicleDeployed;
-    }
-    
-    public void startBuildVehicle(VehicleSidebarButton v) {
-	this.currentVehicleProgress = 0;
-	this.currentVehicleBuilding = v;
-	this.isCurrentVehicleReady = false;
-	this.currentVehicleProgressTicks = 0;
-	this.isCurrentVehicleHold = false;
-	this.isCurrentVehicleDeployed = false;
+	this.queue.update();
 	
-	getPrimaryWarFactory().setProgressValue(0);
-	getPrimaryWarFactory().setMaxProgress(VEHICLE_MAX_PROGRESS);
+	this.updateDisplayedCash();
     }
     
-    private void updateCurrentVehicleBuilding() {
-	if (this.currentVehicleBuilding != null) {
-	    if (!this.isCurrentVehicleDeployed && !this.isCurrentVehicleHold && !this.isCurrentVehicleReady && this.currentVehicleProgressTicks++ > 80 - currentVehicleBuilding.getTargetVehicle().getBuildingSpeed()) {
-		this.currentVehicleProgressTicks = 0;
-		this.currentVehicleProgress++;
-		
-		getPrimaryWarFactory().setProgressValue(this.currentVehicleProgress);
-		
-		if (this.currentVehicleProgress == VEHICLE_MAX_PROGRESS) {
-		    this.isCurrentVehicleReady = true;
-		}
-	    }
-	    
-	    if (!this.isCurrentVehicleDeployed && this.isCurrentVehicleReady && this.waitDeployVehicleTicks++ > this.WAIT_BEFORE_DEPLOY_VEHICLE) {
-		this.waitDeployVehicleTicks = 0;
-		this.isCurrentVehicleHold = false;
-		this.isCurrentVehicleReady = false;	
-		this.isCurrentVehicleDeployed = true;
+    public void updateDisplayedCash() {
+	if (this.ticksWaitCash > 0) {
+	    this.ticksWaitCash--;
+	}
+	
+	if (this.ticksWaitOre > 0) {
+	    this.ticksWaitOre--;
+	}	
+	
+	// For cash
+	int diff = Math.abs(this.cash - this.displayCash);
+	int move = Math.min(Math.max((int)(diff * DISPLAY_FRAC_CASH_PER_TICK), DISPLAY_CASH_DELTA_PER_TICK), diff);
 
-		getPrimaryWarFactory().setProgressValue(-1);
-		// Its player base
-		if (Main.getInstance().getPlayer().getBase() == this) { 
-		    SoundManager.getInstance().playSpeechSoundGlobal("unitrdy1");
-		}
+
+	if (this.displayCash < this.cash)
+	{
+	    this.displayCash += move;
+	    SoundManager.getInstance().playSfxGlobal("cashup1", 0.8f);
+	}
+	else if (this.displayCash > this.cash)
+	{
+	    this.displayCash -= move;
+	    if (this.ticksWaitCash == 0) { 
+		SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
+		this.ticksWaitCash = TICKS_WAIT_CASH;
 		
-		this.deployBuildedVehicle(this.currentVehicleBuilding.getTargetVehicle());
+		this.displayCash = this.cash;
 	    }
 	}
+	
+	// For ore
+	diff = Math.abs(this.ore - this.displayOre);
+	move = Math.min(Math.max((int) (diff * DISPLAY_FRAC_CASH_PER_TICK), DISPLAY_CASH_DELTA_PER_TICK), diff);
+
+	if (this.displayOre < this.ore)
+	{
+	    this.displayOre += move;
+	    SoundManager.getInstance().playSfxGlobal("cashup1", 0.8f);
+	}
+	else if (this.displayOre > this.ore)
+	{
+	    this.displayOre -= move;
+	    
+	    if (this.ticksWaitOre == 0) { 
+		SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
+		this.ticksWaitOre = TICKS_WAIT_CASH;
+		
+		this.displayOre = this.ore;
+	    }
+	}	
     }
 
     private void updateBuildings() {
 	isSovietCYPresent = isAlliedCYPresent = false;
-	isBarracksPresent = false;
-	isTentPresent = false;
-	isSovietWarFactoryPresent = isAlliedWarFactoryPresent = false;
-	isSubPenPresent = false;
-	isShipYardPresent = false;
-	isHelipadPresent = false;
-	isAirLinePresent = false;
-	isChronoSpherePresent = false;
-	isNukeSiloPresent = false;
-	isIronCurtainPresent = false;
-	isSovietTechPresent = false;
-	isAlliedTechPresent = false;
 	isRadarDomePresent = false;
 	isProcPresent = false;
 
 	this.oreCapacity = 0;
 	this.powerConsumptionLevel = this.powerLevel = 0;
 	
+	this.buildingClasses.clear();
+	
 	for (EntityBuilding b : this.buildings) {
+	    if (!this.buildingClasses.contains(b.getClass())) {
+		this.buildingClasses.add(b.getClass());
+	    }
+	    
 	    // Update power levels
 	    if (b instanceof IPowerConsumer) {
 		this.powerConsumptionLevel += ((IPowerConsumer) b).getConsumptionLevel();
@@ -187,20 +179,12 @@ public class Base {
 		} else if (((EntityConstructionYard) b).getAlignment() == Alignment.SOVIET) {
 		    this.isSovietCYPresent = true;
 		}
-	    } else if (b instanceof EntityBarracks) {
-		this.isBarracksPresent = true;
-	    //} else if (b instanceof EntityTent) {
-		//this.isTentPresent = true;
 	    } else if (b instanceof EntityWarFactory) {
 		if (((EntityWarFactory) b).getAlignment() == Alignment.ALLIED) {
 		    this.isAlliedWarFactoryPresent = true;
 		} else if (((EntityWarFactory) b).getAlignment() == Alignment.SOVIET) {
 		    this.isSovietWarFactoryPresent = true;
 		}
-	    } else if (b instanceof EntityProc) {
-		this.isProcPresent = true;
-	    } else if (b instanceof EntityPowerPlant) {
-		this.isPowerPlantPresent = true;
 	    } else if (b instanceof EntityRadarDome) {
 		this.isRadarDomePresent = true;
 	    }
@@ -259,16 +243,18 @@ public class Base {
 	    return false;
 	}
 
-	if (!this.isAlliedCYPresent && !this.isSovietCYPresent) {
+	if (!this.queue.canBuild(targetBuilding)) {
 	    return false;
 	}
 
 	if (checkBuildingDistance(cellX, cellY)) {
-	    EntityBuilding b = EntityBuilding.newInstance(targetBuilding);
+	    EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
 	    b.changeCellPos(cellX, cellY);
 	    
 	    Main.getInstance().getWorld().addBuildingTo(b);
 
+	    queue.getProductionForBuilding(targetBuilding).deployCurrentActor();
+	    
 	    return true;
 	} else {
 	    return false;
@@ -342,28 +328,73 @@ public class Base {
 	return false;
     }
 
-    public void setCurrentVehicleHold(boolean hold) {
-	this.isCurrentVehicleHold = hold;
-    }
-
-    public void cancelCurrentVehicle(boolean moneyBack) {
-	// TODO: finish moneyback
-	this.currentVehicleBuilding = null;
-	this.isCurrentVehicleHold = false;
-	this.isCurrentVehicleReady = false;
-	this.currentVehicleProgress = 0;
-	this.currentVehicleProgressTicks = 0;
-	
-	getPrimaryWarFactory().setProgressValue(-1);
-    }
-
     public void giveOre(int aCapacity) {
-	// TODO: silos and overflow
-	//int overflow = 0;
-	//if (this.oreValue + aCapacity > this.oreCapacity) {
-	//    overflow = this.oreValue + aCapacity - this.oreCapacity;
-	//}
+	if (this.ore + aCapacity > 0.8f * this.oreCapacity) {
+	    if (this.owner == Main.getInstance().getPlayer()) {
+		// "Silos needed"
+		SoundManager.getInstance().playSpeechSoundGlobal("silond1");
+	    }
+	    
+	    return; // don't accept exceeding ore
+	}
 	
-	this.oreValue += aCapacity;// - overflow;
+	int overflow = 0;
+	if (this.ore + aCapacity > this.oreCapacity) {
+	    overflow = this.ore + aCapacity - this.oreCapacity;
+	}
+	
+	this.ore += aCapacity - overflow;
+    }
+    
+    public void takeOre(int value) {
+	this.ore -= value;
+	
+	if (this.ore < 0) {
+	    this.ore = 0;
+	}
+    }
+    
+    public void gainCash(int amount) {
+	this.cash += amount;
+    }
+    
+    public boolean takeCash(int amount) {
+	if (this.cash + this.ore < amount) {
+	    return false;
+	}
+	
+	// Spent ore first
+	this.ore -= amount;
+	if (this.ore < 0) { // we spent all ore
+	    this.cash += this.ore; // spent cash
+	    this.ore = 0;
+	}
+	
+	return true;
+    }
+    
+    public ProductionQueue getProductionQueue() {
+	return this.queue;
+    }
+
+    public void productButtonItem(SideBarItemsButton texture) {
+	EntityActor target = queue.getBuildableActor(texture);
+	queue.startBuildingActor(target, texture);
+    }
+
+    public int getCash() {
+	return this.cash;
+    }
+    
+    public int getDisplayCash() {
+	return this.displayCash;
+    }
+    
+    public int getDisplayOre() {
+	return this.displayOre;
+    }    
+
+    public HashSet<Class> getBuildingClasses() {
+	return this.buildingClasses;
     }
 }

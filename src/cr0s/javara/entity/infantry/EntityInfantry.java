@@ -14,6 +14,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.AttackInfantry;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
@@ -103,24 +104,6 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     @Override
     public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
 	return world.getInfantryPathfinder().findPathFromTo((EntityInfantry) e, aGoalX, aGoalY);
-    }
-
-    public static EntityInfantry newInstance(EntityInfantry b) {
-	Constructor ctor;
-	try {
-	    ctor = (b.getClass()).getDeclaredConstructor(Float.class, Float.class, Team.class, Player.class);
-	    ctor.setAccessible(true);
-	    EntityInfantry newEntityInfantry = ((EntityInfantry) ctor.newInstance(b.posX, b.posY, b.team, b.owner));
-
-	    return newEntityInfantry;
-	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-		| IllegalArgumentException | InvocationTargetException e) {
-	    e.printStackTrace();
-	}
-
-
-	
-	return null;
     }
    
     @Override

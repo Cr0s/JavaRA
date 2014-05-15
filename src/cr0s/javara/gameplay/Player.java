@@ -127,6 +127,7 @@ public class Player {
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}
 
+	this.base.gainCash(5000);
     }
 
     public OrderTargeter getBestOrderTargeterForTarget(Target target) {
@@ -190,5 +191,9 @@ public class Player {
 	}
 
 	this.selectedEntities = list;
+    }
+
+    public Team getTeam() {
+	return this.team;
     }
 }

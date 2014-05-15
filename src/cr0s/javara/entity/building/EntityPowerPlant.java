@@ -6,15 +6,17 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer {
+public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer, IHaveCost {
     private Image normal, corrupted;
     private final String TEXTURE_NAME = "powr.shp";
     private final String MAKE_TEXTURE_NAME = "powrmake.shp";
@@ -25,8 +27,9 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     private static final int POWER_PRODUCTION_LEVEL = 30;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
+    private static final int BUILDING_COST = 300;
 
-    public EntityPowerPlant(Integer tileX, Integer tileY, Team team, Player player) {
+    public EntityPowerPlant(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
 	setBibType(BibType.SMALL);
@@ -38,6 +41,8 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	this.buildingSpeed = 90;//50;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
+	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
     }
 
     private void initTextures() {
@@ -115,5 +120,10 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     @Override
     public Image getTexture() {
 	return normal;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return BUILDING_COST;
     }      
 }

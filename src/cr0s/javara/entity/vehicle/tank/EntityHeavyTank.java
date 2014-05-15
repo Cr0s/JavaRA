@@ -11,6 +11,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Drag;
@@ -25,7 +26,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover {
+public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost {
 
     private String TEXTURE_NAME = "3tnk.shp";
     private SpriteSheet texture;
@@ -53,6 +54,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     private final float MOVE_SPEED = 0.3f;
 
     private final float SHIFT = 12;
+    
+    private final int BUILDING_COST = 1150;
 
     public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -231,5 +234,10 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     @Override
     public int getWaitSpreadTime() {
 	return this.WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return this.BUILDING_COST;
     }    
 }

@@ -11,7 +11,7 @@ import cr0s.javara.main.Main;
 
 public abstract class SideBarPage {
     private ArrayList<SideBarItemsButton> buttons;
-    private HashMap<String, SideBarItemsButton> buttonsHash;
+    protected HashMap<String, SideBarItemsButton> buttonsHash;
     
     private SideBarItemsButton currentButton;
     
@@ -72,5 +72,9 @@ public abstract class SideBarPage {
 	return this.buttonsHash.get(name);
     }
     
-    public abstract void buttonClicked(SideBarItemsButton button);
+    public void buttonClicked(SideBarItemsButton button) {
+	Main.getInstance().getPlayer().getBase().productButtonItem(button);	
+	
+	Main.getInstance().getSideBar().switchPage("start");
+    }
 }

@@ -10,6 +10,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IDeployable;
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
@@ -22,7 +23,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityWarFactory extends EntityBuilding implements ISelectable, IShroudRevealer, IDeployable {
+public class EntityWarFactory extends EntityBuilding implements ISelectable, IShroudRevealer, IDeployable, IPowerConsumer, IHaveCost {
 
     private SpriteSheet sheetTop;
     private Image weapDownNormal, weapDownCorrupted;
@@ -64,7 +65,10 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     
     private final Rectangle exitBoundingBox;
     
-    public EntityWarFactory(Integer tileX, Integer tileY, Team team, Player player) {
+    private static final int CONSUME_POWER_VALUE = 30;
+    private static final int BUILDING_COST = 2000;
+    
+    public EntityWarFactory(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, FOOTPRINT);
 
 	this.weapAlignment = player.getAlignment();
@@ -82,6 +86,10 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	initTextures();
 	
 	this.exitBoundingBox = new Rectangle(posX, posY, sizeWidth, sizeHeight - 24);
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.requiredToBuild.add(EntityPowerPlant.class);
+	this.requiredToBuild.add(EntityProc.class);
     }
 
     private void initTextures() {
@@ -314,5 +322,15 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     @Override
     public void executeDeployment() {
 	this.owner.getBase().setPrimaryWarFactory(this);
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return this.BUILDING_COST;
+    }
+
+    @Override
+    public int getConsumptionLevel() {
+	return this.CONSUME_POWER_VALUE;
     }    
 }

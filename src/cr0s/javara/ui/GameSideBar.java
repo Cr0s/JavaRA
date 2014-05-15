@@ -9,8 +9,11 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
+import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Base;
 import cr0s.javara.gameplay.Player;
+import cr0s.javara.gameplay.Production;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
@@ -44,7 +47,7 @@ public class GameSideBar {
     //             y  x
     private boolean[][] sideBarCategoriesOpened;
 
-    private Color translucentColor = new Color(255, 255, 255, 90);
+    private Color translucentColor = new Color(255, 255, 255, 120);
     private Color opaqueColor = new Color(255, 255, 255, 255);
 
     private HashMap<String, SideBarPage> sideBarPages;
@@ -55,8 +58,6 @@ public class GameSideBar {
     public static final String PAGE_BUILDING_SOVIET = "sovbuild";
     public static final String PAGE_VEHICLE = "vehicle";
 
-    private Color progressHideColor = new Color(0, 0, 0, 128);
-
     private Rectangle currentViewportRect = new Rectangle(0, 0, 0, 0);
     private Rectangle radarRect = new Rectangle(0, 0, 0, 0);
     private float previewScale;
@@ -66,13 +67,13 @@ public class GameSideBar {
     private PowerBarRenderer powerBar;
 
     private static final int POWERBAR_WIDTH = 10;
-    
+
     private final int MINIMAP_UPDATE_INTERVAL_TICKS = 10;
     private int minimapUpdateTicks = MINIMAP_UPDATE_INTERVAL_TICKS;
-    
+
     private int lowPowerAdviceTicks = 0;
     private int LOW_POWER_ADVICE_INTERVAL = 250;
-    
+
     private boolean wasLowPower = false;
 
     public GameSideBar(Team aTeam, Player aPlayer) {
@@ -117,8 +118,13 @@ public class GameSideBar {
 	g.fill(this.sidebarBounds);
 	this.powerBar.render(g, this.getBackgroundColor());
 	drawSideBarButtons(g);
+	drawMoney(g);
 	g.setColor(pColor);
 
+    }
+
+    public void drawMoney(Graphics g) {
+	g.getFont().drawString(this.sidebarBounds.getX(), this.sidebarBounds.getY() - g.getFont().getLineHeight(), Main.getInstance().getPlayer().getBase().getDisplayCash() + Main.getInstance().getPlayer().getBase().getDisplayOre() + "$", Color.yellow.darker(0.2f));
     }
 
     public void drawRadar(Graphics g) {
@@ -160,64 +166,83 @@ public class GameSideBar {
 
     private void drawStartPage(Graphics g, int sX, int sY, Color filterColor) {
 	drawRadar(g);
+	int x = Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1;
+	int y = MENU_START_Y;
 
-	if (this.player.getAlignment() == Alignment.SOVIET) {
-	    // Draw soviet, then allied
-	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][1] ? 1 : 0, 1).draw(sX, sY, filterColor);
-	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][0] ? 1 : 0, 0).draw(sX + 64, sY, filterColor);
-	} else {
-	    // Draw allied, then soviet
-	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][0] ? 1 : 0, 0).draw(sX, sY, filterColor);
-	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][1] ? 1 : 0, 1).draw(sX + 64, sY, filterColor);
-	}
+	drawBuildingButtons(g, x, y, filterColor);
+	drawWarFactoryButton(g, x, y, filterColor);
+	drawBarracksButton(g, x, y, filterColor);
 
-	for (int i = 1; i < 4; i++) {
-	    int x = Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 1;
-	    int y = MENU_START_Y;
 
-	    for (int j = 0; j < 2; j++) {
-		// Is this Vehicles button with progress?
-		if (i == 1 && j == 0 && this.player.getBase().isCurrentVehicleBuilding()) {
-		    drawCurrentVehicleProgress(g, x + (64 * j), y + (i * 48), filterColor);
-		} else { // Default case
-		    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[i][j] ? 1 : 0, 2 * i + j).draw(x + (64 * j), y + (i * 48), filterColor);
-		}
-	    }
+	for (int i = 2; i < 4; i++) {
+	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[i][0] ? 1 : 0, 2 * i).draw(x, y + (i * 48), filterColor);
+	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[i][1] ? 1 : 0, 2 * i + 1).draw(x + 64, y + (i * 48), filterColor);
 	}	
     }
 
-    private void drawCurrentVehicleProgress(Graphics g, int x, int y, Color filterColor) {
-	// Draw unit image first
-	player.getBase().getCurrentVehicleButton().getTexture().draw(x, y, filterColor);
+    private void drawBarracksButton(Graphics g, final int sX, final int sY, Color filterColor) {
+	EntityActor currentActor = this.player.getBase().getProductionQueue().getCurrentInfantryProduction().getTargetActor();
 
-	// Draw progress rect
-	Color pColor = g.getColor();
+	if (currentActor != null) {
+	    this.player.getBase().getProductionQueue().getCurrentInfantryProduction().drawProductionButton(g, sX + 64, sY + (1 * 48), filterColor, true);
+	} else {
+	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[1][1] ? 1 : 0, 3).draw(sX + 64, sY + (1 * 48), filterColor);
+	}	
+    }
 
-	g.setColor(this.progressHideColor.multiply(filterColor));
-	g.fillRect(x, y, 64, 48 - player.getBase().getCurrentVehicleProgress());
+    private void drawWarFactoryButton(Graphics g, final int sX, final int sY, Color filterColor) {
+	EntityActor currentActor = this.player.getBase().getProductionQueue().getCurrentProducingVehicle();
 
-	g.setColor(Color.white.multiply(filterColor));
-	// Draw status
-	if (player.getBase().isCurrentVehicleReady() && !player.getBase().isCurrentVehicleDeployed()) {
-	    g.drawString("ready", x + 5, y + 46 - g.getFont().getLineHeight());
-	} else if (player.getBase().isCurrentVehicleHold()) {
-	    g.drawString("on hold", x + 1, y + 46 - g.getFont().getLineHeight());
+	if (currentActor != null) {
+	    this.player.getBase().getProductionQueue().getCurrentVehicleProduction().drawProductionButton(g, sX, sY + (1 * 48), filterColor, true);
+	} else {
+	    this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[1][0] ? 1 : 0, 2).draw(sX, sY + (1 * 48), filterColor);
 	}
+    }
 
-	g.setColor(pColor);
+    private void drawBuildingButtons(Graphics g, int sX, int sY, Color filterColor) {
+	boolean isSovietLeft = this.player.getAlignment() == Alignment.SOVIET;
+
+	EntityActor currentActor = this.getPlayer().getBase().getProductionQueue().getCurrentProducingBuilding();
+	if (currentActor != null) {
+	    if (!isSovietLeft && currentActor.unitProductionAlingment != Alignment.SOVIET) {
+		sX += 64;
+	    } else if (isSovietLeft && currentActor.unitProductionAlingment == Alignment.ALLIED) {
+		sX += 64;
+	    }
+
+	    this.getPlayer().getBase().getProductionQueue().getProductionForBuilding(currentActor).drawProductionButton(g, sX, sY, filterColor, true);
+
+	    // Draw blackouted right texture
+	    if (isSovietLeft) {
+		this.menuCategoriesSheet.getSubImage(0, 1).draw(sX + 64, sY, filterColor);
+	    } else {
+		this.menuCategoriesSheet.getSubImage(0, 0).draw(sX + 64, sY, filterColor);
+	    }
+	} else {
+	    if (isSovietLeft) {
+		// Draw soviet, then allied
+		this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][1] ? 1 : 0, 1).draw(sX, sY, filterColor);
+		this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][0] ? 1 : 0, 0).draw(sX + 64, sY, filterColor);
+	    } else {
+		// Draw allied, then soviet
+		this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][0] ? 1 : 0, 0).draw(sX, sY, filterColor);
+		this.menuCategoriesSheet.getSubImage(this.sideBarCategoriesOpened[0][1] ? 1 : 0, 1).draw(sX + 64, sY, filterColor);
+	    }	    
+	}
     }
 
     public void update(int delta) {
 	if (Main.getInstance().getPlayer().getBase().isLowPower()) {
 	    if (--this.lowPowerAdviceTicks <= 0) {
 		this.lowPowerAdviceTicks = this.LOW_POWER_ADVICE_INTERVAL;
-		
+
 		SoundManager.getInstance().playSpeechSoundGlobal("lopower1");
 	    }
-	    
+
 	    if (!wasLowPower) {
 		this.wasLowPower = true;
-		
+
 		// If power down occured with radar, play radar disabling sound
 		if (Main.getInstance().getPlayer().getBase().isRadarDomePresent) {
 		    SoundManager.getInstance().playSfxGlobal("radardn1", 0.9f);
@@ -226,7 +251,7 @@ public class GameSideBar {
 	} else {
 	    if (wasLowPower) {
 		this.wasLowPower = false;
-		
+
 		// If power up occured with radar, play radar enabling sound
 		if (Main.getInstance().getPlayer().getBase().isRadarDomePresent) {
 		    SoundManager.getInstance().playSfxGlobal("radaron2", 0.9f);
@@ -239,10 +264,10 @@ public class GameSideBar {
 
 	if (--this.minimapUpdateTicks <= 0) {
 	    this.minimapUpdateTicks = this.MINIMAP_UPDATE_INTERVAL_TICKS;
-	    
+
 	    this.minimap.update(this.getBackgroundColor());
 	}
-	
+
 	// Update current viewport rect
 	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
 	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	
@@ -302,62 +327,123 @@ public class GameSideBar {
 	}
     }
 
-    public void startPageClick(int button, int buttonX, int buttonY) {
-	if (button == 0) { // left click
-	    switch (buttonX) {
-	    case 0: // Left side clicked
-		switch (buttonY) {
-		case 0: // 
-		    if (this.player.getAlignment() == Alignment.SOVIET) {
-			// TODO: add allied building page
-			if (this.sideBarCategoriesOpened[0][1]) {
-			    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-			    switchPage(PAGE_BUILDING_SOVIET);
-			}
-		    }
-		    break;
+    public void productionButtonClick(Production production, int button, int buttonX, int buttonY) {
+	if (button == 0) {
+	    if (production.isOnHold()) {
+		production.setOnHold(false);
 
-		case 1:
-		    if ((!player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleHold())) {
-			if (this.sideBarCategoriesOpened[1][0]) {
-			    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-			    switchPage(PAGE_VEHICLE);
-			}
-		    } else if (player.getBase().isCurrentVehicleBuilding() && player.getBase().isCurrentVehicleHold()  && !player.getBase().isCurrentVehicleDeployed()) { // continue holded building
-			player.getBase().setCurrentVehicleHold(false);
-			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
-		    } else if (player.getBase().isCurrentVehicleBuilding() && player.getBase().isCurrentVehicleDeployed()) { 
-			player.getBase().startBuildVehicle(player.getBase().getCurrentVehicleButton());
+		SoundManager.getInstance().playSpeechSoundGlobal("abldgin1"); // "Building"
+	    } else {
+		if (production.getTargetActor() instanceof EntityBuilding) {
+		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+
+		    if (production.isReady() && !production.isBuilding()) {
+			Main.getInstance().getBuildingOverlay().setBuildingMode((EntityBuilding) production.getTargetActor());
+		    } else if (!production.isReady() && production.isBuilding()){
+			SoundManager.getInstance().playSpeechSoundGlobal("progres1"); // "Unable to comply, building in progress"
+		    } else if (!production.isReady() && !production.isBuilding()) {
 			SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
-		    } else if (player.getBase().isCurrentVehicleBuilding() && !player.getBase().isCurrentVehicleDeployed()) {
-			SoundManager.getInstance().playSpeechSoundGlobal("progres1");
-		    }
+			production.restartBuilding();
+		    } 
+		} else {
+		    if (!production.isReady() && !production.isBuilding()) {
+			SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+			SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
+			production.restartBuilding();
+		    } 
 		}
 	    }
-	} else if (button == 1) { // right click
-	    switch (buttonX) {
-	    case 0: // left side clicked
-		switch (buttonY) {
-		case 1: // second line (War Factory) clicked
-		    if (player.getBase().isCurrentVehicleBuilding()) {
-			if (!player.getBase().isCurrentVehicleHold() && !player.getBase().isCurrentVehicleReady() && !player.getBase().isCurrentVehicleDeployed()) {
-			    player.getBase().setCurrentVehicleHold(true);
-			    SoundManager.getInstance().playSpeechSoundGlobal("onhold1");
-			} else if ((player.getBase().isCurrentVehicleReady() && !player.getBase().isCurrentVehicleDeployed()) || player.getBase().isCurrentVehicleHold()) {
-			    SoundManager.getInstance().playSpeechSoundGlobal("cancld1");
-			    player.getBase().cancelCurrentVehicle(true);
-			} else if (player.getBase().isCurrentVehicleReady() || player.getBase().isCurrentVehicleDeployed()) {
-			    if (this.sideBarCategoriesOpened[1][0]) { 
-				SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-				switchPage(PAGE_VEHICLE); 
-			    }
-			}
-		    }
-		    break;  
-		}
-		break;
+	} else if (button == 1) {
+	    if (production.isBuilding()) {
+		if (production.isOnHold() || production.isReady()) {
+		    production.cancel(true);
+
+		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		    SoundManager.getInstance().playSpeechSoundGlobal("cancld1"); // "Canceled"
+		} else if (!production.isOnHold()) {
+		    production.setOnHold(true);
+
+		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		    SoundManager.getInstance().playSpeechSoundGlobal("onhold1"); // "On hold"
+		} 
+	    } else if (!production.isReady() || production.isDeployed()) {
+		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		production.resetTargetActor();
+		openPageByClick(buttonX, buttonY);
+	    } else {
+		production.cancel(true);
+
+		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		SoundManager.getInstance().playSpeechSoundGlobal("cancld1"); // "Canceled"		
 	    }
+	}	
+    }
+
+    public void openPageByClick(int buttonX, int buttonY) {
+	switch (buttonY) {
+	case 0: // building productions
+	    if (buttonX == 0) { // left side click
+		if (this.player.getAlignment() == Alignment.SOVIET && this.sideBarCategoriesOpened[0][1]) {
+		    // TODO: add allied building page
+		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		    switchPage(PAGE_BUILDING_SOVIET);
+		} else if (buttonX == 1) {
+
+		}
+	    }
+
+	    break;
+
+	case 1:
+	    if (buttonX == 0) {
+		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
+		switchPage(PAGE_VEHICLE);
+	    } else if (buttonX == 1) {
+
+	    }
+
+	    break;
+	}
+    }
+
+    public void startPageClick(int button, int buttonX, int buttonY) {
+	switch (buttonY) {
+	case 0: // building productions
+	    if (buttonX == 0) { // left side click
+		EntityActor buildingActor = player.getBase().getProductionQueue().getCurrentProducingBuilding();
+
+		if (buildingActor != null) {
+		    Production production = player.getBase().getProductionQueue().getProductionForBuilding(buildingActor);
+
+		    productionButtonClick(production, button, buttonX, buttonY);
+		} else {
+		    openPageByClick(buttonX, buttonY);
+		}
+	    } else if (buttonX == 1) { // right side click
+
+	    }
+	    break;
+
+	case 1:
+	    if (buttonX == 0) {
+		EntityActor buildingActor = player.getBase().getProductionQueue().getCurrentProducingVehicle();
+
+		if (buildingActor != null) {
+		    Production production = player.getBase().getProductionQueue().getCurrentVehicleProduction();
+
+		    productionButtonClick(production, button, buttonX, buttonY);
+		} else {
+		    openPageByClick(buttonX, buttonY);
+		}		
+	    }
+	    break;
+
+	case 2:
+	    break;
+
+	case 3:
+	    break;
 	}
     }
 

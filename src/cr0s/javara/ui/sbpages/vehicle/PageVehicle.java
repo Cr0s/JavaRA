@@ -61,7 +61,7 @@ public class PageVehicle extends SideBarPage {
 	    
 	    if (vsb.getTargetVehicle() != null) {
 		SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");
-		Main.getInstance().getPlayer().getBase().startBuildVehicle(vsb);
+		Main.getInstance().getPlayer().getBase().getProductionQueue().startBuildingActor(vsb.getTargetVehicle(), vsb);
 
 		Main.getInstance().getSideBar().switchPage(GameSideBar.START_PAGE_NAME);
 	    }

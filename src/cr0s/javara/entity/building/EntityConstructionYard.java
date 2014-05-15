@@ -31,7 +31,7 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 
     private Alignment yardAlignment = Alignment.SOVIET;
 
-    public EntityConstructionYard(Integer tileX, Integer tileY, Team team, Player player) {
+    public EntityConstructionYard(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, FOOTPRINT);
 
 	this.yardAlignment = player.getAlignment();
@@ -45,6 +45,8 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	this.buildingSpeed = 100;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
+	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
     }
 
     private void initTextures() {

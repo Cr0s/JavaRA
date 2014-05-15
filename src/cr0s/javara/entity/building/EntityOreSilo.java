@@ -7,6 +7,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -14,11 +15,12 @@ import cr0s.javara.entity.actor.activity.activities.harvester.FindResources;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityOreSilo extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor {
+public class EntityOreSilo extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor, IHaveCost {
 
     private SpriteSheet sheet;
     
@@ -39,7 +41,9 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
     private int oreLevel = 0;
     private final int CORRUPTED_OFFSET = 5;
     
-    public EntityOreSilo(Integer tileX, Integer tileY, Team team, Player player) {
+    private static final int BUILDING_COST = 150;
+    
+    public EntityOreSilo(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "x");
 
 	setBibType(BibType.NONE);
@@ -51,6 +55,11 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
 	this.buildingSpeed = 80;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
+	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+
+	this.requiredToBuild.add(EntityProc.class);
+	this.requiredToBuild.add(EntityPowerPlant.class);
     }
     
     private void initTextures() {
@@ -145,11 +154,16 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
 
     @Override
     public Color getPipColorAt(int i) {
-	return (owner.getBase().oreValue * this.PIPS_COUNT > i * owner.getBase().oreCapacity) ? Color.yellow : null;
+	return (owner.getBase().ore * this.PIPS_COUNT > i * owner.getBase().oreCapacity) ? Color.yellow : null;
     }
 
     @Override
     public int getOreCapacityValue() {
 	return this.MAX_CAPACITY;
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return BUILDING_COST;
     }        
 }

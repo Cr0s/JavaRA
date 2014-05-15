@@ -11,6 +11,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDeployable;
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -40,7 +41,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHarvester extends EntityVehicle implements ISelectable, IShroudRevealer, IPips {
+public class EntityHarvester extends EntityVehicle implements ISelectable, IShroudRevealer, IPips, IHaveCost {
 
     private String TEXTURE_NAME = "harv.shp";
     private SpriteSheet texture;
@@ -87,6 +88,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     private static final int MAX_FACINGS = 8;
     private int droppingTicks = DROPPING_FRAMES_DELAY_TICKS;
     private int droppingFrame;
+    
+    private final int BUILDING_COST = 1100;
 
     public EntityHarvester(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -97,8 +100,6 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	this.setHp(50);
 	this.setMaxHp(50);
-
-	this.buildingSpeed = 80;
 
 	this.contents = new HashMap<>();
 
@@ -385,5 +386,10 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	public CursorType getCursorForTarget(Entity self, Target target) {
 	    return canEnterProc(self, target.getTargetEntity()) ? CursorType.CURSOR_ENTER : CursorType.CURSOR_NO_ENTER;
 	}
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return this.BUILDING_COST;
     }      
 }

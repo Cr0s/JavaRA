@@ -12,6 +12,7 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.IDeployable;
+import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Deploy;
@@ -29,7 +30,7 @@ import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable {
+public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable, IHaveCost {
 
     private String TEXTURE_NAME = "mcv.shp";
     private SpriteSheet texture;
@@ -51,6 +52,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
     private boolean isDeploying = false;
 
     private final float MOVE_SPEED = 0.1f;
+    private final int BUILDING_COST = 2000;
 
     public EntityMcv(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -194,7 +196,7 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	    return;
 	}
 	
-	EntityConstructionYard cy = new EntityConstructionYard((int) posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), (int) posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
+	EntityConstructionYard cy = new EntityConstructionYard(posX - (EntityConstructionYard.WIDTH_TILES / 2 * 24), posY - (EntityConstructionYard.HEIGHT_TILES / 2 * 24), this.team, this.owner);
 	cy.isVisible = true;
 	cy.isSelected = true;
 	world.addBuildingTo(cy);
@@ -249,5 +251,10 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	public CursorType getCursorForTarget(Entity self, Target target) {
 	    return (((EntityMcv)self).canDeploy()) ? CursorType.CURSOR_DEPLOY : CursorType.CURSOR_NO_DEPLOY;
 	}
+    }
+
+    @Override
+    public int getBuildingCost() {
+	return this.BUILDING_COST;
     }
 }
