@@ -69,7 +69,7 @@ public class GameSideBar {
     private MinimapRenderer minimap;
     private PowerBarRenderer powerBar;
 
-    private static final int POWERBAR_WIDTH = 10;
+    private static final int POWERBAR_WIDTH = 11;
 
     private final int MINIMAP_UPDATE_INTERVAL_TICKS = 10;
     private int minimapUpdateTicks = MINIMAP_UPDATE_INTERVAL_TICKS;

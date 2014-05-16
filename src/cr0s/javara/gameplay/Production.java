@@ -21,7 +21,7 @@ public class Production {
 
     private Player player;
 
-    private final int DEPLOY_WAIT_TIME_TICKS = 20;
+    private final int DEPLOY_WAIT_TIME_TICKS = 5;
     private int ticksBeforeDeploy;
 
     private int maxBuildedTicks;
