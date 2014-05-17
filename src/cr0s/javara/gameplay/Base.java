@@ -388,7 +388,9 @@ public class Base {
 		// "Silos needed"
 		SoundManager.getInstance().playSpeechSoundGlobal("silond1");
 	    }
-	    
+	}
+	
+	if (this.ore + aCapacity > this.oreCapacity) {
 	    return; // don't accept exceeding ore
 	}
 	
