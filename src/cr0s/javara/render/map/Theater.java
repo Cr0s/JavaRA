@@ -9,6 +9,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
@@ -74,7 +75,12 @@ public class Theater {
     }
 
     private void generateSpriteSheet() {
-	ImageBuffer ib = new ImageBuffer(SHEET_SIZE, SHEET_SIZE);
+	Image ib = null;
+	try {
+	    ib = new Image(SHEET_SIZE, SHEET_SIZE);
+	} catch (SlickException e1) {
+	    e1.printStackTrace();
+	}
 
 	for (String name : tileSet.getTiles().values()) {
 	    TmpTexture t = ResourceManager.getInstance().getTemplateTexture(tileSet.getSetName(), name + ".tem");
@@ -104,10 +110,10 @@ public class Theater {
 	    }
 	}
 	
-	this.spriteSheet = new SpriteSheet(ib.getImage(), 24, 24);
+	this.spriteSheet = new SpriteSheet(ib, 24, 24);
     }
 
-    private void putTextureInSheet(ImageBuffer sheet, ShpTexture texture) {
+    private void putTextureInSheet(Image sheet, ShpTexture texture) {
 	if (texture == null) {
 	    return;
 	}
@@ -156,19 +162,11 @@ public class Theater {
 
 		    // No intersections, add texture to new place
 		    // Copy texture into sheet
-		    for (int y = 0; y < img.getHeight(); y++) {
-			for (int x = 0; x < img.getWidth(); x++) {
-			    Color c = img.getColor(x, y);
-
-			    int r, g, b, a;
-			    r = c.getRed();
-			    g = c.getGreen();
-			    b = c.getBlue();
-			    a = c.getAlpha();
-
-			    sheet.setRGBA(sX + x, sY + y, r, g, b, a);
-			}
-		    }		    
+		    try {
+			sheet.getGraphics().drawImage(img, sX, sY);
+		    } catch (SlickException e) {
+			e.printStackTrace();
+		    }    
 
 		    // Save texture bounds for further intersect check
 		    this.texturesBounds.add(rect);
@@ -190,7 +188,7 @@ public class Theater {
 	}
     }
 
-    private void putTextureInSheet(ImageBuffer sheet, TmpTexture texture) {
+    private void putTextureInSheet(Image sheet, TmpTexture texture) {
 	if (texture == null) {
 	    return;
 	}
@@ -214,19 +212,11 @@ public class Theater {
 	    int deployY = currentSheetY + (i * img.getHeight());
 
 	    // Copy texture into sheet
-	    for (int y = 0; y < img.getHeight(); y++) {
-		for (int x = 0; x < img.getWidth(); x++) {
-		    Color c = img.getColor(x, y);
-
-		    int r, g, b, a;
-		    r = c.getRed();
-		    g = c.getGreen();
-		    b = c.getBlue();
-		    a = c.getAlpha();
-
-		    sheet.setRGBA(deployX + x, deployY + y, r, g, b, a);
-		}
-	    }
+	    try {
+		sheet.getGraphics().drawImage(img, deployX, deployY);
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }    
 	}
 
 	Rectangle r = new Rectangle(currentSheetX, currentSheetY, texture.width, texture.height * texture.numImages);
@@ -235,7 +225,7 @@ public class Theater {
 	currentSheetX += texture.width;
     }
 
-    private void putShpTextureInSheetDissected(ImageBuffer sheet, ShpTexture texture) {
+    private void putShpTextureInSheetDissected(Image sheet, ShpTexture texture) {
 	if (texture == null) {
 	    return;
 	}
@@ -259,19 +249,11 @@ public class Theater {
 	    int deployY = currentSheetY + (i * img.getHeight());
 
 	    // Copy texture into sheet
-	    for (int y = 0; y < img.getHeight(); y++) {
-		for (int x = 0; x < img.getWidth(); x++) {
-		    Color c = img.getColor(x, y);
-
-		    int r, g, b, a;
-		    r = c.getRed();
-		    g = c.getGreen();
-		    b = c.getBlue();
-		    a = c.getAlpha();
-
-		    sheet.setRGBA(deployX + x, deployY + y, r, g, b, a);
-		}
-	    }
+	    try {
+		sheet.getGraphics().drawImage(img, deployX, deployY);
+	    } catch (SlickException e) {
+		e.printStackTrace();
+	    }    
 	}
 
 	Rectangle r = new Rectangle(currentSheetX, currentSheetY, texture.width, texture.height * texture.numImages);
