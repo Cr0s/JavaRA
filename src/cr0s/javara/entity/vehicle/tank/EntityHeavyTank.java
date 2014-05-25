@@ -85,7 +85,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	if (!this.isIdle()) { 
 	    this.turret.setTarget(new Point(goalX * 24, goalY * 24));
 	} else {
-	    this.turret.setTurretRotation(this.currentFacing);
+	    this.turret.rotateTurretTo(this.currentFacing);
 	}
 	
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));

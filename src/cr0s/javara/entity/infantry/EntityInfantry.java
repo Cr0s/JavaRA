@@ -30,7 +30,7 @@ import cr0s.javara.resources.SoundManager;
 
 public abstract class EntityInfantry extends MobileEntity implements IShroudRevealer {
 
-    private static final float DEFAULT_MOVE_SPEED = 0.5f;
+    private static final float DEFAULT_MOVE_SPEED = 0.8f;
 
     private static final int WIDTH = 50;
     private static final int HEIGHT = 39;

@@ -98,7 +98,7 @@ public class Turret {
      * Sets rotation to entity immediately.
      * @param rot
      */
-    public void setTurretRotation(int rot) {
+    private void setTurretRotation(int rot) {
 	if (rot < 0) { rot = 31; } 
 	this.turretRotation = rot;
     }
