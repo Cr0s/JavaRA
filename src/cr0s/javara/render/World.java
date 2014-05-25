@@ -20,6 +20,7 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
+import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
@@ -119,7 +120,7 @@ public class World implements TileBasedMap {
 	}
 
 
-	for (Entity e : entitiesToAdd) {
+	for (Entity e : this.entitiesToAdd) {
 	    if (e instanceof EntityBuilding) {
 		EntityBuilding eb = (EntityBuilding) e;
 
@@ -132,7 +133,8 @@ public class World implements TileBasedMap {
 
 	    this.entities.add(e);
 	}
-	entitiesToAdd.clear();          
+	
+	this.entitiesToAdd.clear();          
 
 	this.blockingEntityMap.update();
 	
@@ -155,7 +157,10 @@ public class World implements TileBasedMap {
 		    }
 		}
 
-
+		if (e instanceof IHaveTurret) {
+		    ((IHaveTurret) e).updateTurrets(delta);
+		}
+		
 		// For mobile entities, after entity updated, update it's blocking map state to avoid entity movement collisions
 		if (e instanceof MobileEntity) {
 		    this.blockingEntityMap.freeForMobileEntity((MobileEntity) e);

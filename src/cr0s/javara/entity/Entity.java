@@ -4,6 +4,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
+import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityWarFactory;
 import cr0s.javara.entity.infantry.EntityInfantry;
@@ -85,24 +86,24 @@ public abstract class Entity {
 		REDUCE = 10;
 	    }
 	    
-	    float cornerXUpLeft = minX - 2*SELECTION_BOX_ADD;
-	    float cornerYUpLeft = minY - 2*SELECTION_BOX_ADD;
+	    float cornerXUpLeft = minX - 2 * SELECTION_BOX_ADD;
+	    float cornerYUpLeft = minY - 2 * SELECTION_BOX_ADD;
 	    g.drawLine(cornerXUpLeft, cornerYUpLeft, cornerXUpLeft + bbWidth / REDUCE, cornerYUpLeft);
 	    g.drawLine(cornerXUpLeft, cornerYUpLeft, cornerXUpLeft, cornerYUpLeft + bbHeight / REDUCE);
 	    
-	    float cornerXDownLeft = minX - 2*SELECTION_BOX_ADD;
-	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
+	    float cornerXDownLeft = minX - 2 * SELECTION_BOX_ADD;
+	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2 * SELECTION_BOX_ADD;
 	    g.drawLine(cornerXDownLeft, cornerYDownLeft, cornerXDownLeft + bbWidth / REDUCE, cornerYDownLeft);
 	    g.drawLine(cornerXDownLeft, cornerYDownLeft, cornerXDownLeft, cornerYDownLeft - bbHeight / REDUCE);
 	    
 	    // Right corners
-	    float cornerXUpRight = maxX + 2*SELECTION_BOX_ADD;
+	    float cornerXUpRight = maxX + 2 * SELECTION_BOX_ADD;
 	    float cornerYUpRight = maxY - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
 	    g.drawLine(cornerXUpRight, cornerYUpRight, cornerXUpRight - bbWidth / REDUCE, cornerYUpRight);
 	    g.drawLine(cornerXUpRight, cornerYUpRight, cornerXUpRight, cornerYUpRight + bbHeight / REDUCE);
 	    
-	    float cornerXDownRight = maxX + 2*SELECTION_BOX_ADD;
-	    float cornerYDownRight = maxY + 2*SELECTION_BOX_ADD;
+	    float cornerXDownRight = maxX + 2 * SELECTION_BOX_ADD;
+	    float cornerYDownRight = maxY + 2 * SELECTION_BOX_ADD;
 	    g.drawLine(cornerXDownRight, cornerYDownRight, cornerXDownRight - bbWidth / REDUCE, cornerYDownRight);
 	    g.drawLine(cornerXDownRight, cornerYDownRight, cornerXDownRight, cornerYDownRight - bbHeight / REDUCE);
 	    
@@ -124,14 +125,14 @@ public abstract class Entity {
 	    float maxX = this.boundingBox.getMaxX();
 	    float maxY = this.boundingBox.getMaxY();
 	    
-	    float cornerXUpLeft = minX - 2*SELECTION_BOX_ADD + BAR_COMPRESS;
-	    float cornerYUpLeft = minY - 2*SELECTION_BOX_ADD;
-	    float cornerXDownLeft = minX - 2*SELECTION_BOX_ADD;
-	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
-	    float cornerXUpRight = maxX + 2*SELECTION_BOX_ADD - BAR_COMPRESS;
-	    float cornerYUpRight = maxY - this.boundingBox.getHeight() - 2*SELECTION_BOX_ADD;
-	    float cornerXDownRight = maxX + 2*SELECTION_BOX_ADD;
-	    float cornerYDownRight = maxY + 2*SELECTION_BOX_ADD;
+	    float cornerXUpLeft = minX - 2 * this.SELECTION_BOX_ADD + BAR_COMPRESS;
+	    float cornerYUpLeft = minY - 2 * this.SELECTION_BOX_ADD;
+	    float cornerXDownLeft = minX - 2 * this.SELECTION_BOX_ADD;
+	    float cornerYDownLeft = minY + this.boundingBox.getHeight() + 2 * this.SELECTION_BOX_ADD;
+	    float cornerXUpRight = maxX + 2 * this.SELECTION_BOX_ADD - BAR_COMPRESS;
+	    float cornerYUpRight = maxY - this.boundingBox.getHeight() - 2 * this.SELECTION_BOX_ADD;
+	    float cornerXDownRight = maxX + 2 * this.SELECTION_BOX_ADD;
+	    float cornerYDownRight = maxY + 2 * this.SELECTION_BOX_ADD;
 	    
 	    float barWidth = (cornerXUpRight - cornerXUpLeft) - 1;
 	    
@@ -162,9 +163,9 @@ public abstract class Entity {
 		g.drawLine(cornerXUpLeft + 1, cornerYUpLeft - 2, cornerXUpLeft + 1 + barWidthProgress, cornerYUpRight - 2);			
 	    }
 	    
-	   if (this instanceof EntityWarFactory) {
-	       if (((EntityBuilding)this).isPrimary()) {
-		   drawPrimarySign(g);
+	   if (this instanceof EntityWarFactory || this instanceof EntityBarracks) {
+	       if (((EntityBuilding) this).isPrimary()) {
+		   ((EntityBuilding) this).drawPrimarySign(g);
 	       }
 	   }
 	}	
@@ -175,8 +176,8 @@ public abstract class Entity {
 	    final int PIPS_SPACING_X = 5;
 	    final int PIPS_SIZE = 3;
 	    
-	    float cornerYDownLeft = this.boundingBox.getMinY() + this.boundingBox.getHeight() + 2*SELECTION_BOX_ADD;
-	    float cornerXDownLeft = this.boundingBox.getMinX() - 2*SELECTION_BOX_ADD;   
+	    float cornerYDownLeft = this.boundingBox.getMinY() + this.boundingBox.getHeight() + 2 * this.SELECTION_BOX_ADD;
+	    float cornerXDownLeft = this.boundingBox.getMinX() - 2 * this.SELECTION_BOX_ADD;   
 	    
 	    int pipY = (int) cornerYDownLeft - PIPS_OFFSET_Y; 
 	    int startPipX = (int) cornerXDownLeft + PIPS_SPACING_X;
