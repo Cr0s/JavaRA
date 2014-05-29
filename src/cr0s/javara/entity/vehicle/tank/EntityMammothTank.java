@@ -30,7 +30,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityMammonthTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
+public class EntityMammothTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
 
     private String TEXTURE_NAME = "4tnk.shp";
     private SpriteSheet texture;
@@ -62,7 +62,7 @@ public class EntityMammonthTank extends EntityVehicle implements ISelectable, Mo
     private final int BUILDING_COST = 2000;
     private Turret turret;
 
-    public EntityMammonthTank(Float posX, Float posY, Team team, Player player) {
+    public EntityMammothTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
