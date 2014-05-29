@@ -136,7 +136,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
     @Override
     public float getMoveSpeed() {
-	return MOVE_SPEED;
+	return this.MOVE_SPEED;
     }
 
     @Override

@@ -40,9 +40,9 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     public EntityVehicle(float posX, float posY, Team team, Player player, int sizeWidth, int sizeHeight) {
 	super(posX, posY, team, player, sizeWidth, sizeHeight);
 	
-	this.selectedSounds.put(SELECTED_SOUND, new Integer[] { 0, 2 } );
-	this.selectedSounds.put("await1", new Integer[] { 0, 1, 2, 3 } );
-	this.selectedSounds.put("yessir1", new Integer[] { 0, 1, 2, 3 } );
+	this.selectedSounds.put(this.SELECTED_SOUND, new Integer[] { 0, 2 });
+	this.selectedSounds.put("await1", new Integer[] { 0, 1, 2, 3 });
+	this.selectedSounds.put("yessir1", new Integer[] { 0, 1, 2, 3 });
 	
 	this.orderSounds = new HashMap<>();
 	this.orderSounds.put("ackno", new Integer[] { 0, 1, 2, 3 });
@@ -74,7 +74,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	try {
 	    ctor = (b.getClass()).getDeclaredConstructor(Float.class, Float.class, Team.class, Player.class);
 	    ctor.setAccessible(true);
-	    EntityVehicle newEntityVehicle = ((EntityVehicle) ctor.newInstance(b.posX, b.posY, b.team, b.owner));
+	    EntityVehicle newEntityVehicle = (EntityVehicle) ctor.newInstance(b.posX, b.posY, b.team, b.owner);
 
 	    return newEntityVehicle;
 	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
@@ -94,7 +94,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     }
     
     public String getSelectSound() {
-	return SELECTED_SOUND;
+	return this.SELECTED_SOUND;
     }
     
     @Override
@@ -103,7 +103,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	    Integer[] versions = this.selectedSounds.get(s);
 	    
 	    boolean canPlay = false;
-	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+	    for (int i = 0; i < Math.min(this.MAX_VERSIONS, versions.length); i++) {
 		if (versions[i] == this.unitVersion) {
 		    canPlay = true;
 		    break;
@@ -116,7 +116,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	    }
 	}
 	
-	SoundManager.getInstance().playUnitSoundGlobal(this, SELECTED_SOUND, 0);
+	SoundManager.getInstance().playUnitSoundGlobal(this, this.SELECTED_SOUND, 0);
     }
     
     @Override

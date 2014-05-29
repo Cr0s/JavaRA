@@ -233,7 +233,7 @@ public class World implements TileBasedMap {
 	map.renderMapEntities(container, g, camera);
 
 	// Debug: render blocked cells
-	//if (Main.DEBUG_MODE) {
+	if (Main.DEBUG_MODE) {
 	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
 		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
 		    if (!this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) {
@@ -243,7 +243,7 @@ public class World implements TileBasedMap {
 		    }		
 		}
 	    }
-	//}	
+	}	
 
 	renderSelectionBoxes(g);
 

@@ -55,7 +55,7 @@ public class EntityMammonthTank extends EntityVehicle implements ISelectable, Mo
 
     private Entity targetEntity = null;
 
-    private final float MOVE_SPEED = 0.1f;
+    private final float MOVE_SPEED = 0.07f;
 
     private final float SHIFT = 12;
     
@@ -136,7 +136,7 @@ public class EntityMammonthTank extends EntityVehicle implements ISelectable, Mo
 
     @Override
     public float getMoveSpeed() {
-	return MOVE_SPEED;
+	return this.MOVE_SPEED;
     }
 
     @Override
