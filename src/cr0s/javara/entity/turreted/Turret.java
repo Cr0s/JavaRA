@@ -9,7 +9,6 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
-import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.RotationUtil;
 
 public class Turret {
@@ -69,9 +68,9 @@ public class Turret {
 	    }
 
 	    if (this.turretRotationDirection == RotationDirection.LEFT) {
-		this.setTurretRotation((this.getTurretRotation() + 1) % Turn.MAX_FACING);
+		this.setTurretRotation((this.getTurretRotation() + 1) % this.numFacings);
 	    } else if (this.turretRotationDirection == RotationDirection.RIGHT) {
-		this.setTurretRotation((this.getTurretRotation() - 1) % Turn.MAX_FACING);
+		this.setTurretRotation((this.getTurretRotation() - 1) % this.numFacings);
 	    }
 
 	    return false;
@@ -108,7 +107,7 @@ public class Turret {
      * @param rot desired rotation value
      */
     public void rotateTurretTo(int rot) {
-	rot = rot % 32;
+	rot = rot % this.numFacings;
 
 	this.newTurretRotation = rot;
 

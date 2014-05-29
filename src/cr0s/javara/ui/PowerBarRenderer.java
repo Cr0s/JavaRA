@@ -37,8 +37,7 @@ public class PowerBarRenderer {
 	float providedFrac = providedLerp.update(provided / scaleBy);
 	float usedFrac = usedLerp.update(used / scaleBy);
 
-
-	Color color = (used > provided) ? ((provided / used < 0.1) ? this.powerDownCritical : this.powerDown) : this.powerNormal;
+	Color color = (used > provided) ? (((float) provided / (float) used <= 0.6f) ? this.powerDownCritical : this.powerDown) : this.powerNormal;
 	float barY = lerp(barPos.getY(), barPos.getY() - this.height, providedFrac);
 	
 	g.setColor(color.multiply(filterColor));

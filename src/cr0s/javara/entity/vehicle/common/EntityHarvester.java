@@ -98,8 +98,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	Random r = new Random();
 
-	this.setHp(50);
-	this.setMaxHp(50);
+	this.setHp(600);
+	this.setMaxHp(600);
 
 	this.contents = new HashMap<>();
 

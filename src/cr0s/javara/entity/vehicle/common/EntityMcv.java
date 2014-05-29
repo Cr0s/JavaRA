@@ -64,12 +64,10 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	Random r = new Random();
 
-	this.setHp(50);
-	this.setMaxHp(50);
+	this.setHp(600);
+	this.setMaxHp(600);
 	
 	this.currentFacing = 16;
-	
-	this.buildingSpeed = 35;
 	
 	this.ordersList.add(new McvDeployTargeter(this));
     }

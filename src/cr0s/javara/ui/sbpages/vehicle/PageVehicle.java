@@ -5,6 +5,7 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
+import cr0s.javara.entity.vehicle.tank.EntityMammonthTank;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.GameSideBar;
@@ -29,7 +30,7 @@ public class PageVehicle extends SideBarPage {
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 0, 3, false, null));
 	addButton(new VehicleSidebarButton("Mobile Construction Vehicle", "mcvicon.shp", this.getPosition(), 1, 3, true, new EntityMcv(0.0f, 0.0f, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	
-	addButton(new VehicleSidebarButton("Mammonth tank", "4tnkicon.shp", this.getPosition(), 0, 4, false, null));
+	addButton(new VehicleSidebarButton("Mammonth tank", "4tnkicon.shp", this.getPosition(), 0, 4, true, new EntityMammonthTank(0f, 0f, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	addButton(new VehicleSidebarButton("Mine layer", "mnlyicon.shp", this.getPosition(), 1, 4, false, null));
 	
 	addButton(new VehicleSidebarButton("Heavy tank", "3tnkicon.shp", this.getPosition(), 0, 5, true, new EntityHeavyTank(0f, 0f, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));

@@ -30,9 +30,9 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
+public class EntityMammonthTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
 
-    private String TEXTURE_NAME = "3tnk.shp";
+    private String TEXTURE_NAME = "4tnk.shp";
     private SpriteSheet texture;
 
     private final int ROTATION_START_TEXTURE_INDEX = 0;
@@ -40,8 +40,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
     private final int MAX_ROTATION = 32;	
 
-    private static final int TEXTURE_WIDTH = 36;
-    private static final int TEXTURE_HEIGHT = 36;
+    private static final int TEXTURE_WIDTH = 48;
+    private static final int TEXTURE_HEIGHT = 48;
     private static final int SHROUD_REVEALING_RANGE = 8;
     private static final int WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS = 15;
     private static final int WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS = 5;
@@ -55,14 +55,14 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
     private Entity targetEntity = null;
 
-    private final float MOVE_SPEED = 0.3f;
+    private final float MOVE_SPEED = 0.1f;
 
     private final float SHIFT = 12;
     
-    private final int BUILDING_COST = 1150;
+    private final int BUILDING_COST = 2000;
     private Turret turret;
 
-    public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
+    public EntityMammonthTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -70,8 +70,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
 	this.isVisible = true;
 
-	this.setHp(550);
-	this.setMaxHp(550);
+	this.setHp(900);
+	this.setMaxHp(900);
 	
 	this.turret = new Turret(this, new Point(0, 0), texture, 32, 32);
     }
@@ -86,7 +86,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	    this.turret.rotateTurretTo(this.currentFacing);
 	}
 	
-	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	boundingBox.setBounds(this.posX, this.posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
     }
 
     @Override
@@ -141,12 +141,12 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
     @Override
     public float getTextureX() {
-	return posX - (TEXTURE_WIDTH / 2) + 12;
+	return posX - (TEXTURE_WIDTH / 2) + (TEXTURE_WIDTH / 6) + 4;
     }
 
     @Override
     public float getTextureY() {
-	return posY - (TEXTURE_HEIGHT / 2) + 6; 
+	return posY - (TEXTURE_HEIGHT / 2) + (TEXTURE_HEIGHT / 8) + 9; 
     }
 
     @Override
