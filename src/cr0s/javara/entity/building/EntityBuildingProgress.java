@@ -5,7 +5,7 @@ import org.newdawn.slick.Image;
 
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
-import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;

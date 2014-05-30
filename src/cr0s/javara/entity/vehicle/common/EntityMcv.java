@@ -17,7 +17,7 @@ import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Deploy;
 import cr0s.javara.entity.actor.activity.activities.Turn;
-import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;

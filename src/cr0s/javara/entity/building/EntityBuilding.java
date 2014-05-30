@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;

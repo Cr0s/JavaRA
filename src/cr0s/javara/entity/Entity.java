@@ -6,7 +6,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
-import cr0s.javara.entity.building.EntityWarFactory;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;

@@ -1,4 +1,4 @@
-package cr0s.javara.entity.building;
+package cr0s.javara.entity.building.common;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -9,6 +9,9 @@ import org.newdawn.slick.SpriteSheet;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.building.BibType;
+import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.IPowerProducer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;

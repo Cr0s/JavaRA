@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Point;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
-import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.main.Main;

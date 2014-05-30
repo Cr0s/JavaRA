@@ -1,4 +1,4 @@
-package cr0s.javara.entity.building;
+package cr0s.javara.entity.building.common;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -14,6 +14,9 @@ import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.building.BibType;
+import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.gameplay.Player;

@@ -135,7 +135,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	    }
 	    
 	    boolean canPlay = false;
-	    for (int i = 0; i < Math.min(MAX_VERSIONS, versions.length); i++) {
+	    for (int i = 0; i < Math.min(this.MAX_VERSIONS, versions.length); i++) {
 		if (versions[i] == this.unitVersion) {
 		    canPlay = true;
 		    break;

@@ -1,4 +1,4 @@
-package cr0s.javara.entity.building;
+package cr0s.javara.entity.building.common;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -9,40 +9,46 @@ import org.newdawn.slick.SpriteSheet;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.building.BibType;
+import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.resources.SoundManager;
 
-public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer, IHaveCost {
+public class EntityRadarDome extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost {
     private Image normal, corrupted;
-    private final String TEXTURE_NAME = "powr.shp";
-    private final String MAKE_TEXTURE_NAME = "powrmake.shp";
+    private final String TEXTURE_NAME = "dome.shp";
+    private final String MAKE_TEXTURE_NAME = "domemake.shp";
 
     public static final int WIDTH_TILES = 2;
     public static final int HEIGHT_TILES = 3;
 
-    private static final int POWER_PRODUCTION_LEVEL = 30;
-
-    private static final int SHROUD_REVEALING_RANGE = 7;
-    private static final int BUILDING_COST = 300;
-
-    public EntityPowerPlant(Float tileX, Float tileY, Team team, Player player) {
+    private static final int POWER_CONSUMPTION_LEVEL = 40;
+    private static final int BUILDING_COST = 1600;
+    private static final int SHROUD_REVEALING_RANGE = 15;
+    
+    public EntityRadarDome(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
 
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
 
-	setMaxHp(50);
+	setMaxHp(60);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 90;//50;
+	this.buildingSpeed = 45;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
 	
 	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.requiredToBuild.add(EntityPowerPlant.class);
+	this.requiredToBuild.add(EntityProc.class);
     }
 
     private void initTextures() {
@@ -78,8 +84,6 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
     }
 
     @Override
@@ -108,11 +112,6 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     }
 
     @Override
-    public int getPowerProductionLevel() {
-	return POWER_PRODUCTION_LEVEL;
-    }
-
-    @Override
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
@@ -123,7 +122,21 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     }
 
     @Override
+    public int getConsumptionLevel() {
+	return this.POWER_CONSUMPTION_LEVEL;
+    }      
+    
+    @Override
+    public void onBuildFinished() {
+	super.onBuildFinished();
+	
+	if (!Main.getInstance().getPlayer().getBase().isLowPower()) {
+	    SoundManager.getInstance().playSfxGlobal("radaron2", 0.9f);
+	}
+    }
+
+    @Override
     public int getBuildingCost() {
 	return BUILDING_COST;
-    }      
+    }
 }

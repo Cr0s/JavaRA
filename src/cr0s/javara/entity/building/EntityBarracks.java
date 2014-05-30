@@ -15,6 +15,7 @@ import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;

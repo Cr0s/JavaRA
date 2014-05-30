@@ -5,8 +5,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Circle;
 
 import cr0s.javara.entity.building.EntityBuilding;
-import cr0s.javara.entity.building.EntityConstructionYard;
-import cr0s.javara.entity.building.EntityWarFactory;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 import cr0s.javara.render.map.TileSet;

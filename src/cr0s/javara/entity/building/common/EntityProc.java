@@ -1,4 +1,4 @@
-package cr0s.javara.entity.building;
+package cr0s.javara.entity.building.common;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -16,6 +16,10 @@ import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.actor.activity.activities.harvester.FindResources;
+import cr0s.javara.entity.building.BibType;
+import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.IOreCapacitor;
+import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;

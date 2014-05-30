@@ -20,7 +20,7 @@ import cr0s.javara.entity.actor.activity.activities.Drag;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
-import cr0s.javara.entity.building.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.entity.turreted.Turret;
 import cr0s.javara.entity.vehicle.EntityVehicle;
