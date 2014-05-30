@@ -87,6 +87,10 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	}
 	
 	boundingBox.setBounds(this.posX, this.posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	
+	if (this.isIdle()) {
+	    this.turret.recoil();
+	}
     }
 
     @Override

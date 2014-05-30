@@ -87,6 +87,9 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	}
 	
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
+	if (this.isIdle()) {
+	    this.turret.recoil();
+	}
     }
 
     @Override

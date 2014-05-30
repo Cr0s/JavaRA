@@ -15,6 +15,8 @@ public class Turret {
     private float offestX;
     private float offsetY;
     
+    private float turretX, turretY;
+    
     private EntityActor parentEntity;
     
     private SpriteSheet turretTexture;
@@ -27,7 +29,18 @@ public class Turret {
     private float targetX, targetY;
     private boolean isTargeting;
     
+    private int currentRecoil = 0;
+    private int maxRecoil = 0;                 // in pixels
+    private final static int MAX_RECOIL_DEFAULT = 2; 
+    
+    private final static int RECOIL_INTERVAL_TICKS = 10;
+    private int recoilTicks = 0;
+    
     public Turret(EntityActor a, Point parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings) {
+	this(a, parentOffset, texture, aStartFrame, aNumFacings, MAX_RECOIL_DEFAULT);
+    }
+    
+    public Turret(EntityActor a, Point parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings, int aMaxRecoil) {
 	this.parentEntity = a;
 	
 	this.offestX = parentOffset.getX();
@@ -36,24 +49,50 @@ public class Turret {
 	this.turretTexture = texture;
 	this.startFrame = aStartFrame;
 	this.numFacings = aNumFacings;
-    }
-    
-    public void update(int delta) {
-	doTurretRotationTick();
-    }
-    
-    public void render(Graphics g) {
-	float x = 0f, y = 0f;
 	
+	this.maxRecoil = aMaxRecoil;
+    }
+    
+    public void update(int delta) {	
 	if (this.parentEntity instanceof MobileEntity) {
-	    x = ((MobileEntity) this.parentEntity).getTextureX() + this.offestX;
-	    y = ((MobileEntity) this.parentEntity).getTextureY() + this.offsetY;
+	    this.turretX = ((MobileEntity) this.parentEntity).getTextureX() + this.offestX;
+	    this.turretY = ((MobileEntity) this.parentEntity).getTextureY() + this.offsetY;
 	} else {
-	    x = this.parentEntity.posX + this.offestX;
-	    y = this.parentEntity.posY + this.offsetY;		    
-	}	
+	    this.turretX = this.parentEntity.posX + this.offestX;
+	    this.turretY = this.parentEntity.posY + this.offsetY;		    
+	  
+	}
 	
-	this.turretTexture.renderInUse((int) x, (int) y, 0, this.startFrame + RotationUtil.quantizeFacings(this.turretRotation, this.numFacings));
+	doTurretRotationTick();
+	
+	// Do a recoil
+	if (this.maxRecoil != 0 && this.currentRecoil > 0 && !this.isTurretRotatingNow) {
+	    if (++this.recoilTicks > this.RECOIL_INTERVAL_TICKS) {
+		this.recoilTicks = 0;
+	    }
+	    
+	    Point recoilOffset = getRecoilOffset();
+	    
+	    this.turretX += recoilOffset.getX();
+	    this.turretY += recoilOffset.getY();
+	    
+	    this.currentRecoil--;
+	}	
+    }
+    
+    private Point getRecoilOffset() {
+	float recoilX = 0;
+	float recoilY = 0;
+	
+	Point recoilVector = RotationUtil.facingToRecoilVector(this.turretRotation);
+	recoilX = this.currentRecoil * recoilVector.getX();
+	recoilY = this.currentRecoil * recoilVector.getY();
+	
+	return new Point(recoilX, recoilY);
+    }
+
+    public void render(Graphics g) {
+	this.turretTexture.renderInUse((int) turretX, (int) turretY, 0, this.startFrame + RotationUtil.quantizeFacings(this.turretRotation, this.numFacings));
     }
     
     /**
@@ -142,5 +181,11 @@ public class Turret {
     
     public boolean isTargeting() {
 	return this.isTargeting;
+    }
+    
+    public void recoil() {
+	if (this.currentRecoil == 0) {
+	    this.currentRecoil = this.maxRecoil;
+	}
     }
 }

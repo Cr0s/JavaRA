@@ -46,7 +46,7 @@ public class Production {
     private final int NO_FUNDS_INTERVAL = 300;
     private int ticksBeforeNotifyNoFunds = NO_FUNDS_INTERVAL;
     
-    private final boolean INSTANT_BUILD = false;
+    private final boolean INSTANT_BUILD = true;//false;
     
     public Production(Player p) {
 	this.player = p;
