@@ -4,13 +4,13 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
-import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.common.EntityAdvPowerPlant;
 import cr0s.javara.entity.building.common.EntityOreSilo;
 import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.entity.building.common.EntityProc;
 import cr0s.javara.entity.building.common.EntityRadarDome;
 import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.building.soviet.EntityBarracks;
 import cr0s.javara.gameplay.Base;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.SoundManager;

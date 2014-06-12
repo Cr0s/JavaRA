@@ -4,14 +4,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import cr0s.javara.entity.actor.EntityActor;
-import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.common.EntityAdvPowerPlant;
+import cr0s.javara.entity.building.common.EntityConcreteWall;
 import cr0s.javara.entity.building.common.EntityOreSilo;
 import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.entity.building.common.EntityProc;
 import cr0s.javara.entity.building.common.EntityRadarDome;
 import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.building.soviet.EntityBarracks;
+import cr0s.javara.entity.building.soviet.EntityBarredWireWall;
 import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.infantry.EntityRiffleTrooper;
@@ -86,8 +88,8 @@ public class ProductionQueue {
 	addButton(new BuildingSidebarButton("Wired Fence", "fencicon.shp", this.getPosition(), 0, 9, false));
 	addButton(new BuildingSidebarButton("Concrete Wall", "brikicon.shp", this.getPosition(), 1, 9, false));	
 	 */
-	//this.sovietBuildings.put("fencicon.shp", ...);
-	//this.sovietBuildings.put("brikicon.shp", ...);
+	this.sovietBuildings.put("fencicon.shp", new EntityBarredWireWall(0f, 0f, this.player.getTeam(), this.player));
+	this.sovietBuildings.put("brikicon.shp", new EntityConcreteWall(0f, 0f, this.player.getTeam(), this.player));
 
 	this.sovietBuildings.put("powricon.shp", new EntityPowerPlant(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("barricon.shp", new EntityBarracks(0f, 0f, this.player.getTeam(), this.player));

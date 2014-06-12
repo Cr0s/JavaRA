@@ -3,9 +3,9 @@ package cr0s.javara.gameplay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import cr0s.javara.entity.actor.EntityActor;
-import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.IOreCapacitor;
 import cr0s.javara.entity.building.IPowerConsumer;
@@ -14,7 +14,9 @@ import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.entity.building.common.EntityProc;
 import cr0s.javara.entity.building.common.EntityRadarDome;
+import cr0s.javara.entity.building.common.EntityWall;
 import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.building.soviet.EntityBarracks;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -23,6 +25,7 @@ import cr0s.javara.render.map.TileSet;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.ui.sbpages.vehicle.VehicleSidebarButton;
+import cr0s.javara.util.Pos;
 /**
  * Describes player's base.
  * @author Cr0s
@@ -66,49 +69,49 @@ public class Base {
 
     private int powerLevel = 0;
     private int powerConsumptionLevel = 0;
-    
+
     public int oreCapacity, ore, displayOre;
-    
+
     private ProductionQueue queue;
-    
+
     private int cash;
     private int displayCash;
-    
+
     private final int TICKS_WAIT_CASH = 2;
     private int ticksWaitCash = 0;
 
     private final int TICKS_WAIT_ORE = 2;
     private int ticksWaitOre = 0;    
-    
+
     private Player owner;
-    
+
     private float DISPLAY_FRAC_CASH_PER_TICK = 0.07f;
     private int DISPLAY_CASH_DELTA_PER_TICK = 37;
-    
+
     private HashSet<Class> buildingClasses = new HashSet<>();
-    
+
     public Base(Team team, Player aOwner) {
 	this.owner = aOwner;
-	
+
 	this.queue = new ProductionQueue(this.owner);
     }
 
     public void update() {
 	updateBuildings();
 	this.queue.update();
-	
+
 	this.updateDisplayedCash();
     }
-    
+
     public void updateDisplayedCash() {
 	if (this.ticksWaitCash > 0) {
 	    this.ticksWaitCash--;
 	}
-	
+
 	if (this.ticksWaitOre > 0) {
 	    this.ticksWaitOre--;
 	}	
-	
+
 	// For cash
 	int diff = Math.abs(this.cash - this.displayCash);
 	int move = Math.min(Math.max((int)(diff * DISPLAY_FRAC_CASH_PER_TICK), DISPLAY_CASH_DELTA_PER_TICK), diff);
@@ -125,11 +128,11 @@ public class Base {
 	    if (this.ticksWaitCash == 0) { 
 		SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
 		this.ticksWaitCash = TICKS_WAIT_CASH;
-		
+
 		this.displayCash = this.cash;
 	    }
 	}
-	
+
 	// For ore
 	diff = Math.abs(this.ore - this.displayOre);
 	move = Math.min(Math.max((int) (diff * DISPLAY_FRAC_CASH_PER_TICK), DISPLAY_CASH_DELTA_PER_TICK), diff);
@@ -142,11 +145,11 @@ public class Base {
 	else if (this.displayOre > this.ore)
 	{
 	    this.displayOre -= move;
-	    
+
 	    if (this.ticksWaitOre == 0) { 
 		SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
 		this.ticksWaitOre = TICKS_WAIT_CASH;
-		
+
 		this.displayOre = this.ore;
 	    }
 	}	
@@ -159,14 +162,14 @@ public class Base {
 
 	this.oreCapacity = 0;
 	this.powerConsumptionLevel = this.powerLevel = 0;
-	
+
 	this.buildingClasses.clear();
-	
+
 	for (EntityBuilding b : this.buildings) {
 	    if (!this.buildingClasses.contains(b.getClass())) {
 		this.buildingClasses.add(b.getClass());
 	    }
-	    
+
 	    // Update power levels
 	    if (b instanceof IPowerConsumer) {
 		this.powerConsumptionLevel += ((IPowerConsumer) b).getConsumptionLevel();
@@ -182,7 +185,7 @@ public class Base {
 		}
 	    } else if (b instanceof EntityBarracks) {
 		this.isBarracksPresent = true;
-	    //} else if (b instanceof EntityTent) {
+		//} else if (b instanceof EntityTent) {
 		//this.isTentPresent = true;
 	    } else if (b instanceof EntityWarFactory) {
 		if (((EntityWarFactory) b).getAlignment() == Alignment.ALLIED) {
@@ -216,7 +219,7 @@ public class Base {
 
     public void addBuilding(EntityBuilding building) {
 	this.buildings.add(building);
-	
+
 	if (building instanceof EntityWarFactory) {
 	    building.setPrimary(!isMoreThanOneWarFactory());
 	} else if (building instanceof EntityBarracks /*|| building instanceof EntityTent*/) {
@@ -254,21 +257,48 @@ public class Base {
 	    return false;
 	}
 
-	if (checkBuildingDistance(cellX, cellY)) {
-	    EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
-	    b.changeCellPos(cellX, cellY);
-	    
-	    Main.getInstance().getWorld().addBuildingTo(b);
+	if (checkBuildingDistance(cellX, cellY, targetBuilding instanceof EntityWall)) {
+	    if (targetBuilding instanceof EntityWall) {
+		buildWallsAt(cellX, cellY, targetBuilding);
+	    } else {
+
+		EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
+		b.changeCellPos(cellX, cellY);
+
+		Main.getInstance().getWorld().addBuildingTo(b);
+	    }
 
 	    queue.getProductionForBuilding(targetBuilding).deployCurrentActor();
-	    
+
 	    return true;
 	} else {
 	    return false;
 	}
     }
 
-    public boolean checkBuildingDistance(int cellX, int cellY) {
+    public void buildWallsAt(int cellX, int cellY,
+	    EntityBuilding targetBuilding) {
+	EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
+	b.changeCellPos(cellX, cellY);
+	Main.getInstance().getWorld().addBuildingTo(b);	
+
+	LinkedList<Pos> allowedWalls = getAllowedWalls(cellX, cellY, targetBuilding);
+	for (Pos p : allowedWalls) {
+	    if (p.getX() == cellX && p.getY() == cellY) {
+		continue;
+	    }
+	    
+	    if (!isPossibleToBuildHere((int) p.getX(), (int) p.getY(), targetBuilding)) {
+		continue;
+	    }
+	    
+	    EntityBuilding bb = (EntityBuilding) targetBuilding.newInstance();
+	    bb.changeCellPos((int) p.getX(), (int) p.getY());
+	    Main.getInstance().getWorld().addBuildingTo(bb);		    
+	}
+    }
+
+    public boolean checkBuildingDistance(int cellX, int cellY, boolean isWall) {
 	// Find minimal distance to all construction yards
 	int minDistanceToCYSq = 0;
 	int minDistanceToOtherBuildingsSq = 0;
@@ -289,7 +319,11 @@ public class Base {
 	    }
 	}
 
-	return (minDistanceToCYSq <= (this.BUILDING_CY_RANGE * this.BUILDING_CY_RANGE) && minDistanceToOtherBuildingsSq <= (this.BUILDING_NEAREST_BUILDING_DISTANCE * this.BUILDING_NEAREST_BUILDING_DISTANCE));
+	return minDistanceToCYSq <= (this.BUILDING_CY_RANGE * this.BUILDING_CY_RANGE) 
+		&& (
+			isWall 
+			|| minDistanceToOtherBuildingsSq <= (this.BUILDING_NEAREST_BUILDING_DISTANCE * this.BUILDING_NEAREST_BUILDING_DISTANCE)
+			);
     }
 
     public ArrayList<EntityBuilding> getBuildings() {
@@ -299,7 +333,7 @@ public class Base {
     public void deployBuildedVehicle(EntityVehicle v) {
 	getPrimaryWarFactory().deployEntity(EntityVehicle.newInstance(v));
     }
-    
+
     public EntityBuilding getPrimaryBarrackOrTent() {
 	for (EntityBuilding b : this.buildings) {
 	    if (b instanceof EntityBarracks /*|| b instanceof EntityTent*/) {
@@ -308,7 +342,7 @@ public class Base {
 		}
 	    }
 	}	
-	
+
 	return null;
     }
 
@@ -345,7 +379,7 @@ public class Base {
 	    }*/
 	}
     }
-    
+
     public EntityWarFactory getPrimaryWarFactory() {
 	for (EntityBuilding b : this.buildings) {
 	    if (b instanceof EntityWarFactory) {
@@ -354,7 +388,7 @@ public class Base {
 		}
 	    }
 	}	
-	
+
 	return null;
     }
 
@@ -380,8 +414,8 @@ public class Base {
 
 	return false;
     }
-    
-    
+
+
     public void giveOre(int aCapacity) {
 	if (this.ore + aCapacity > 0.8f * this.oreCapacity) {
 	    if (this.owner == Main.getInstance().getPlayer()) {
@@ -389,46 +423,46 @@ public class Base {
 		SoundManager.getInstance().playSpeechSoundGlobal("silond1");
 	    }
 	}
-	
+
 	if (this.ore + aCapacity > this.oreCapacity) {
 	    return; // don't accept exceeding ore
 	}
-	
+
 	int overflow = 0;
 	if (this.ore + aCapacity > this.oreCapacity) {
 	    overflow = this.ore + aCapacity - this.oreCapacity;
 	}
-	
+
 	this.ore += aCapacity - overflow;
     }
-    
+
     public void takeOre(int value) {
 	this.ore -= value;
-	
+
 	if (this.ore < 0) {
 	    this.ore = 0;
 	}
     }
-    
+
     public void gainCash(int amount) {
 	this.cash += amount;
     }
-    
+
     public boolean takeCash(int amount) {
 	if (this.cash + this.ore < amount) {
 	    return false;
 	}
-	
+
 	// Spent ore first
 	this.ore -= amount;
 	if (this.ore < 0) { // we spent all ore
 	    this.cash += this.ore; // spent cash
 	    this.ore = 0;
 	}
-	
+
 	return true;
     }
-    
+
     public ProductionQueue getProductionQueue() {
 	return this.queue;
     }
@@ -441,16 +475,73 @@ public class Base {
     public int getCash() {
 	return this.cash;
     }
-    
+
     public int getDisplayCash() {
 	return this.displayCash;
     }
-    
+
     public int getDisplayOre() {
 	return this.displayOre;
     }    
 
     public HashSet<Class> getBuildingClasses() {
 	return this.buildingClasses;
+    }
+
+    public LinkedList<Pos> getAllowedWalls(int cellX, int cellY,
+	    EntityBuilding targetBuilding) {
+	LinkedList<Pos> lineBuildAllowedPositions = new LinkedList<Pos>();
+
+	// Search in directions: Down, Right, Up, Left
+	int[] dx = { 0, 1, 0, -1 };
+	int[] dy = { -1, 0, 1, 0 };
+
+	LinkedList<Pos> tempList = new LinkedList<Pos>();
+	for (int i = 0; i < 4; i++) {
+	    boolean nodeFound = false;
+
+	    for (int range = 1; range < ((EntityWall) targetBuilding).lineBuildMaxLength; range++) {
+		int checkX = cellX + (dx[i] * range);
+		int checkY = cellY + (dy[i] * range);
+
+		EntityBuilding b = Main.getInstance().getWorld().getBuildingInCell(new Pos(checkX, checkY));
+
+		if (b != null) {
+		    if (b instanceof EntityWall) {
+			if (((EntityWall) b).textureName == ((EntityWall) targetBuilding).textureName) {
+			    nodeFound = true;
+			}
+			
+			break;
+		    } else {
+			break;
+		    }
+		} else {
+		    if (!Main.getInstance().getWorld().isCellBuildable(checkX , checkY)) {
+			break;
+		    }
+		}
+	    }
+
+	    if (nodeFound) {
+		for (int range = 0; range < ((EntityWall) targetBuilding).lineBuildMaxLength; range++) {
+		    int checkX = cellX + (dx[i] * range);
+		    int checkY = cellY + (dy[i] * range);
+
+		    if (!Main.getInstance().getWorld().isCellBuildable(checkX , checkY)) {
+			break;
+		    }
+
+		    tempList.add(new Pos(checkX, checkY));
+		}
+	    }
+
+	    if (!tempList.isEmpty()) {
+		lineBuildAllowedPositions.addAll(tempList);
+		tempList.clear();
+	    }
+	}
+
+	return lineBuildAllowedPositions;
     }
 }

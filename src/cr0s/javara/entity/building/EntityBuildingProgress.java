@@ -27,9 +27,12 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 	this.targetBuilding.posX = this.posX;
 	this.targetBuilding.posY = this.posY;
 
-	makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);
-
-	this.ticksRemaining = makeTexture.numImages - 1;
+	if (!targetBuilding.makeTextureName.isEmpty()) {
+	    makeTexture = ResourceManager.getInstance().getConquerTexture(targetBuilding.makeTextureName);
+	    this.ticksRemaining = makeTexture.numImages - 1;
+	} else {
+	    this.ticksRemaining = 1;
+	}
 	
 	setBibType(this.targetBuilding.getBibType());
 
@@ -61,6 +64,10 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 
     @Override
     public void renderEntity(Graphics g) {
+	if (this.makeTexture == null) {
+	    return;
+	}
+	
 	this.makeTexture.getAsImage(this.currentFrame, this.owner.playerColor).draw(this.posX, this.posY);
     }
 

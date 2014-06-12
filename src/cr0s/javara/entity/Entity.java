@@ -4,9 +4,9 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
-import cr0s.javara.entity.building.EntityBarracks;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.building.soviet.EntityBarracks;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;

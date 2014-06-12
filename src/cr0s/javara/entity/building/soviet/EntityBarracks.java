@@ -1,4 +1,4 @@
-package cr0s.javara.entity.building;
+package cr0s.javara.entity.building.soviet;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -10,6 +10,9 @@ import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.BibType;
+import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
