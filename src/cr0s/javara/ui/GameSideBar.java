@@ -143,7 +143,7 @@ public class GameSideBar {
     }
 
     public void drawCurrentViewportRect(Graphics g) {
-	g.setColor(Color.white.multiply(this.getBackgroundColor()));
+	g.setColor(Color.green.multiply(this.getBackgroundColor()));
 
 	g.setLineWidth(1);
 	g.draw(this.currentViewportRect);
@@ -219,9 +219,9 @@ public class GameSideBar {
 
 	    // Draw blackouted right texture
 	    if (isSovietLeft) {
-		this.menuCategoriesSheet.getSubImage(0, 1).draw(sX + 64, sY, filterColor);
-	    } else {
 		this.menuCategoriesSheet.getSubImage(0, 0).draw(sX + 64, sY, filterColor);
+	    } else {
+		this.menuCategoriesSheet.getSubImage(0, 1).draw(sX + 64, sY, filterColor);
 	    }
 	} else {
 	    if (isSovietLeft) {
