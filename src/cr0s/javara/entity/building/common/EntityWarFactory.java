@@ -64,8 +64,8 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     private EntityVehicle targetEntity;
     
     // 6 directions to exit from war factory
-    private final int[] exitDirectionsX = { -1, 1, -1, 0, 1, 0};
-    private final int[] exitDirectionsY = {  0, 0,  1, 1, 1, 0};
+    private final int[] exitDirectionsX = { 0, -1, -1, 1, 1, 0 };
+    private final int[] exitDirectionsY = { 1,  0,  1, 1, 0, 0 };
     
     private final Rectangle exitBoundingBox;
     
