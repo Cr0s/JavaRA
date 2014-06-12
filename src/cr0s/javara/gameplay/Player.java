@@ -1,29 +1,19 @@
 package cr0s.javara.gameplay;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
-import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
-import cr0s.javara.entity.infantry.EntityInfantry;
-import cr0s.javara.entity.infantry.EntityRiffleTrooper;
-import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
-import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
-import cr0s.javara.main.Main;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.World;
-import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.shrouds.Shroud;
-import cr0s.javara.resources.SoundManager;
+import cr0s.javara.util.Pos;
 
 public class Player {
     public String name;
@@ -82,8 +72,8 @@ public class Player {
 	this.spawnY = y;
     }
 
-    public Point getPlayerSpawnPoint() {
-	return new Point(this.spawnX, this.spawnY);
+    public Pos getPlayerSpawnPoint() {
+	return new Pos(this.spawnX, this.spawnY);
     }
 
     public void spawn() {
@@ -102,7 +92,7 @@ public class Player {
 	    int rx = this.spawnX + (this.world.getRandomInt(-10, 10));
 	    int ry = this.spawnY + (this.world.getRandomInt(-10, 10));
 
-	    Point randomPoint = new Point(rx, ry);
+	    Pos randomPoint = new Pos(rx, ry);
 
 	    if (!world.isCellPassable(randomPoint)) {
 		continue;

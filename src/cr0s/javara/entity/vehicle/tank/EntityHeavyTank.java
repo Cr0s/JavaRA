@@ -4,23 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.Entity;
-import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
-import cr0s.javara.entity.actor.activity.activities.Drag;
-import cr0s.javara.entity.actor.activity.activities.Move;
-import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
-import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.entity.turreted.Turret;
 import cr0s.javara.entity.vehicle.EntityVehicle;
@@ -28,7 +21,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
-import cr0s.javara.util.RotationUtil;
+import cr0s.javara.util.Pos;
 
 public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
 
@@ -73,7 +66,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	this.setHp(550);
 	this.setMaxHp(550);
 	
-	this.turret = new Turret(this, new Point(0, 0), texture, 32, 32);
+	this.turret = new Turret(this, new Pos(0, 0), texture, 32, 32);
     }
 
     @Override
@@ -81,15 +74,12 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	super.updateEntity(delta);
 	
 	if (!this.isIdle()) { 
-	    this.turret.setTarget(new Point(goalX * 24, goalY * 24));
+	    this.turret.setTarget(new Pos(goalX * 24, goalY * 24));
 	} else {
 	    this.turret.rotateTurretTo(this.currentFacing);
 	}
 	
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
-	if (this.isIdle()) {
-	    this.turret.recoil();
-	}
     }
 
     @Override

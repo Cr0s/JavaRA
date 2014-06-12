@@ -21,7 +21,7 @@ public class Sequence {
     private int currentFacing;
     
     private Color remapColor;
-    private boolean isLoop;
+    protected boolean isLoop;
     
     public Sequence(ShpTexture t, int startIndex, int facingsCount, int len, int delayTicks, Color remap) {
 	this.tex = t;
@@ -73,7 +73,7 @@ public class Sequence {
 	
 	int i = this.start + (f * this.length) + (this.currentFrame % this.length);
 	
-	this.tex.getAsImage(i, remapColor).draw(x, y);
+	this.tex.getAsImage(i, this.remapColor).draw(x, y);
     }
 
     public boolean isFinished() {

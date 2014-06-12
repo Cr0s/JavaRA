@@ -6,15 +6,16 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.util.PointsUtil;
+import cr0s.javara.util.Pos;
 
 public class Drag extends Activity {
     
-    private Point start, end;
+    private Pos start, end;
     private int lengthInTicks;
 
     private int ticks;
     
-    public Drag(Point aStart, Point aEnd, int aLengthInTicks) {
+    public Drag(Pos aStart, Pos aEnd, int aLengthInTicks) {
 	this.start = aStart;
 	this.end = aEnd;
 	this.lengthInTicks = aLengthInTicks;
@@ -29,8 +30,8 @@ public class Drag extends Activity {
 	
 	MobileEntity me = (MobileEntity)a;
 	
-	//Point currentPos = me.getPos();
-	Point nextPos;
+	//Pos currentPos = me.getPos();
+	Pos nextPos;
 	if (lengthInTicks > 1) { 
 	    nextPos = PointsUtil.interpolatePos(start, end, ticks, lengthInTicks - 1);
 	} else {

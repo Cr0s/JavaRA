@@ -30,7 +30,6 @@ import cr0s.javara.entity.building.common.EntityProc;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
-import cr0s.javara.main.CursorType;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
@@ -38,7 +37,9 @@ import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.map.ResourcesLayer;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.ui.cursor.CursorType;
 import cr0s.javara.util.PointsUtil;
+import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
 public class EntityHarvester extends EntityVehicle implements ISelectable, IShroudRevealer, IPips, IHaveCost {
@@ -64,11 +65,11 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
     private int updateTicks = 0;
 
-    private boolean isHarvesting = false; // TODO: make harvesting animation
+    private boolean isHarvesting = false;
 
     public EntityProc linkedProc;
-    public Point lastOrderPoint;
-    public Point lastHarvestedPoint;
+    public Pos lastOrderPoint;
+    public Pos lastHarvestedPoint;
 
     public static final int SEARCH_RADIUS_FROM_PROC = 30;
     public static final int SEARCH_RADIUS_FROM_ORDER = 25;
@@ -118,7 +119,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 		this.harvestingTicks = this.HARVESTING_FRAMES_DELAY_TICKS;
 		this.harvestingFrame = (this.harvestingFrame + 1) % this.HARVESTING_FRAMES;
 	    }
-	} else if ((this.currentActivity instanceof DropResources)) {
+	} else if (this.currentActivity instanceof DropResources) {
 	    if (--this.droppingTicks <= 0) {
 		this.droppingTicks = this.DROPPING_FRAMES_DELAY_TICKS;
 
@@ -129,7 +130,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 		    this.droppingFrame = this.DROPPING_FRAMES - 5;
 		}
 	    }
-	} else if ((this.currentActivity instanceof FinishDrop)) {
+	} else if (this.currentActivity instanceof FinishDrop) {
 	    if (--this.droppingTicks <= 0) {
 		this.droppingTicks = this.DROPPING_FRAMES_DELAY_TICKS;
 
@@ -336,8 +337,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	
 	for (Entity e : world.getEntitiesList()) {
 	    if (e instanceof EntityProc) {
-		int distance = PointsUtil.distanceSq(this.getCenterPos(), new Point(e.boundingBox.getCenterX(), e.boundingBox.getCenterY()));
-		if (closestProc == null || distance < PointsUtil.distanceSq(this.getCenterPos(), new Point(closestProc.boundingBox.getCenterX(), closestProc.boundingBox.getCenterY()))) {
+		int distance = this.getCenterPos().distanceToSq(new Pos(e.boundingBox.getCenterX(), e.boundingBox.getCenterY()));
+		if (closestProc == null || distance < this.getCenterPos().distanceToSq(new Pos(closestProc.boundingBox.getCenterX(), closestProc.boundingBox.getCenterY()))) {
 		    closestProc = (EntityProc) e;
 		}
 	    }
@@ -353,12 +354,12 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	@Override
 	public boolean canTarget(Entity self, Target target) {
-	    return target.isCellTarget() && (self instanceof EntityHarvester) && !self.world.getMap().getResourcesLayer().isCellEmpty(target.getTargetCell());
+	    return target.isCellTarget() && (self instanceof EntityHarvester) && (self.owner.getShroud() != null && self.owner.getShroud().isExplored(target.getTargetCell())) && !self.world.getMap().getResourcesLayer().isCellEmpty(target.getTargetCell());
 	}
 
 	@Override
 	public CursorType getCursorForTarget(Entity self, Target target) {
-	    return CursorType.CURSOR_ATTACK;
+	    return CursorType.CURSOR_HARVEST;
 	}
     }    
 

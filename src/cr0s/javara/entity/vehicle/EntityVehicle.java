@@ -3,25 +3,18 @@ package cr0s.javara.entity.vehicle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Random;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Point;
-import org.newdawn.slick.util.pathfinding.Mover;
-import org.newdawn.slick.util.pathfinding.Path;
-import org.newdawn.slick.util.pathfinding.Path.Step;
 
-import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
-import cr0s.javara.main.Main;
 import cr0s.javara.order.Order;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.resources.SoundManager;
-import cr0s.javara.util.RotationUtil;
+import cr0s.javara.util.Pos;
 
 public abstract class EntityVehicle extends MobileEntity implements IShroudRevealer {
     public int tileX, tileY;
@@ -156,7 +149,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     }
     
     @Override
-    public boolean canEnterCell(Point cellPos) {
+    public boolean canEnterCell(Pos cellPos) {
 	return world.isCellPassable(cellPos);
     }
 }

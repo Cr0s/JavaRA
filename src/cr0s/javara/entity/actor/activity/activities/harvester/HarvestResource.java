@@ -6,6 +6,7 @@ import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Wait;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
+import cr0s.javara.util.Pos;
 
 public class HarvestResource extends Activity {
 
@@ -26,7 +27,7 @@ public class HarvestResource extends Activity {
 	    return deliverResources();
 	}
 	
-	Point currentCell = harv.getCellPos();
+	Pos currentCell = harv.getCellPos();
 	
 	// Try to find resources if there is no resources in current cell
 	if (harv.world.getMap().getResourcesLayer().isCellEmpty(currentCell)) {
@@ -55,7 +56,7 @@ public class HarvestResource extends Activity {
 	return deliverActivity;	
     }
     
-    public Activity findResources(Point currentCell) {
+    public Activity findResources(Pos currentCell) {
 	FindResources findActivity = new FindResources();
 	findActivity.queueActivity(this.nextActivity);
 

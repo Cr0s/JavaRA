@@ -405,10 +405,10 @@ public class GameSideBar {
 	    break;
 
 	case 1:
-	    if (buttonX == 0) {
+	    if (buttonX == 0 && this.sideBarCategoriesOpened[1][0]) {
 		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 		switchPage(PAGE_VEHICLE);
-	    } else if (buttonX == 1) {
+	    } else if (buttonX == 1 && this.sideBarCategoriesOpened[1][1]) {
 		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
 		switchPage(PAGE_INFANTRY);
 	    }

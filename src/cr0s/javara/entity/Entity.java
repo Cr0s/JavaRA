@@ -16,7 +16,7 @@ import cr0s.javara.render.World;
 public abstract class Entity {
 	public World world;
 	
-	public float posX, posY;
+	public float posX, posY, posZ;
 	public float moveX, moveY;
 	
 	private boolean isDead;

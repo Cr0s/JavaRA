@@ -2,7 +2,6 @@ package cr0s.javara.entity.actor.activity.activities;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
@@ -16,11 +15,12 @@ import cr0s.javara.entity.infantry.EntityInfantry.AnimationState;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.render.World;
 import cr0s.javara.util.PointsUtil;
+import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
 public class MoveInfantry extends Activity {
 
-    private Point destCell;
+    private Pos destCell;
     private int destRange;
     private EntityBuilding ignoreBuilding;
 
@@ -36,7 +36,7 @@ public class MoveInfantry extends Activity {
     private boolean isNewPath;
     private int randomWaitTicks;
 
-    public MoveInfantry(MobileEntity me, Point destinationCell) {
+    public MoveInfantry(MobileEntity me, Pos destinationCell) {
 	this.destCell = destinationCell;
 
 	this.randomWaitTicks = me.world.getRandomInt(1, 3);
@@ -44,26 +44,26 @@ public class MoveInfantry extends Activity {
 	chooseNewPath(me);
     }
 
-    public MoveInfantry(MobileEntity me, Point destinationCell, int enoughRange) {
+    public MoveInfantry(MobileEntity me, Pos destinationCell, int enoughRange) {
 	this(me, destinationCell);
 
 	this.destRange = enoughRange;
     }
 
-    public MoveInfantry(MobileEntity me, Point destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
+    public MoveInfantry(MobileEntity me, Pos destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
 	this(me, destinationCell, enoughRange);
 
 	this.ignoreBuilding = aIgnoreBuilding;
     }
 
-    public MoveInfantry(MobileEntity me, Path scriptedPath, Point destinationCell, EntityBuilding aIgnoreBuilding) {
+    public MoveInfantry(MobileEntity me, Path scriptedPath, Pos destinationCell, EntityBuilding aIgnoreBuilding) {
 	this(me, destinationCell, 0);
 
 	this.currentPath = scriptedPath;
 	this.ignoreBuilding = aIgnoreBuilding;
     }
 
-    private Point popPath(MobileEntity me) {
+    private Pos popPath(MobileEntity me) {
 	int px = 0, py = 0;
 
 	if (this.currentPath == null || currentPathIndex >= this.currentPath.getLength() || this.currentPath.getLength() < 1) {
@@ -75,7 +75,7 @@ public class MoveInfantry extends Activity {
 	px = s.getX();
 	py = s.getY();
 
-	Point nextCell = new Point(px, py);
+	Pos nextCell = new Pos(px, py);
 
 
 	me.desiredSubcell = me.currentSubcell;
@@ -159,7 +159,7 @@ public class MoveInfantry extends Activity {
 
 	// It seems destination cell are blocked, try to choose nearest free cell as new destination cell
 	if (this.currentPath == null) {
-	    Point newDestCell = chooseClosestToDestCell(me);
+	    Pos newDestCell = chooseClosestToDestCell(me);
 
 	    // Give up
 	    if (newDestCell == null) {
@@ -174,12 +174,12 @@ public class MoveInfantry extends Activity {
 	}
     }
 
-    public Point chooseClosestToDestCell(MobileEntity me) {
-	Point res = this.destCell;
+    public Pos chooseClosestToDestCell(MobileEntity me) {
+	Pos res = this.destCell;
 
 	// Find free cells in range, starting from closest range
 	for (int range = 1; range <= this.destRange; range++) {
-	    ArrayList<Point> cells = me.world.choosePassableCellsInCircle(destCell, range);
+	    ArrayList<Pos> cells = me.world.choosePassableCellsInCircle(destCell, range);
 
 	    if (cells.size() != 0) {
 		return cells.get(me.world.getRandomInt(0, cells.size()));
@@ -191,7 +191,7 @@ public class MoveInfantry extends Activity {
 
     @Override
     public Activity tick(EntityActor a) {
-	Point nextCell = null;
+	Pos nextCell = null;
 
 	if (isCancelled || !(a instanceof MobileEntity)) {
 	    return nextActivity;
@@ -254,8 +254,8 @@ public class MoveInfantry extends Activity {
 
 	public MoveInfantry parentMove;
 	private MobileEntity me;
-	private Point start;
-	private Point end;
+	private Pos start;
+	private Pos end;
 
 	private int lengthInTicks;
 	private int ticks;
@@ -265,7 +265,7 @@ public class MoveInfantry extends Activity {
 
 	private boolean isNewPath;
 
-	public MovePart(MoveInfantry aParentMove, MobileEntity aMe, Point aStart, Point aDestCell) {
+	public MovePart(MoveInfantry aParentMove, MobileEntity aMe, Pos aStart, Pos aDestCell) {
 	    this.parentMove = aParentMove;
 
 	    this.me = aMe;
@@ -278,7 +278,7 @@ public class MoveInfantry extends Activity {
 	    int subOffsetXcurr = (int) EntityInfantry.subcellOffsets[this.me.currentSubcell.ordinal()].getX();
 	    int subOffsetYcurr = (int) EntityInfantry.subcellOffsets[this.me.currentSubcell.ordinal()].getY();
 	    
-	    this.end = new Point((aDestCell.getX() * 24) + subOffsetXnext, (aDestCell.getY() * 24) + subOffsetYnext);
+	    this.end = new Pos((aDestCell.getX() * 24) + subOffsetXnext, (aDestCell.getY() * 24) + subOffsetYnext);
 	    this.start = aStart;
 
 	    this.lengthInTicks = (int) (40 - (10 * me.getMoveSpeed()));
@@ -289,7 +289,7 @@ public class MoveInfantry extends Activity {
 
 	@Override
 	public Activity tick(EntityActor a) {
-	    Point nextPos;
+	    Pos nextPos;
 
 	    if (lengthInTicks > 1) { 
 		nextPos = PointsUtil.interpolatePos(start, end, ticks, lengthInTicks - 1);

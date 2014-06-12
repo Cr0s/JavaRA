@@ -9,6 +9,7 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
+import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
 public class Turret {
@@ -36,11 +37,11 @@ public class Turret {
     private final static int RECOIL_INTERVAL_TICKS = 10;
     private int recoilTicks = 0;
     
-    public Turret(EntityActor a, Point parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings) {
+    public Turret(EntityActor a, Pos parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings) {
 	this(a, parentOffset, texture, aStartFrame, aNumFacings, MAX_RECOIL_DEFAULT);
     }
     
-    public Turret(EntityActor a, Point parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings, int aMaxRecoil) {
+    public Turret(EntityActor a, Pos parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings, int aMaxRecoil) {
 	this.parentEntity = a;
 	
 	this.offestX = parentOffset.getX();
@@ -54,14 +55,7 @@ public class Turret {
     }
     
     public void update(int delta) {	
-	if (this.parentEntity instanceof MobileEntity) {
-	    this.turretX = ((MobileEntity) this.parentEntity).getTextureX() + this.offestX;
-	    this.turretY = ((MobileEntity) this.parentEntity).getTextureY() + this.offsetY;
-	} else {
-	    this.turretX = this.parentEntity.posX + this.offestX;
-	    this.turretY = this.parentEntity.posY + this.offsetY;		    
-	  
-	}
+	updateTurretPos();
 	
 	doTurretRotationTick();
 	
@@ -71,7 +65,7 @@ public class Turret {
 		this.recoilTicks = 0;
 	    }
 	    
-	    Point recoilOffset = getRecoilOffset();
+	    Pos recoilOffset = getRecoilOffset();
 	    
 	    this.turretX += recoilOffset.getX();
 	    this.turretY += recoilOffset.getY();
@@ -80,18 +74,30 @@ public class Turret {
 	}	
     }
     
-    private Point getRecoilOffset() {
+    private void updateTurretPos() {
+	if (this.parentEntity instanceof MobileEntity) {
+	    this.turretX = ((MobileEntity) this.parentEntity).getTextureX() + this.offestX;
+	    this.turretY = ((MobileEntity) this.parentEntity).getTextureY() + this.offsetY;
+	} else {
+	    this.turretX = this.parentEntity.posX + this.offestX;
+	    this.turretY = this.parentEntity.posY + this.offsetY;
+	}
+    }
+
+    private Pos getRecoilOffset() {
 	float recoilX = 0;
 	float recoilY = 0;
 	
-	Point recoilVector = RotationUtil.facingToRecoilVector(this.turretRotation);
+	Pos recoilVector = RotationUtil.facingToRecoilVector(this.turretRotation);
 	recoilX = this.currentRecoil * recoilVector.getX();
 	recoilY = this.currentRecoil * recoilVector.getY();
 	
-	return new Point(recoilX, recoilY);
+	return new Pos(recoilX, recoilY);
     }
 
     public void render(Graphics g) {
+	updateTurretPos();
+	
 	this.turretTexture.renderInUse((int) turretX, (int) turretY, 0, this.startFrame + RotationUtil.quantizeFacings(this.turretRotation, this.numFacings));
     }
     
@@ -172,7 +178,7 @@ public class Turret {
 	return this.turretRotation;
     }
 
-    public void setTarget(Point point) {
+    public void setTarget(Pos point) {
 	this.isTargeting = true;
 	
 	this.targetX = point.getX();

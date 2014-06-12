@@ -1,11 +1,10 @@
 package cr0s.javara.entity.actor.activity.activities.harvester;
 
-import org.newdawn.slick.geom.Point;
-
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
+import cr0s.javara.util.Pos;
 
 public class DeliverResources extends Activity {
 
@@ -17,7 +16,7 @@ public class DeliverResources extends Activity {
 	
 	EntityHarvester harv = (EntityHarvester) a;
 	
-	Point procDestPoint = null;
+	Pos procDestPoint = null;
 	if (harv.linkedProc == null || harv.linkedProc.isDead() || harv.linkedProc.isDestroyed()) {
 	    harv.linkedProc = harv.findClosestProc();
 	}

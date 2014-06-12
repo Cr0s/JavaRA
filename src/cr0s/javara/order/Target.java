@@ -3,16 +3,17 @@ package cr0s.javara.order;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.util.Pos;
 
 public class Target {
     private Entity targetEntity;
-    private Point targetCell;
+    private Pos targetCell;
     
     public Target(Entity target) {
 	this.targetEntity = target;
     }
     
-    public Target (Point target) {
+    public Target (Pos target) {
 	this.targetCell = target;
     }
     
@@ -28,7 +29,7 @@ public class Target {
 	return this.targetEntity;
     }
     
-    public Point getTargetCell() {
+    public Pos getTargetCell() {
 	return this.targetCell;
     }
 }

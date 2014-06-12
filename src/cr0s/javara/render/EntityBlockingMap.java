@@ -3,12 +3,10 @@ package cr0s.javara.render;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.newdawn.slick.geom.Point;
-
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
-import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
+import cr0s.javara.util.Pos;
 
 public class EntityBlockingMap {
     private World world;
@@ -38,7 +36,7 @@ public class EntityBlockingMap {
 	case ONE_CELL:
 		occupyCell(me.getCellPos(), me);
 		if (me.isMovingToCell) {
-		    occupyCell(new Point(me.targetCellX, me.targetCellY), me);
+		    occupyCell(new Pos(me.targetCellX, me.targetCellY), me);
 		}
 	case DONT_FILLS:
 	    break;
@@ -48,7 +46,7 @@ public class EntityBlockingMap {
 	case ONE_SUBCELL:
 		occupySubCell(me.getCellPos(), me.currentSubcell, me);
 		if (me.isMovingToCell) {
-		    occupySubCell(new Point(me.targetCellX, me.targetCellY), me.desiredSubcell, me);
+		    occupySubCell(new Pos(me.targetCellX, me.targetCellY), me.desiredSubcell, me);
 		}
 	    break;
 	default:
@@ -63,7 +61,7 @@ public class EntityBlockingMap {
 		freeCell(me.getCellPos());
 		
 		if (me.isMovingToCell) {
-		    freeCell(new Point(me.targetCellX, me.targetCellY));
+		    freeCell(new Pos(me.targetCellX, me.targetCellY));
 		}
 	case DONT_FILLS:
 	    break;
@@ -73,7 +71,7 @@ public class EntityBlockingMap {
 	case ONE_SUBCELL:
 		freeSubCell(me.getCellPos(), me.currentSubcell);
 		if (me.isMovingToCell) {
-		    freeSubCell(new Point(me.targetCellX, me.targetCellY), me.desiredSubcell);
+		    freeSubCell(new Pos(me.targetCellX, me.targetCellY), me.desiredSubcell);
 		}
 	    break;
 	default:
@@ -82,11 +80,11 @@ public class EntityBlockingMap {
 	
     }    
     
-    public void freeCell(Point cellPos) {
+    public void freeCell(Pos cellPos) {
 	freeSubCell(cellPos, SubCell.FULL_CELL);
     }
     
-    public void freeSubCell(Point cellPos, SubCell sc) {
+    public void freeSubCell(Pos cellPos, SubCell sc) {
 	LinkedList<Influence> infList = this.blockingMap[(int) cellPos.getX()][(int) cellPos.getY()];
 	
 	if (sc == SubCell.FULL_CELL) {
@@ -108,7 +106,7 @@ public class EntityBlockingMap {
 	}
     }
     
-    public void occupySubCell(Point cellPos, SubCell sc, Entity e) {
+    public void occupySubCell(Pos cellPos, SubCell sc, Entity e) {
 	if (sc == SubCell.FULL_CELL) {
 	    occupyCell(cellPos, e);
 	    return;
@@ -124,14 +122,14 @@ public class EntityBlockingMap {
 	infList.add(new Influence(sc, e));
     }    
     
-    public void occupyCell(Point cellPos, Entity e) {
+    public void occupyCell(Pos cellPos, Entity e) {
 	LinkedList<Influence> infList = new LinkedList<>();
 	infList.add(new Influence(SubCell.FULL_CELL, e));
 	
 	this.blockingMap[(int) cellPos.getX()][(int) cellPos.getY()] = infList;
     }
     
-    public boolean isSubcellFree(Point pos, SubCell sub) {
+    public boolean isSubcellFree(Pos pos, SubCell sub) {
 	if (sub == null) {
 	    System.out.println("ERR: null subcell!");
 	    return false;
@@ -156,7 +154,7 @@ public class EntityBlockingMap {
 	return true;
     }
     
-    public boolean isFullCellOccupied(Point pos) {
+    public boolean isFullCellOccupied(Pos pos) {
 	// Whole cell is free
 	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null) {
 	    return false;
@@ -181,7 +179,7 @@ public class EntityBlockingMap {
 	}
     }
 
-    public SubCell getFreeSubCell(Point pos, SubCell currentSubcell) {
+    public SubCell getFreeSubCell(Pos pos, SubCell currentSubcell) {
 	if (this.isSubcellFree(pos, currentSubcell)) {
 	    return currentSubcell;
 	}
@@ -199,7 +197,7 @@ public class EntityBlockingMap {
 	return null;
     }
 
-    public LinkedList<Influence> getCellInfluences(Point pos) {
+    public LinkedList<Influence> getCellInfluences(Pos pos) {
 	return this.blockingMap[(int) pos.getX()][(int) pos.getY()];
     }
 }

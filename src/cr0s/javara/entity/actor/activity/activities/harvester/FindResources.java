@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.MobileEntity;
@@ -14,6 +13,7 @@ import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.util.CellChooser;
 import cr0s.javara.util.PointsUtil;
+import cr0s.javara.util.Pos;
 
 public class FindResources extends Activity {
 
@@ -40,7 +40,7 @@ public class FindResources extends Activity {
 		return deliverActivity;		
 	    }
 	    
-	    moveActivity = new Move(me, pathToResource, new Point(pathToResource.getX(pathToResource.getLength() - 1), pathToResource.getY(pathToResource.getLength() - 1)), null);
+	    moveActivity = new Move(me, pathToResource, new Pos(pathToResource.getX(pathToResource.getLength() - 1), pathToResource.getY(pathToResource.getLength() - 1)), null);
 	} else {
 	    if (!harv.isEmpty()) {
 		DeliverResources deliverActivity = new DeliverResources();
@@ -59,14 +59,14 @@ public class FindResources extends Activity {
 
     private Path findPathToClosestResourceCell(final EntityHarvester harv) {
 	int searchRadius = (harv.lastOrderPoint != null || harv.lastHarvestedPoint != null) ? harv.SEARCH_RADIUS_FROM_ORDER : harv.SEARCH_RADIUS_FROM_PROC;
-	final Point centerPos = (harv.lastOrderPoint != null) ? harv.lastOrderPoint : (harv.lastHarvestedPoint != null) ? harv.lastHarvestedPoint : harv.getCellPos();
+	final Pos centerPos = (harv.lastOrderPoint != null) ? harv.lastOrderPoint : (harv.lastHarvestedPoint != null) ? harv.lastHarvestedPoint : harv.getCellPos();
 
 	final int MAX_PATHS_PER_POINT = 10;
-	Point resourcePos = null;
-	ArrayList<Point> resourcePoints = harv.world.chooseTilesInCircle(centerPos, searchRadius, new CellChooser() {
+	Pos resourcePos = null;
+	ArrayList<Pos> resourcePoints = harv.world.chooseTilesInCircle(centerPos, searchRadius, new CellChooser() {
 
 	    @Override
-	    public boolean isCellChoosable(Point cellPos) {
+	    public boolean isCellChoosable(Pos cellPos) {
 		boolean shroudObscures = harv.owner.getShroud() != null && !harv.owner.getShroud().isExplored(cellPos);
 		boolean isHarvesterPoint = (int) cellPos.getX() == (int) harv.getCellPos().getX() && (int) cellPos.getY() == (int) harv.getCellPos().getY();
 		
@@ -82,13 +82,10 @@ public class FindResources extends Activity {
 	    pathsToResources = new ArrayList<Path>();
 	    
 	    // Sort by "closest to harvest point goes first"
-	    Collections.sort(resourcePoints, new Comparator<Point>() {
+	    Collections.sort(resourcePoints, new Comparator<Pos>() {
 		@Override
-		public int compare(Point p1, Point p2) {
-		    int d1 = PointsUtil.distanceSq(p1, centerPos);
-		    int d2 = PointsUtil.distanceSq(p2, centerPos);
-		    
-		    return d1 - d2;
+		public int compare(Pos p1, Pos p2) {
+		    return p1.distanceToSq(p2);
 		}
 	    });
 	    

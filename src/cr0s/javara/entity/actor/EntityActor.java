@@ -5,9 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import org.newdawn.slick.Graphics;
 
+import cr0s.javara.combat.ArmorType;
+import cr0s.javara.combat.TargetType;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.activity.Activity;
@@ -32,6 +35,9 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     public Alignment unitProductionAlingment = Alignment.NEUTRAL;
     
     public LinkedList<Class> requiredToBuild;
+    
+    public ArmorType armorType = ArmorType.NONE;
+    public TreeSet<TargetType> targetTypes = new TreeSet<TargetType>();
     
     public EntityActor(float posX, float posY, Team team, Player owner,
 	    final float aSizeWidth, final float aSizeHeight) {
@@ -121,7 +127,7 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
 	try {
 	    ctor = (this.getClass()).getDeclaredConstructor(Float.class, Float.class, Team.class, Player.class);
 	    ctor.setAccessible(true);
-	    EntityActor newEntity = ((EntityActor) ctor.newInstance(this.posX, this.posY, this.team, this.owner));
+	    EntityActor newEntity = (EntityActor) ctor.newInstance(this.posX, this.posY, this.team, this.owner);
 
 	    return newEntity;
 	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException

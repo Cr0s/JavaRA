@@ -8,7 +8,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IHaveCost;
@@ -29,6 +28,7 @@ import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.Pos;
 
 public class EntityProc extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IPips, IOreCapacitor, ITargetLines, IHaveCost {
 
@@ -87,7 +87,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	    return;
 	}
 		
-	Point harvCell = getHarvesterCell();
+	Pos harvCell = getHarvesterCell();
 	EntityHarvester harv = new EntityHarvester(harvCell.getX() * 24f, harvCell.getY() * 24f, team, owner);
 	
 	harv.currentFacing = HARV_FACING;
@@ -100,8 +100,8 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	world.spawnEntityInWorld(harv);
     }
     
-    public Point getHarvesterCell() {
-	return new Point((this.getTileX() / 24) + HARV_OFFSET_X, (this.getTileY() / 24) + HARV_OFFSET_Y);	
+    public Pos getHarvesterCell() {
+	return new Pos((this.getTileX() / 24) + HARV_OFFSET_X, (this.getTileY() / 24) + HARV_OFFSET_Y);	
     }
     
     private void initTextures() {
@@ -211,7 +211,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	for (Entity e : world.getEntitiesList()) {
 	    if (e instanceof EntityHarvester) {
 		if (((EntityHarvester)e).linkedProc == this) {
-		    this.targetLines.add(new TargetLine(new Point(this.boundingBox.getCenterX(), this.boundingBox.getCenterY()), ((EntityHarvester) e).getCenterPos(), Color.yellow));
+		    this.targetLines.add(new TargetLine(new Pos(this.boundingBox.getCenterX(), this.boundingBox.getCenterY()), ((EntityHarvester) e).getCenterPos(), Color.yellow));
 		}
 	    }
 	}

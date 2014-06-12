@@ -1,25 +1,17 @@
 package cr0s.javara.entity.infantry;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
-import org.newdawn.slick.BigImage;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
-import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.activities.AttackInfantry;
-import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.building.EntityBuilding;
-import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
@@ -27,6 +19,7 @@ import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.Sequence;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.resources.SoundManager;
+import cr0s.javara.util.Pos;
 
 public abstract class EntityInfantry extends MobileEntity implements IShroudRevealer {
 
@@ -37,16 +30,16 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
     public static final int MAX_FACING = 8;
 
-    public static Point subcellOffsets[] = new Point[6];
+    public static Pos subcellOffsets[] = new Pos[6];
 
     static {
-	subcellOffsets[SubCell.TOP_LEFT.ordinal()] = new Point(-21, -12);
-	subcellOffsets[SubCell.TOP_RIGHT.ordinal()] = new Point(-5, -12);
+	subcellOffsets[SubCell.TOP_LEFT.ordinal()] = new Pos(-21, -12);
+	subcellOffsets[SubCell.TOP_RIGHT.ordinal()] = new Pos(-5, -12);
 
-	subcellOffsets[SubCell.CENTER.ordinal()] = new Point(-13, -6);
+	subcellOffsets[SubCell.CENTER.ordinal()] = new Pos(-13, -6);
 
-	subcellOffsets[SubCell.BOTTOM_LEFT.ordinal()] = new Point(-21, 2);
-	subcellOffsets[SubCell.BOTTOM_RIGHT.ordinal()] = new Point(-5, 2);
+	subcellOffsets[SubCell.BOTTOM_LEFT.ordinal()] = new Pos(-21, 2);
+	subcellOffsets[SubCell.BOTTOM_RIGHT.ordinal()] = new Pos(-5, 2);
     }
 
     protected ShpTexture texture;
@@ -103,6 +96,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3	
 
 	this.randomTicksBeforeIdleSeq = (int) (this.MIN_IDLE_DELAY_TICKS + Math.random() * (this.MAX_IDLE_DELAY_TICKS - this.MIN_IDLE_DELAY_TICKS));
+	
+	this.armorType = ArmorType.NONE;
     }
 
     @Override
@@ -111,7 +106,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     }
 
     @Override
-    public boolean canEnterCell(Point cellPos) {
+    public boolean canEnterCell(Pos cellPos) {
 	return world.isCellPassable(cellPos, (this.desiredSubcell == null) ? this.currentSubcell : this.desiredSubcell);
     }
 
@@ -179,7 +174,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     }
 
     @Override
-    public void moveTo(Point destCell, EntityBuilding ignoreBuilding) {
+    public void moveTo(Pos destCell, EntityBuilding ignoreBuilding) {
 	this.goalX = (int) destCell.getX();
 	this.goalY = (int) destCell.getY();
 
@@ -201,7 +196,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.goalX = (int) p.getX(p.getLength() - 1);
 	this.goalY = (int) p.getY(p.getLength() - 1);
 
-	queueActivity(new MoveInfantry(this, p, new Point(goalX, goalY), ignoreBuilding));
+	queueActivity(new MoveInfantry(this, p, new Pos(goalX, goalY), ignoreBuilding));
     }     
 
     @Override

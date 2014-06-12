@@ -4,16 +4,17 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.geom.Point;
+
+import cr0s.javara.util.Pos;
 
 public class TargetLine {
-    private Point self;
-    private ArrayList<Point> targets;
+    private Pos self;
+    private ArrayList<Pos> targets;
     private Color color;
     
     private int lifeTime = 150;
     
-    public TargetLine(Point s, Point target, Color c, int time) {
+    public TargetLine(Pos s, Pos target, Color c, int time) {
 	this.self = s;
 	this.targets = new ArrayList<>();
 	this.targets.add(target);
@@ -21,7 +22,7 @@ public class TargetLine {
 	this.lifeTime = time;
     }
     
-    public TargetLine(Point s, Point target, Color c) {
+    public TargetLine(Pos s, Pos target, Color c) {
 	this.self = s;
 	this.targets = new ArrayList<>();
 	this.targets.add(target);
@@ -40,7 +41,7 @@ public class TargetLine {
 	g.setColor(this.color);
 	
 	g.setLineWidth(1);
-	for (Point t : this.targets) {
+	for (Pos t : this.targets) {
 	    g.drawLine(self.getX(), self.getY(), t.getX(), t.getY());
 	    g.drawOval(t.getX() - 2, t.getY() - 2, 4, 4);
 	}

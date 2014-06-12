@@ -28,6 +28,7 @@ import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
+import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
 public abstract class MobileEntity extends EntityActor implements Mover, INotifyBlockingMove {
@@ -51,28 +52,28 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 
     public abstract Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY);
 
-    public Point getCenterPos() {
-	return new Point(this.getCenterPosX(), this.getCenterPosY());
+    public Pos getCenterPos() {
+	return new Pos(this.getCenterPosX(), this.getCenterPosY());
     }
     
-    public Point getPos() {
-	return new Point(this.posX, this.posY);
+    public Pos getPos() {
+	return new Pos(this.posX, this.posY);
     }
     
-    public Point getCellPos() {
-	return new Point((int) getCenterPosX() / 24, (int) getCenterPosY() / 24);
+    public Pos getCellPos() {
+	return new Pos((int) getCenterPosX() / 24, (int) getCenterPosY() / 24);
     }    
     
-    public Point getTexturePos() {
-	return new Point(this.getTextureX(), this.getTextureY());
+    public Pos getTexturePos() {
+	return new Pos(this.getTextureX(), this.getTextureY());
     }
 
-    public void setPos(Point pos) {
+    public void setPos(Pos pos) {
 	this.posX = pos.getX();
 	this.posY = pos.getY();
     }
     
-    public void setCenterPos(Point pos) {
+    public void setCenterPos(Pos pos) {
 	this.setCenterX(pos.getX());
 	this.setCenterY(pos.getY());
     }
@@ -176,13 +177,13 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	int dx[] = { +1, -1,  0,  0, +1, -1, +1, -1 };
 	int dy[] = {  0,  0, +1, -1, +1, +1, -1, -1 };
 	
-	Point nudgerPos = null;
+	Pos nudgerPos = null;
 	if (nudger != null) {
 	    nudgerPos = nudger.getCellPos();
 	}
 	
-	ArrayList<Point> availCells = new ArrayList<>();
-	ArrayList<Point> smartCells = new ArrayList<>(); // smart cells is cells which blocked, but we can try to nudge actor inside it
+	ArrayList<Pos> availCells = new ArrayList<>();
+	ArrayList<Pos> smartCells = new ArrayList<>(); // smart cells is cells which blocked, but we can try to nudge actor inside it
 	
 	for (int i = 0; i < 8; i++) {
 	    int newCellX = (int) this.getCellPos().getX() + dx[i];
@@ -194,13 +195,13 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	    }
 	    
 	    if (world.isCellPassable(newCellX, newCellY)) {
-		availCells.add(new Point(newCellX, newCellY));
+		availCells.add(new Pos(newCellX, newCellY));
 	    } else {
-		smartCells.add(new Point(newCellX, newCellY));
+		smartCells.add(new Pos(newCellX, newCellY));
 	    }
 	}
 	
-	Point pointToGetOut = null; // target point to stand down
+	Pos pointToGetOut = null; // target point to stand down
 	
 	// Choose random cell, first from of available, if not, then, select from smart cells
 	if (availCells.size() != 0) {
@@ -224,7 +225,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 
 	    Collections.shuffle(smartCells);
 	    
-	    for (Point cell : smartCells) {
+	    for (Pos cell : smartCells) {
 		MobileEntity blocker = world.getMobileEntityInCell(cell);
 		
 		if (blocker != this && blocker != null && blocker.isFrendlyTo(this)) {
@@ -234,11 +235,11 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	}
     }
     
-    public void moveTo(Point destCell) {
+    public void moveTo(Pos destCell) {
 	this.moveTo(destCell, null);
     }
     
-    public void moveTo(Point destCell, EntityBuilding ignoreBuilding) {
+    public void moveTo(Pos destCell, EntityBuilding ignoreBuilding) {
 	this.goalX = (int) destCell.getX();
 	this.goalY = (int) destCell.getY();
 
@@ -259,7 +260,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	this.goalX = (int) p.getX(p.getLength() - 1);
 	this.goalY = (int) p.getY(p.getLength() - 1);
 	
-	queueActivity(new Move(this, p, new Point(goalX, goalY), ignoreBuilding));
+	queueActivity(new Move(this, p, new Pos(goalX, goalY), ignoreBuilding));
     }    
     
     @Override
@@ -273,7 +274,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
     public abstract float getTextureX();
     public abstract float getTextureY();    
     public abstract int getMinimumEnoughRange();
-    public abstract boolean canEnterCell(Point cellPos);    
+    public abstract boolean canEnterCell(Pos cellPos);    
     public abstract int getWaitAverageTime();
     public abstract int getWaitSpreadTime();
     
@@ -304,7 +305,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
     }
 
 
-    public void setCellPos(Point exitPoint) {
+    public void setCellPos(Pos exitPoint) {
 	this.posX = exitPoint.getX() * 24;
 	this.posY = exitPoint.getY() * 24;
     }

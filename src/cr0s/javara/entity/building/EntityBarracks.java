@@ -1,13 +1,8 @@
 package cr0s.javara.entity.building;
 
-import java.util.ArrayList;
-
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.entity.IHaveCost;
@@ -23,7 +18,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
-import cr0s.javara.util.CellChooser;
+import cr0s.javara.util.Pos;
 
 public class EntityBarracks extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost {
 
@@ -47,8 +42,8 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 
     private static final int BUILDING_COST = 400;
     
-    private Point rallyPoint;
-    private Point exitPoint;
+    private Pos rallyPos;
+    private Pos exitPos;
     
     public EntityBarracks(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xx xx ~~");
@@ -168,30 +163,30 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	    world.spawnEntityInWorld(newInstance);
 	    
 	    Path p = new Path();
-	    p.appendStep((int) exitPoint.getX(), (int) exitPoint.getY());
-	    p.appendStep((int) rallyPoint.getX(), (int) rallyPoint.getY());
+	    p.appendStep((int) exitPos.getX(), (int) exitPos.getY());
+	    p.appendStep((int) rallyPos.getX(), (int) rallyPos.getY());
 	    
-	    SubCell freeSubCell = world.blockingEntityMap.getFreeSubCell(rallyPoint, SubCell.CENTER);
+	    SubCell freeSubCell = world.blockingEntityMap.getFreeSubCell(rallyPos, SubCell.CENTER);
 	    if (freeSubCell != null) {
 		me.currentSubcell = freeSubCell;
 		me.desiredSubcell = freeSubCell;
-		me.setCellPos(exitPoint);
+		me.setCellPos(exitPos);
 		
 		me.startMovingByPath(p, this);
 	    } else {
 		SubCell sc = SubCell.CENTER;
 
-		MobileEntity blocker = world.getMobileEntityInCell(exitPoint);
+		MobileEntity blocker = world.getMobileEntityInCell(exitPos);
 		if (blocker != null) {
 		    blocker.nudge(me, true);
 		}
 		
-		blocker = world.getMobileEntityInCell(rallyPoint);
+		blocker = world.getMobileEntityInCell(rallyPos);
 		if (blocker != null) {
 		    blocker.nudge(me, true);
 		}
 		
-		me.setCellPos(exitPoint);
+		me.setCellPos(exitPos);
 		me.currentSubcell = sc;
 		me.desiredSubcell = sc;
 		me.startMovingByPath(p, this);
@@ -201,7 +196,7 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
     
     @Override
     public void onBuildFinished() {
-	this.exitPoint = new Point((posX) / 24, (posY + 1 * 24) / 24);
-	this.rallyPoint = new Point((posX) / 24, (posY + 2 * 24) / 24);	
+	this.exitPos = new Pos((posX) / 24, (posY + 1 * 24) / 24);
+	this.rallyPos = new Pos((posX) / 24, (posY + 2 * 24) / 24);	
     }
 }

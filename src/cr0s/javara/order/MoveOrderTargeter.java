@@ -1,11 +1,10 @@
 package cr0s.javara.order;
 
-import org.newdawn.slick.geom.Point;
-
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
-import cr0s.javara.main.CursorType;
+import cr0s.javara.ui.cursor.CursorType;
+import cr0s.javara.util.Pos;
 
 public class MoveOrderTargeter extends OrderTargeter {
 
@@ -24,7 +23,7 @@ public class MoveOrderTargeter extends OrderTargeter {
 
     @Override
     public CursorType getCursorForTarget(Entity self, Target target) {
-	Point cellPos = target.getTargetCell();
+	Pos cellPos = target.getTargetCell();
 
 	if (self == null || target == null || cellPos == null) {
 	    return CursorType.CURSOR_POINTER;

@@ -25,6 +25,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.Pos;
 
 public class EntityWarFactory extends EntityBuilding implements ISelectable, IShroudRevealer, IDeployable, IPowerConsumer, IHaveCost {
 
@@ -195,7 +196,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	
 	if (isExitBlocked) {
 	    // Try to nudge blocker
-	    MobileEntity blocker = world.getMobileEntityInCell(new Point(exitX, exitY));
+	    MobileEntity blocker = world.getMobileEntityInCell(new Pos(exitX, exitY));
 	    if (blocker != null) {
 		blocker.nudge(null, true);
 	    }

@@ -25,6 +25,9 @@ public class ShpTexture {
     private boolean[] isRemap = new boolean[256];
 
     private Point sheetPos;
+    public String palleteName;
+    
+    public Color forcedColor;
 
     public ShpTexture(ShpFileCnc shp) {
 	this.width = shp.width();
@@ -61,7 +64,7 @@ public class ShpTexture {
     }
 
     private ImageBuffer remapShpFrame(int index, Color remapColor) {
-	PalFile pal = ResourceManager.getInstance().getPaletteByName("temperat.pal");
+	PalFile pal = ResourceManager.getInstance().getPaletteByName(this.palleteName == null ? "temperat.pal" : this.palleteName);
 	Color[] colors = new Color[256];
 
 	// Remap pallete only if remapping color is specified
@@ -74,8 +77,12 @@ public class ShpTexture {
 		int colorValue = bb.get() & 0xFF;
 
 		// Check for shadow color
-		if (colorValue != 0x04) {
-		    imgbuf.setRGBA(x, y, colors[colorValue].getRed(), colors[colorValue].getGreen(), colors[colorValue].getBlue(), (colorValue == 0) ? 0 : 255);
+		if (colorValue != 0x04 && colorValue != 0x03) {
+		    if (forcedColor == null) {
+			imgbuf.setRGBA(x, y, colors[colorValue].getRed(), colors[colorValue].getGreen(), colors[colorValue].getBlue(), (colorValue == 0) ? 0 : 255);
+		    } else {
+			imgbuf.setRGBA(x, y, forcedColor.getRed(), forcedColor.getGreen(), forcedColor.getBlue(), (colorValue == 0) ? 0 : forcedColor.getAlpha());
+		    }
 		} else {
 		    // Shadows
 		    imgbuf.setRGBA(x, y, 0, 0, 0, 128); // Replace shadow color with black color with 3/4 transparency

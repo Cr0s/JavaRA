@@ -44,34 +44,34 @@ public class ResourceManager {
     private static ResourceManager instance;
     public static final String ROOT_FOLDER = System.getProperty("user.dir")
 	    + System.getProperty("file.separator");
-    
+
     public static final String RESOURCE_FOLDER = ROOT_FOLDER + "assets"
 	    + System.getProperty("file.separator");
     public static final String PAL_FOLDER = RESOURCE_FOLDER + "pal"
 	    + System.getProperty("file.separator");
     public static final String TILESETS_FOLDER = ROOT_FOLDER + "tilesets"
 	    + System.getProperty("file.separator");
-    
+
     public static final String MAPS_FOLDER = ROOT_FOLDER + "maps"
 	    + System.getProperty("file.separator");
-    
+
     public static final String CURSORS_FOLDER = RESOURCE_FOLDER + "cursors" + System.getProperty("file.separator");
 
     public static final String MAIN_CURSOR = CURSORS_FOLDER + "pointer.png";
-    
+
     public static final String GOTO_CURSOR = CURSORS_FOLDER + "goto.tga";
     public static final String NO_GOTO_CURSOR = CURSORS_FOLDER + "no_goto.tga";
-    
+
     public static final String SELECT_CURSOR = CURSORS_FOLDER + "select.tga";
     public static final String DEPLOY_CURSOR = CURSORS_FOLDER + "deploy.tga";
-    
+
     public static final String NO_DEPLOY_CURSOR = CURSORS_FOLDER + "no_deploy.tga";
     public static final String ATTACK_CURSOR = CURSORS_FOLDER + "attack.tga";
     public static final String ENTER_CURSOR = CURSORS_FOLDER + "enter.tga";
     public static final String NO_ENTER_CURSOR = CURSORS_FOLDER + "no_enter.tga";
-    
+
     public static final String SIDEBAR_CATEGORIES_SHEET = RESOURCE_FOLDER + "sidebar_buttons.png";
-    
+
     public static Cursor pointerCursor;
     private HashMap<String, MixFile> mixes = new HashMap<>();
     private HashMap<String, ShpTexture> commonTextureSources = new HashMap<>();
@@ -81,7 +81,7 @@ public class ResourceManager {
     private HashMap<String, XSound> sounds = new HashMap<>();
 
     private SpriteSheet bib1, bib2, bib3;
-    
+
     private ResourceManager() {
 	try {
 	    this.pointerCursor = CursorLoader.get().getCursor(MAIN_CURSOR, 0, 0);
@@ -92,7 +92,7 @@ public class ResourceManager {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	
+
 	loadMixes();
     }
 
@@ -109,22 +109,22 @@ public class ResourceManager {
 	bib2 = new SpriteSheet(getTemplateShpTexture("temperat", "bib2.tem").getAsCombinedImage(null), 24, 24);
 	bib3 = new SpriteSheet(getTemplateShpTexture("temperat", "bib3.tem").getAsCombinedImage(null), 24, 24);
     }
-    
+
     public SpriteSheet getBibSheet(BibType bt) {
 	switch (bt) {
 	case SMALL:
 	    return bib3;
 	case MIDDLE:
 	    return bib2;
-	    
+
 	case BIG:
 	    return bib1;
-	    
+
 	default:
 	    return null;
 	}
     }
-    
+
     private void loadMixes() {
 	RandomAccessFile randomAccessFile = null;
 
@@ -170,7 +170,7 @@ public class ResourceManager {
 
 	return null;
     }    
-    
+
     public ShpTexture getConquerTexture(String name) {
 	MixFile mix = mixes.get("conquer.mix");
 
@@ -184,9 +184,10 @@ public class ResourceManager {
 
 	    if (rec != null) {
 		ReadableByteChannel rbc = mix.getEntryData(rec);
-		
+
 		ShpFileCnc shp = new ShpFileCnc(name, rbc);
 		ShpTexture shpTexture = new ShpTexture(shp);
+		shpTexture.palleteName = "temperat.pal";
 		commonTextureSources.put(name, shpTexture);
 		return shpTexture;
 	    } else {
@@ -196,11 +197,11 @@ public class ResourceManager {
 
 	return null;
     }
-    
+
     public XSound loadSpeechSound(String name) {
 	return loadSound("speech.mix", name + ".aud");
     }
-    
+
     public XSound loadSound(String mixname, String name) {
 	MixFile mix = mixes.get(mixname);
 
@@ -223,11 +224,11 @@ public class ResourceManager {
 		    e.printStackTrace();
 		}
 		//aud.close();
-		
+
 		if (sound != null) {
 		    this.sounds.put(name, sound);
 		}
-		
+
 		return sound;
 	    } else {
 		return null;
@@ -236,7 +237,7 @@ public class ResourceManager {
 
 	return null;	
     }
-    
+
     public ShpTexture getTemplateShpTexture(String tileSetName, String name) {
 	MixFile mix = mixes.get(tileSetName.toLowerCase() + ".mix");
 
@@ -253,8 +254,9 @@ public class ResourceManager {
 
 		ShpFileCnc shp = new ShpFileCnc(name, rbc);
 		ShpTexture shpTexture = new ShpTexture(shp);
+		shpTexture.palleteName = tileSetName + ".pal";
 		shpTextureSources.put(name, shpTexture);
-		
+
 		return shpTexture;
 	    } else {
 		System.out.println("Record SHP (" + name +") in " + tileSetName + ".mix is not found");
@@ -266,7 +268,7 @@ public class ResourceManager {
 
 	return null;
     }    
-    
+
     public TmpTexture getTemplateTexture(String type, String name) {
 	type = type.toLowerCase();
 	MixFile mix = mixes.get(type + ".mix");
@@ -284,7 +286,7 @@ public class ResourceManager {
 
 		TmpFileRA tmp = new TmpFileRA(name, rbc);
 		TmpTexture tmpTexture = new TmpTexture(tmp, type);
-		
+
 		templatesTexureSources.put(name, tmpTexture);
 		return tmpTexture;
 	    } else {
@@ -328,7 +330,7 @@ public class ResourceManager {
 	} catch (DirectoryIteratorException ex) {
 	    throw ex.getCause();
 	}
-	
+
 	return result;
     }
 
@@ -337,7 +339,7 @@ public class ResourceManager {
 	if (alignment == Alignment.SOVIET) {
 	    mixname = "russian.mix";
 	}
-	
+
 	return loadSound(mixname, name);
     }
 
@@ -354,7 +356,7 @@ public class ResourceManager {
 
 	    if (rec != null) {
 		ReadableByteChannel rbc = mix.getEntryData(rec);
-		
+
 		ShpFileCnc shp = new ShpFileCnc(name, rbc);
 		ShpTexture shpTexture = new ShpTexture(shp);
 		commonTextureSources.put(name, shpTexture);
@@ -366,5 +368,39 @@ public class ResourceManager {
 	}
 
 	return null;
+    }
+
+    public ShpTexture getShpTexture(String name) {
+	// Check texture sources cache
+	if (commonTextureSources.containsKey(name)) {
+	    return commonTextureSources.get(name);
+	}
+
+	RandomAccessFile randomAccessFile = null;
+	
+	try {
+	    randomAccessFile = new RandomAccessFile(Paths
+			.get(RESOURCE_FOLDER + name).toString(), "r");
+	    
+	    FileChannel inChannel = randomAccessFile.getChannel();
+	    
+	    ShpFileCnc shp = new ShpFileCnc(name, inChannel);
+	    ShpTexture shpTexture = new ShpTexture(shp);
+	    shpTexture.palleteName = "temperat.pal";
+	    
+	    commonTextureSources.put(name, shpTexture);
+	    return shpTexture;
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return null;
+	} finally {
+	    if (randomAccessFile != null) {
+		try {
+		    randomAccessFile.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+	    }
+	}
     }
 }

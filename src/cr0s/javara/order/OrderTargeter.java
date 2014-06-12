@@ -2,7 +2,7 @@ package cr0s.javara.order;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
-import cr0s.javara.main.CursorType;
+import cr0s.javara.ui.cursor.CursorType;
 
 public abstract class OrderTargeter {
     public String orderString;

@@ -21,13 +21,13 @@ import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
-import cr0s.javara.main.CursorType;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.ui.cursor.CursorType;
 import cr0s.javara.util.RotationUtil;
 
 public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable, IHaveCost {

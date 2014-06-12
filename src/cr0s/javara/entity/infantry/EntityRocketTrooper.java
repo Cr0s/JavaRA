@@ -50,8 +50,7 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
     
     @Override
     public int getMinimumEnoughRange() {
-	// TODO Auto-generated method stub
-	return 0;
+	return 3;
     }
 
     @Override

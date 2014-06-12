@@ -31,6 +31,7 @@ import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.resources.TmpTexture;
+import cr0s.javara.util.Pos;
 
 public class TileMap {
     private short width, height;
@@ -49,7 +50,7 @@ public class TileMap {
 
     private Rectangle bounds;
 
-    private ArrayList<Point> spawns;
+    private ArrayList<Pos> spawns;
 
     // Viewport and darkness shifts in tiles
     public static final int MAP_OFFSET_TILES = 16;
@@ -80,7 +81,7 @@ public class TileMap {
 
 		System.out.println("[MAP] Added spawn: (" + x + "; " + y + ")");
 
-		this.spawns.add(new Point(x, y));
+		this.spawns.add(new Pos(x, y));
 	    }
 
 
@@ -332,7 +333,7 @@ public class TileMap {
 	return this.bounds.contains(x, y);
     }
 
-    public ArrayList<Point> getSpawnPoints() {
+    public ArrayList<Pos> getSpawnPoints() {
 	return this.spawns;
     }
 
@@ -370,5 +371,9 @@ public class TileMap {
 
     public ResourcesLayer getResourcesLayer() {
 	return this.resourcesLayer;
+    }
+
+    public boolean isInMap(Point targetCell) {
+	return this.isInMap(targetCell.getX(), targetCell.getY());
     }
 }

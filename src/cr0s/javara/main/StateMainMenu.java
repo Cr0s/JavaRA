@@ -18,6 +18,8 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.ui.cursor.CursorManager;
+import cr0s.javara.ui.cursor.CursorType;
 
 public class StateMainMenu extends BasicGameState implements MouseListener, InputListener {
 
@@ -208,7 +210,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	@Override
 	public void enter(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
-	    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	}
 
 	@Override
@@ -312,13 +314,14 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 			c.getDefaultFont().drawString(itemX + (MENU_BUTTON_WIDTH / 2) - (c.getDefaultFont().getWidth(m.text) / 2), itemY + MENU_BUTTON_HEIGHT / 2 - (c.getDefaultFont().getLineHeight() / 2), m.text);
 			
 		}
+		
+		CursorManager.getInstance().drawCursor(g);
 	}
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2)
 			throws SlickException {
-		// TODO Auto-generated method stub
-		
+	    CursorManager.getInstance().update();
 	}
 	
 	private class MainMenuItem {

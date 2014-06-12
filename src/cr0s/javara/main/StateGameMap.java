@@ -14,11 +14,15 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.effect.MoveFlash;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.resources.SoundManager;
+import cr0s.javara.ui.cursor.CursorManager;
+import cr0s.javara.ui.cursor.CursorType;
+import cr0s.javara.util.Pos;
 
 public class StateGameMap extends BasicGameState {
     public static final int STATE_ID = 1;
@@ -102,7 +106,7 @@ public class StateGameMap extends BasicGameState {
 	if (e != null) {
 	    target = new Target(e);
 	} else {
-	    target = new Target(new Point((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
+	    target = new Target(new Pos((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
 	}
 
 	// We have no selected entities
@@ -110,12 +114,13 @@ public class StateGameMap extends BasicGameState {
 	    if (target.isEntityTarget() && button == 0) {
 		Main.getInstance().getPlayer().selectOneEntity(e);
 	    } else {
-		Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+		CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	    }
 	} else {
 	    InputAttributes ia = new InputAttributes(button);
 	    OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(target);
-
+	    boolean moveFlashSpawned = false;
+	    
 	    if (targeterForEntity != null) {
 		// Issue orders to selected entities
 		for (Entity entity : Main.getInstance().getPlayer().selectedEntities) {
@@ -129,6 +134,16 @@ public class StateGameMap extends BasicGameState {
 
 		    if (order != null) {
 			ea.resolveOrder(order);
+			
+			if (order.orderString.equals("Move") && !moveFlashSpawned) {
+			    moveFlashSpawned = true;
+			    
+			    MoveFlash flash = new MoveFlash(order.targetPosition.getX() * 24, order.targetPosition.getY() * 24, ea.team, ea.owner, 24, 24);
+			    flash.setWorld(ea.world);
+			    flash.isVisible = true;
+			    
+			    ea.world.spawnEntityInWorld(flash);
+			}
 		    } else {
 			// Current entity can't resolve this order, so de-select this entity
 			if (entity != null) { 
@@ -152,7 +167,7 @@ public class StateGameMap extends BasicGameState {
 		if (e != null && button == 0) {
 		    Main.getInstance().getPlayer().selectOneEntity(e);
 		} else {
-		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+		    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 		}
 	    }
 	}
@@ -180,7 +195,7 @@ public class StateGameMap extends BasicGameState {
 
 		Main.getInstance().getPlayer().selectedEntities.addAll(entities);
 		
-		OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(new Target(new Point(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y)));
+		OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(new Target(new Pos(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y)));
 		if (targeterForEntity != null) {
 		    targeterForEntity.entity.playSelectedSound();
 		} else {
@@ -321,6 +336,8 @@ public class StateGameMap extends BasicGameState {
 	Main.getInstance().getCamera().renderFinish(container, g);
 
 	Main.getInstance().getSideBar().render(g);
+	
+	CursorManager.getInstance().drawCursor(g);
     }
 
     @Override
@@ -335,20 +352,18 @@ public class StateGameMap extends BasicGameState {
 	Main.getInstance().getSideBar().update(delta);
 	
 	SoundManager.getInstance().update(delta);
-        //if (!Main.getInstance().speech.isPlaying() && Main.getInstance().speech.isWithinEarshot()) {
-        //    System.out.println("Queued sound");
-       //     Main.getInstance().speech.queue();
-        //}
     }
 
     private void updateCursor() {
+	CursorManager.getInstance().update();
+	
 	if (--this.cursorUpdateTicks <= 0) {
 	    this.cursorUpdateTicks = this.CURSOR_UPDATE_INTERVAL_TICKS;
 	    return;
 	}
 
 	if (Main.getInstance().getSideBar().isMouseInsideBar() || Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
-	    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	    return;
 	}
 	
@@ -374,26 +389,26 @@ public class StateGameMap extends BasicGameState {
 		this.mouseOverEntity = null;
 	    }
 
-	    target = new Target(new Point((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
+	    target = new Target(new Pos((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
 	}
 
 	// We have no selected entities
 	if (Main.getInstance().getPlayer().selectedEntities.isEmpty()) {
 	    if (target.isEntityTarget()) {
-		Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
+		CursorManager.getInstance().setCursorType(CursorType.CURSOR_SELECT);
 	    } else {
-		Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+		CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	    }
 	} else if (!Main.getInstance().getPlayer().selectedEntities.isEmpty()) {
 	    OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(target);
 
 	    if (targeterForEntity != null) {
-		Main.getInstance().setCursorType(targeterForEntity.getCursorForTarget(targeterForEntity.entity, target));
+		CursorManager.getInstance().setCursorType(targeterForEntity.getCursorForTarget(targeterForEntity.entity, target));
 	    } else {
 		if (e != null) {
-		    Main.getInstance().setCursorType(CursorType.CURSOR_SELECT);
+		    CursorManager.getInstance().setCursorType(CursorType.CURSOR_SELECT);
 		} else {
-		    Main.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+		    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 		}
 	    }
 	}

@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
+import cr0s.javara.combat.TargetType;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -33,8 +34,8 @@ import cr0s.javara.render.map.VehiclePathfinder;
 import cr0s.javara.render.viewport.Camera;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.CellChooser;
+import cr0s.javara.util.Pos;
 
-import org.newdawn.slick.geom.Point;
 
 public class World implements TileBasedMap {
     private TileMap map;
@@ -63,7 +64,7 @@ public class World implements TileBasedMap {
     private Random random;
 
     private final int MAX_RANGE = 50;
-    private ArrayList<Point> pointsInRange[] = new ArrayList[MAX_RANGE + 1];
+    private ArrayList<Pos> pointsInRange[] = new ArrayList[MAX_RANGE + 1];
 
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
@@ -93,7 +94,7 @@ public class World implements TileBasedMap {
 	for (int j = -MAX_RANGE; j <= MAX_RANGE; j++) {
 	    for (int i = -MAX_RANGE; i <= MAX_RANGE; i++) {
 		if (MAX_RANGE * MAX_RANGE >= i * i + j * j) {
-		    pointsInRange[(int)Math.ceil(Math.sqrt(i * i + j * j))].add(new Point(i, j));
+		    pointsInRange[(int)Math.ceil(Math.sqrt(i * i + j * j))].add(new Pos(i, j));
 		}
 	    }
 	}
@@ -236,7 +237,7 @@ public class World implements TileBasedMap {
 	if (Main.DEBUG_MODE) {
 	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
 		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
-		    if (!this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) {
+		    if (!this.blockingEntityMap.isSubcellFree(new Pos(x, y), SubCell.FULL_CELL)) {
 			g.setColor(blockedColor);
 			g.fillRect(x * 24, y * 24, 24, 24);
 			g.setColor(pColor);
@@ -438,7 +439,7 @@ public class World implements TileBasedMap {
 	    return false;
 	}
 
-	return (this.blockingEntityMap.isSubcellFree(new Point(x, y), sub)) && (blockingMap[x][y] == 0 
+	return (this.blockingEntityMap.isSubcellFree(new Pos(x, y), sub)) && (blockingMap[x][y] == 0 
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BUILDING_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
@@ -463,7 +464,7 @@ public class World implements TileBasedMap {
 	    return false;
 	}
 
-	return (isMcvDeploy || this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL)) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
+	return (isMcvDeploy || this.blockingEntityMap.isSubcellFree(new Pos(x, y), SubCell.FULL_CELL)) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
@@ -471,7 +472,7 @@ public class World implements TileBasedMap {
 
     @Override
     public boolean blocked(PathFindingContext arg0, int x, int y) {
-	return !((MobileEntity) arg0.getMover()).canEnterCell(new Point(x, y));
+	return !((MobileEntity) arg0.getMover()).canEnterCell(new Pos(x, y));
     }
 
     // TODO: add lower costs to roads and higher to beaches, roughs
@@ -503,12 +504,12 @@ public class World implements TileBasedMap {
     }
 
     public void occupyRandomSpawnForPlayer(Player p) {
-	ArrayList<Point> spawns = this.map.getSpawnPoints();
+	ArrayList<Pos> spawns = this.map.getSpawnPoints();
 	Random r = new Random(System.currentTimeMillis());
 
 	if (spawns.size() > 0) {
 	    int randomSpawnIndex = r.nextInt(spawns.size());
-	    Point spawnPoint = spawns.get(randomSpawnIndex);
+	    Pos spawnPoint = spawns.get(randomSpawnIndex);
 
 	    spawns.remove(randomSpawnIndex);
 
@@ -541,7 +542,7 @@ public class World implements TileBasedMap {
 	return this.entities;
     }
 
-    public EntityBuilding getBuildingInCell(Point cellPos) {
+    public EntityBuilding getBuildingInCell(Pos cellPos) {
 	float worldX = cellPos.getX() * 24;
 	float worldY = cellPos.getY() * 24;
 
@@ -556,7 +557,7 @@ public class World implements TileBasedMap {
 	return null;
     }
 
-    public MobileEntity getMobileEntityInCell(Point cellPos) {
+    public MobileEntity getMobileEntityInCell(Pos cellPos) {
 	float worldX = cellPos.getX() * 24 + 12; // center of cell
 	float worldY = cellPos.getY() * 24 + 12; // center of cell
 
@@ -571,33 +572,33 @@ public class World implements TileBasedMap {
 	return null;
     }
 
-    public boolean isCellBlockedByEntity(Point cellPos) {
+    public boolean isCellBlockedByEntity(Pos cellPos) {
 	int x = (int) cellPos.getX();
 	int y = (int) cellPos.getY();
 
-	return !this.blockingEntityMap.isSubcellFree(new Point(x, y), SubCell.FULL_CELL);
+	return !this.blockingEntityMap.isSubcellFree(new Pos(x, y), SubCell.FULL_CELL);
     }
     
-    public boolean isCellBlockedByEntity(Point cellPos, SubCell sub) {
+    public boolean isCellBlockedByEntity(Pos cellPos, SubCell sub) {
 	int x = (int) cellPos.getX();
 	int y = (int) cellPos.getY();
 
-	return !this.blockingEntityMap.isSubcellFree(new Point(x, y), sub);
+	return !this.blockingEntityMap.isSubcellFree(new Pos(x, y), sub);
     }    
 
     public int getRandomInt(int from, int to) {
 	return from + random.nextInt(to - from);
     }
 
-    public ArrayList<Point> chooseTilesInCircle(Point centerPos, int range, CellChooser chooser) {
-	ArrayList<Point> res = new ArrayList<Point>();
+    public ArrayList<Pos> chooseTilesInCircle(Pos centerPos, int range, CellChooser chooser) {
+	ArrayList<Pos> res = new ArrayList<Pos>();
 
 	for (int i = 0; i <= range; i++) {
-	    for (Point p : this.pointsInRange[i]) {
+	    for (Pos p : this.pointsInRange[i]) {
 		int cellPosX = (int) (centerPos.getX() + p.getX());
 		int cellPosY = (int) (centerPos.getY() + p.getY());
 
-		Point cellPoint = new Point(cellPosX, cellPosY);
+		Pos cellPoint = new Pos(cellPosX, cellPosY);
 
 		if (map.isInMap(cellPosX * 24, cellPosY * 24) && chooser.isCellChoosable(cellPoint)) {
 		    res.add(cellPoint);
@@ -608,22 +609,54 @@ public class World implements TileBasedMap {
 	return res;
     }
 
-    public ArrayList<Point> choosePassableCellsInCircle(Point centerPos, int range) {
+    public ArrayList<Pos> choosePassableCellsInCircle(Pos centerPos, int range) {
 	return this.chooseTilesInCircle(centerPos, range, new CellChooser() {
 
 	    @Override
-	    public boolean isCellChoosable(Point cellPos) {
+	    public boolean isCellChoosable(Pos cellPos) {
 		return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
 	    }
 
 	});
     }
 
-    public boolean isCellPassable(Point cellPos) {
+    public boolean isCellPassable(Pos cellPos) {
 	return isCellPassable((int) cellPos.getX(), (int) cellPos.getY());
     }
 
-    public boolean isCellPassable(Point cellPos, SubCell subCell) {
+    public boolean isCellPassable(Pos cellPos, SubCell subCell) {
 	return isCellPassable((int) cellPos.getX(), (int) cellPos.getY(), subCell);
+    }
+
+    public TargetType getCellTargetType(Pos cellPos) {
+	int x = (int) cellPos.getX();
+	int y = (int) cellPos.getY();
+	
+	if (!this.map.isInMap(x, y)) {
+	    return null;
+	}
+	
+	if (this.blockingMap[x][y] == TileSet.SURFACE_BEACH_ID 
+		|| this.blockingMap[x][y] == TileSet.SURFACE_BUILDING 
+		|| this.blockingMap[x][y] == TileSet.SURFACE_BUILDING_CLEAR_ID 
+		|| this.blockingMap[x][y] == TileSet.SURFACE_CLEAR_ID
+		|| this.blockingMap[x][y] == TileSet.SURFACE_ORE_GEM
+		|| this.blockingMap[x][y] == TileSet.SURFACE_ORE_GOLD
+		|| this.blockingMap[x][y] == TileSet.SURFACE_ROAD_ID
+		|| this.blockingMap[x][y] == TileSet.SURFACE_ROCK_ID
+		|| this.blockingMap[x][y] == TileSet.SURFACE_ROUGH_ID) {
+	    return TargetType.GROUND;
+	} else {
+	    if (this.blockingMap[x][y] == TileSet.SURFACE_RIVER_ID
+		    || this.blockingMap[x][y] == TileSet.SURFACE_WATER_ID) {
+		return TargetType.WATER;
+	    }
+	}
+	
+	return TargetType.AIR;
+    }
+
+    public Random getRandom() {
+	return this.random;
     }
 }

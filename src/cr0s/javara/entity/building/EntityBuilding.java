@@ -7,6 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
@@ -82,7 +83,7 @@ public abstract class EntityBuilding extends EntityActor {
      */
     private String footprint;
     private int[][] blockingCells;
-
+    
     /**
      * Creates new building.
      * @param aTileX tiled map grid-aligned location of building by X-axis 
@@ -118,6 +119,8 @@ public abstract class EntityBuilding extends EntityActor {
 	this.fillsSpace = FillsSpace.ONE_OR_MORE_CELLS;
 	
 	requiredToBuild.add(EntityConstructionYard.class);
+	
+	this.armorType = ArmorType.CONCRETE;
     }
 
     @Override

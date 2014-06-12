@@ -19,7 +19,7 @@ public class RotationUtil {
 	return a / step;	
     }
 
-    public static Point facingToRecoilVector(int facing) {	
+    public static Pos facingToRecoilVector(int facing) {	
 	int facingToDegrees = (int) Math.floor(facing * 11.25f);
 
 	int resX = 0;
@@ -55,27 +55,6 @@ public class RotationUtil {
 	    }
 	}
 
-	//System.out.println("Facing: " + facingToDegrees + " (" + facing + ")");	
-	//System.out.println("\tx: " + resX + " | y: " + resY);
-
-	return new Point(resX, resY);
+	return new Pos(resX, resY);
     }
-
-    /*public static int getFacingForInfantryFromDir(Point start, Point end) {
-	Point vec = new Point(end.getX() - start.getX(), end.getY() - start.getY());
-
-	if (vec.getX() == 1 && vec.getY() == 0) {
-	    return 6; // right
-	} else if (vec.getX() == -1 && vec.getY() == 0) {
-	    return 2; // left
-	} else if (vec.getX() == 0 && vec.getY() == 1) {
-	    return 7; // down
-	} else if (vec.getX() == 0 && vec.getY() == -1) {
-	    return 0;
-	} else if (vec.getX() == -1 && vec.getY() == -1) {
-	    return 1; // top left diag
-	} else if (vec.getX() == 1 && vec.getY() == -1) {
-	    return 6; // top right diag
-	}
-    }*/
 }
