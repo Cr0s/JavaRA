@@ -45,9 +45,11 @@ public class BuildingOverlay {
 	    if (!isWall) {
 		for (int bX = 0; bX < this.targetBuilding.getWidthInTiles(); bX++) {
 		    for (int bY = 0; bY < this.targetBuilding.getHeightInTiles(); bY++) {
-			if (!this.player.getBase().checkBuildingDistance(cellX, cellY, !isWall)) {
+			if (!this.player.getBase().checkBuildingDistance(cellX, cellY, isWall)) {
 			    g.setColor(blockedCellColor);
-			    g.fillRect((cellX + bX) * 24 , (cellY + bY) * 24, 24, 24);			
+			    if (this.targetBuilding.getBlockingCells()[bX][bY] != TileSet.SURFACE_CLEAR_ID) { 
+				g.fillRect((cellX + bX) * 24 , (cellY + bY) * 24, 24, 24);			
+			    }
 			} else if (this.targetBuilding.getBlockingCells()[bX][bY] != TileSet.SURFACE_CLEAR_ID) {
 			    if (!world.isCellBuildable(cellX + bX , cellY + bY)) {
 				g.setColor(blockedCellColor);
