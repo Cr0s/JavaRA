@@ -107,6 +107,7 @@ public class StateGameMap extends BasicGameState {
 	    target = new Target(e);
 	} else {
 	    target = new Target(new Pos((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
+	    Main.getInstance().getWorld().getMap().smudges.addSmudge(target.getTargetCell(), button == 1);
 	}
 
 	// We have no selected entities

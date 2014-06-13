@@ -59,6 +59,8 @@ public class TileMap {
 
     private Color blockedColor = new Color(255, 0, 0, 32);
 
+    public SmudgeLayer smudges;
+
     public TileMap(World aWorld, String mapName) {
 	this.world = aWorld;
 
@@ -247,6 +249,8 @@ public class TileMap {
 	    }
 	}
 
+	this.smudges.render(g);
+	
 	this.theater.getSpriteSheet().endUse();	
 	//this.theater.getSpriteSheet().draw(24 * 20, 24 * 20);
     }

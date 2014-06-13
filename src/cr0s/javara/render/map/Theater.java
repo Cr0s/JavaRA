@@ -89,6 +89,7 @@ public class Theater {
 	}
 
 	// Add resources textures
+	// TODO: remove explicit extensions
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem01.tem"));
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem02.tem"));
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gem03.tem"));
@@ -98,6 +99,21 @@ public class Theater {
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold02.tem"));
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold03.tem"));
 	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "gold04.tem"));	
+	
+	// Add smudges textures
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr1.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr2.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr3.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr4.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr5.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "cr6.tem"));
+	
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc1.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc2.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc3.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc4.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc5.tem"));
+	putShpTextureInSheetDissected(ib, ResourceManager.getInstance().getTemplateShpTexture(tileSet.getSetName(), "sc6.tem"));
 	
 	// Add map entities textures
 	HashSet<String> addedTextures = new HashSet<>();

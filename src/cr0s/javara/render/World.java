@@ -29,6 +29,7 @@ import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.map.InfantryPathfinder;
+import cr0s.javara.render.map.SmudgeLayer;
 import cr0s.javara.render.map.TileMap;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.render.map.VehiclePathfinder;
@@ -70,6 +71,7 @@ public class World implements TileBasedMap {
     public World(String mapName, GameContainer c, Camera camera) {
 	map = new TileMap(this, mapName);
 
+	map.smudges = new SmudgeLayer(map);
 	this.blockingMap = new int[map.getWidth()][map.getHeight()];
 	this.blockingEntityMap = new EntityBlockingMap(this);
 
@@ -665,5 +667,9 @@ public class World implements TileBasedMap {
 
     public void spawnExplosionAt(Pos pos, String explosionType) {
 	System.out.println("[World] Spawned explosion (" + explosionType + ") at " + pos.toString());
+    }
+
+    public void spawnSmokeAt(Pos pos, String smokeSprite) {
+	System.out.println("[World] Spawned smoke (" + smokeSprite + ") at " + pos.toString());
     }
 }
