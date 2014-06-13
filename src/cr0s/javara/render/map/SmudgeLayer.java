@@ -40,8 +40,8 @@ public class SmudgeLayer {
     }
 
     public void render(Graphics g) {
-	renderLayer(g, this.craters);
 	renderLayer(g, this.scorches);
+	renderLayer(g, this.craters);
     }
     
     private void renderLayer(Graphics g, HashMap<Pos, Smudge> layer) {
