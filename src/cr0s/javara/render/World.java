@@ -222,7 +222,7 @@ public class World implements TileBasedMap {
 	}
 
 	// Make rendering passes
-	for (int i = -1; i < PASSES_COUNT; i++) {
+	for (int i = -2; i < PASSES_COUNT; i++) {
 	    for (Entity e : this.entities) {		    
 		if (!e.isDead() && e.isVisible && e.shouldRenderedInPass(i) && camera.isEntityInsideViewport(e)) { 
 		    e.renderEntity(g);

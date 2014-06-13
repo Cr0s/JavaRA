@@ -14,6 +14,8 @@ import cr0s.javara.entity.building.common.EntityRadarDome;
 import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.building.soviet.EntityBarracks;
 import cr0s.javara.entity.building.soviet.EntityBarredWireWall;
+import cr0s.javara.entity.building.soviet.EntityFireTurret;
+import cr0s.javara.entity.building.soviet.EntityTeslaCoil;
 import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.infantry.EntityRiffleTrooper;
@@ -98,6 +100,9 @@ public class ProductionQueue {
 	this.sovietBuildings.put("siloicon.shp", new EntityOreSilo(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("weapicon.shp", new EntityWarFactory(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
+
+	this.sovietBuildings.put("fturicon.shp", new EntityFireTurret(0f, 0f, this.player.getTeam(), this.player));
+	this.sovietBuildings.put("tslaicon.shp", new EntityTeslaCoil(0f, 0f, this.player.getTeam(), this.player));	
 	
 	this.alliedBuildings.put("powricon.shp", new EntityPowerPlant(0f, 0f, this.player.getTeam(), this.player));
 	//this.sovietBuildings.put("tenticon.shp", new EntityTent(0f, 0f, this.player.getTeam(), this.player));
@@ -107,7 +112,6 @@ public class ProductionQueue {
 	this.alliedBuildings.put("weapicon.shp", new EntityWarFactory(0f, 0f, this.player.getTeam(), this.player));
 	this.alliedBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
 	
-	//this.buildables.put("powricon.shp", this.sovietBuildings.get("powricon.shp"));
 	
 	this.sovietVehicles.put("harvicon.shp", new EntityHarvester(0.0f, 0.0f, this.player.getTeam(), this.player));
 	this.sovietVehicles.put("3tnkicon.shp", new EntityHeavyTank(0.0f, 0.0f, this.player.getTeam(), this.player));

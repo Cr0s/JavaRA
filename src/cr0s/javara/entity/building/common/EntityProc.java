@@ -41,7 +41,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
 
-    private static final int POWER_CONSUMPTION_LEVEL = 20;
+    private static final int POWER_CONSUMPTION_LEVEL = 30;
 
     private static final int SHROUD_REVEALING_RANGE = 9;
 

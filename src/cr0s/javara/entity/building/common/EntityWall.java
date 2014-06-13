@@ -105,7 +105,7 @@ public abstract class EntityWall extends EntityBuilding implements IHaveCost {
 
     @Override
     public boolean shouldRenderedInPass(int passNum) {
-	return passNum == 1;
+	return passNum == -2;
     }
 
     @Override

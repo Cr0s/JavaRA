@@ -27,7 +27,7 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
     public static final int WIDTH_TILES = 2;
     public static final int HEIGHT_TILES = 3;
 
-    private static final int POWER_PRODUCTION_LEVEL = 30;
+    private static final int POWER_PRODUCTION_LEVEL = 100;
 
     private static final int SHROUD_REVEALING_RANGE = 7;
     private static final int BUILDING_COST = 300;

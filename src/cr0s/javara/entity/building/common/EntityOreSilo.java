@@ -34,7 +34,7 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
     public static final int WIDTH_TILES = 1;
     public static final int HEIGHT_TILES = 1;
 
-    private static final int POWER_CONSUMPTION_LEVEL = 5;
+    private static final int POWER_CONSUMPTION_LEVEL = 10;
 
     private static final int SHROUD_REVEALING_RANGE = 3;
     

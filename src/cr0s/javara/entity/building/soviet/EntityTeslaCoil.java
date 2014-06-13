@@ -1,17 +1,24 @@
-package cr0s.javara.entity.building.common;
+package cr0s.javara.entity.building.soviet;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.IHaveCost;
+import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
+import cr0s.javara.entity.actor.activity.activities.harvester.FindResources;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
-import cr0s.javara.entity.building.IPowerProducer;
+import cr0s.javara.entity.building.IOreCapacitor;
+import cr0s.javara.entity.building.IPowerConsumer;
+import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -19,41 +26,46 @@ import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 
-public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, IPowerProducer, IShroudRevealer, IHaveCost {
-    private Image normal, corrupted;
-    private final String TEXTURE_NAME = "apwr.shp";
-    private final String MAKE_TEXTURE_NAME = "apwrmake.shp";
+public class EntityTeslaCoil extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost, IDefense {
 
-    public static final int WIDTH_TILES = 3;
-    public static final int HEIGHT_TILES = 4;
+    private SpriteSheet sheet;
+    
+    private final String TEXTURE_NAME = "tsla.shp";
+    private final String MAKE_TEXTURE_NAME = "tslamake.shp";
 
-    private static final int POWER_PRODUCTION_LEVEL = 200;
+    public static final int WIDTH_TILES = 1;
+    public static final int HEIGHT_TILES = 2;
 
-    private static final int SHROUD_REVEALING_RANGE = 7;
-    private static final int BUILDING_COST = 500;
+    private static final int POWER_CONSUMPTION_LEVEL = 150;
 
-    public EntityAdvPowerPlant(Float tileX, Float tileY, Team team, Player player) {
-	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "xxx xxx xxx ~~~");
+    private static final int SHROUD_REVEALING_RANGE = 3;
+    
+    private final int CORRUPTED_OFFSET = 10;
 
-	setBibType(BibType.MIDDLE);
+    private int currentFrame = 0;
+    private static final int BUILDING_COST = 1200;
+    
+    public EntityTeslaCoil(Float tileX, Float tileY, Team team, Player player) {
+	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_ x");
+
+	setBibType(BibType.NONE);
 	setProgressValue(-1);
 
-	setMaxHp(70);
+	setMaxHp(400);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 35;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
 	
-	this.unitProductionAlingment = Alignment.NEUTRAL;
-	
-	this.requiredToBuild.add(EntityRadarDome.class);
-    }
+	this.unitProductionAlingment = Alignment.SOVIET;
 
+	this.requiredToBuild.add(EntityWarFactory.class);
+    }
+    
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
-	normal = tex.getAsImage(0, owner.playerColor);	
-	corrupted = tex.getAsImage(1, owner.playerColor);
+	
+	this.sheet = new SpriteSheet(tex.getAsCombinedImage(owner.playerColor), 24, 48);
     }
 
     @Override
@@ -61,12 +73,10 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 	float nx = posX;
 	float ny = posY;
 
-	if (this.getHp() > this.getMaxHp() / 2) {
-	    normal.draw(nx, ny);
-	} else {
-	    corrupted.draw(nx, ny);
-	}
+	int textureIndex = (this.getHp() < this.getMaxHp() / 2) ? this.CORRUPTED_OFFSET + this.currentFrame  : this.currentFrame;
 
+	this.sheet.getSubImage(0, textureIndex).draw(nx, ny);
+	
 	// Draw bounding box if debug mode is on
 	if (Main.DEBUG_MODE) {
 	    g.setLineWidth(2);
@@ -78,13 +88,11 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 
     @Override
     public boolean shouldRenderedInPass(int passnum) {
-	return passnum == 0;
+	return passnum == -1;
     }
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
     }
 
     @Override
@@ -113,8 +121,8 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
     }
 
     @Override
-    public int getPowerProductionLevel() {
-	return POWER_PRODUCTION_LEVEL;
+    public int getConsumptionLevel() {
+	return this.POWER_CONSUMPTION_LEVEL;
     }
 
     @Override
@@ -124,7 +132,7 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
     
     @Override
     public Image getTexture() {
-	return normal;
+	return this.sheet.getSubImage(0, 0);
     }
 
     @Override
