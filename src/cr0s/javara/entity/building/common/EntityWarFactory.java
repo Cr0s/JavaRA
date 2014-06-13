@@ -40,7 +40,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
     private static final int SHROUD_REVEALING_RANGE = 10;
-    private static final int ANIMATION_FRAME_DELAY = 2; // in ticks
+    private static final int ANIMATION_FRAME_DELAY = 1; // in ticks
     private static final int ANIMATION_LENGTH = 3;
     private static final int DEPLOY_TRY_INTERVAL = 5;
     
@@ -71,6 +71,9 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     
     private static final int CONSUME_POWER_VALUE = 30;
     private static final int BUILDING_COST = 2000;
+    
+    private int ticksBeforeClose = 0;
+    private final int TICKS_BEFORE_CLOSE = 30;
     
     public EntityWarFactory(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, FOOTPRINT);
@@ -144,6 +147,10 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     @Override
     public void updateEntity(int delta) {
 	this.isCorrupted = this.getHp() <= this.getMaxHp() / 2;
+	
+	if (this.isDoorsCloseAnimation && ++this.ticksBeforeClose <= this.TICKS_BEFORE_CLOSE) {
+	    return;
+	}
 	
 	if (this.animationFrameTicks++ > this.ANIMATION_FRAME_DELAY) {
 	    this.animationFrameTicks = 0;
@@ -264,6 +271,8 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	this.animationFrame = this.ANIMATION_LENGTH;
 	
 	this.isDoorsOpenAnimation = false;
+	
+	this.ticksBeforeClose = 0;
     }    
     
     @Override
