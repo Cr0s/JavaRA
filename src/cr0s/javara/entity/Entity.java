@@ -34,7 +34,7 @@ public abstract class Entity {
 
 	private boolean isInvuln = false;
 
-	private int SELECTION_BOX_ADD = 5;
+	private int SELECTION_BOX_ADD = 1;
 	
 	public float sizeWidth, sizeHeight;
 	
