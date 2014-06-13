@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IEffect;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 
@@ -85,6 +86,11 @@ public class MinimapRenderer {
 	    }
 
 	    for (Entity e : w.getEntitiesList()) {
+		// Don't draw effects
+		if (e instanceof IEffect) {
+		    continue;
+		}
+		
 		int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
 		int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
 

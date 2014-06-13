@@ -11,23 +11,33 @@ import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.Pos;
 
-public class MoveFlash extends Entity implements IEffect {
+public class Explosion extends Entity implements IEffect {
 
     private SpriteSheet tex;
     private int frameIndex = 0;
-    private final int TICKS_PER_FRAME = 2;
-    private final int MAX_FRAMES = 5;
+    private final int TICKS_PER_FRAME = 1;
+    private int maxFrames;
     
     private int ticks = TICKS_PER_FRAME;
     
-    public MoveFlash(float posX, float posY, Team team, Player owner,
+    private int width, height;
+    
+    public Explosion(Pos pos, String texture) {
+	this(pos.getX(), pos.getY(), null, null, 24, 24);
+	
+	ShpTexture t = ResourceManager.getInstance().getConquerTexture(texture);
+	this.width = t.width;
+	this.height = t.height;
+	this.maxFrames = t.numImages;
+	
+	this.tex = new SpriteSheet(t.getAsCombinedImage(null), t.width, t.height);
+    }
+    
+    public Explosion(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
-	ShpTexture t = ResourceManager.getInstance().getTemplateShpTexture(Main.getInstance().getWorld().getMap().getTileSet().getSetName(), "moveflsh.tem");
-	t.forcedColor = new Color(255, 255, 255, 128);
-	
-	tex = new SpriteSheet(t.getAsCombinedImage(null), 23, 23);
     }
 
     @Override
@@ -37,7 +47,7 @@ public class MoveFlash extends Entity implements IEffect {
 	    
 	    this.frameIndex++;
 	    
-	    if (this.frameIndex >= MAX_FRAMES) {
+	    if (this.frameIndex >= this.maxFrames) {
 		this.frameIndex = 0;
 		this.setDead();
 	    }
@@ -46,7 +56,7 @@ public class MoveFlash extends Entity implements IEffect {
 
     @Override
     public void renderEntity(Graphics g) {
-	tex.getSubImage(0, frameIndex).draw(this.posX - 12, this.posY - 12);
+	tex.getSubImage(0, frameIndex).draw(this.posX - this.width / 2, this.posY - this.height / 2);
     }
 
     @Override

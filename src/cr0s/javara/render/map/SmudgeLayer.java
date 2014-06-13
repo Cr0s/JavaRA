@@ -12,7 +12,7 @@ import cr0s.javara.util.Pos;
 
 public class SmudgeLayer {
     private static final int SMOKE_PERCENTAGE = 25;
-    private static final String SMOKE_SPRITE = "smoke_m";
+    private static final String SMOKE_SPRITE = "smoke_m.shp";
     public HashMap<Pos, Smudge> craters = new HashMap<Pos, Smudge>();
     public HashMap<Pos, Smudge> scorches = new HashMap<Pos, Smudge>();
 
@@ -85,6 +85,10 @@ public class SmudgeLayer {
     public void addSmudge(Pos pos, boolean crater) {
 	if (Main.getInstance().getWorld().getRandomInt(0, 100) < SMOKE_PERCENTAGE) {
 	    Main.getInstance().getWorld().spawnSmokeAt(new Pos(pos.getX() * 24 + 12, pos.getY() * 24 + 12), SMOKE_SPRITE);
+	    
+	    if (!crater) {
+		Main.getInstance().getWorld().spawnExplosionAt(new Pos(pos.getX() * 24 + 12, pos.getY() * 24 + 12), "atomsfx.shp");
+	    }
 	}
 	
 	Smudge s = crater ? this.craters.get(pos) : this.scorches.get(pos);

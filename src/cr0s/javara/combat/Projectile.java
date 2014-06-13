@@ -4,12 +4,13 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IEffect;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.util.Pos;
 
-public abstract class Projectile extends Entity {    
+public abstract class Projectile extends Entity implements IEffect {    
     public Weapon weapon;
     public float firepowerModifier = 1.0f;
     public int facing = 0;

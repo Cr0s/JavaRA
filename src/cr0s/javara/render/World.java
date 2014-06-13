@@ -22,6 +22,8 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
+import cr0s.javara.entity.effect.Explosion;
+import cr0s.javara.entity.effect.Smoke;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
@@ -666,10 +668,18 @@ public class World implements TileBasedMap {
     }
 
     public void spawnExplosionAt(Pos pos, String explosionType) {
-	System.out.println("[World] Spawned explosion (" + explosionType + ") at " + pos.toString());
+	Explosion e = new Explosion(pos, explosionType);
+	e.setWorld(this);
+	e.isVisible = true;
+	
+	this.spawnEntityInWorld(e);
     }
 
     public void spawnSmokeAt(Pos pos, String smokeSprite) {
-	System.out.println("[World] Spawned smoke (" + smokeSprite + ") at " + pos.toString());
+	Smoke s = new Smoke(pos, smokeSprite);
+	s.setWorld(this);
+	s.isVisible = true;
+	
+	this.spawnEntityInWorld(s);	
     }
 }
