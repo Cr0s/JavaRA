@@ -53,4 +53,9 @@ public class Pos extends Point {
     public double distanceTo(Pos other) {
 	return Math.sqrt(this.distanceToSq(other));
     }
+    
+    @Override
+    public String toString() {
+	return "Pos (" + this.getX() + "; " + this.getY() + "; " + this.getZ() + ")";
+    }
 }

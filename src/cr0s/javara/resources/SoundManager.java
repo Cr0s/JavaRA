@@ -9,6 +9,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.util.Pos;
 import soundly.Soundly;
 import soundly.XSound;
 
@@ -20,7 +21,7 @@ public class SoundManager {
     private int LAYER_SFX = 1;
 
     public Random r;
-    
+
     private SoundManager() {
 	Soundly sound = Soundly.get();
 
@@ -32,7 +33,7 @@ public class SoundManager {
 
 	sound.setDistanceCheckingEnabled(true);
 	sound.setProximityEnabled(true); 
-	
+
 	this.r = new Random(System.currentTimeMillis());
     }
 
@@ -48,7 +49,7 @@ public class SoundManager {
 	XSound snd = ResourceManager.getInstance().loadSpeechSound(sound);
 	snd.setLayer(LAYER_SPEECH);
 	snd.setVolume(1);
-	
+
 	playSoundGlobal(snd);
     }
 
@@ -56,10 +57,10 @@ public class SoundManager {
 	XSound snd = ResourceManager.getInstance().loadSound("sounds.mix", sound + ".aud");
 	snd.setLayer(LAYER_SFX);
 	snd.setVolume(volume);
-	
+
 	playSoundGlobal(snd);
     }
-    
+
     public void playSoundGlobal(XSound snd) {	
 	snd.setLooping(false);
 	snd.setPosition(0, 0);
@@ -72,12 +73,12 @@ public class SoundManager {
     public void playUnitSoundGlobal(EntityActor unit, String sound, int version) {
 	String prefix = (unit.owner.getAlignment() == Alignment.ALLIED) ? ".v" : ".r"; 
 	String name = sound + prefix + "0" + version;
-	
+
 	XSound snd = ResourceManager.getInstance().loadUnitSound(unit.owner.getAlignment(), name);
 
 	if (snd != null) {
 	    snd.setLayer(LAYER_UNIT);
-	    playSoundGlobal(snd);	
+	    playSoundGlobal(snd);
 	} else {
 	    System.err.println("Sound not found: " + name);
 	}
@@ -85,5 +86,20 @@ public class SoundManager {
 
     public void update(int delta) {
 	Soundly.get().update(delta);
+    }
+
+    public void playSfxAt(String sound, Pos pos) {
+	XSound snd = ResourceManager.getInstance().loadSound("sounds.mix", sound + ".aud");
+
+	if (snd != null) {
+	    snd.setLayer(LAYER_SFX);
+	    snd.setVolume(1);
+
+	    snd.setPosition(pos.getX(), pos.getY());
+	    snd.setRadius(24 * 10);
+	    snd.setProximityEnabled(true);
+
+	    snd.queue();
+	}
     }
 }

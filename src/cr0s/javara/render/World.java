@@ -662,4 +662,8 @@ public class World implements TileBasedMap {
     public Random getRandom() {
 	return this.random;
     }
+
+    public void spawnExplosionAt(Pos pos, String explosionType) {
+	System.out.println("[World] Spawned explosion (" + explosionType + ") at " + pos.toString());
+    }
 }

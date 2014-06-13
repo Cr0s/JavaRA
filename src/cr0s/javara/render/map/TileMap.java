@@ -341,6 +341,9 @@ public class TileMap {
 	return this.theater;
     }
     
+    public int getSurfaceIdAt(Pos pos) {
+	return getSurfaceIdAt((int) pos.getX(), (int) pos.getY());
+    }
     public int getSurfaceIdAt(int cellX, int cellY) {
 	if (!this.isInMap(cellX * 24, cellY * 24)) {
 	    return 0;
