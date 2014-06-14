@@ -4,6 +4,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
+import cr0s.javara.combat.Warhead;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.building.soviet.EntityBarracks;
@@ -248,7 +250,7 @@ public abstract class Entity {
 	    this.maxHp = aMaxHp;
 	}
 	
-	public void giveDamage(int amount) {
+	public void giveDamage(EntityActor firedBy, int amount, Warhead warhead) {
 		if (!isInvuln) {
 			this.setHp(this.getHp() - amount);
 			

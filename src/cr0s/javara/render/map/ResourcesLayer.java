@@ -5,6 +5,7 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.Pos;
 
 public class ResourcesLayer {
     ResourceCell[][] resources;
@@ -158,5 +159,12 @@ public class ResourcesLayer {
 
     public int harvestCell(Point currentCell) {
 	return harvestCell((int) currentCell.getX(), (int) currentCell.getY());
+    }
+
+    public void destroy(Pos tile) {
+	int x = (int) tile.getX();
+	int y = (int) tile.getY();
+	
+	this.resources[x][y] = null;
     }
 }

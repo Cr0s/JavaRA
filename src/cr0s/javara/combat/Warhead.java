@@ -26,6 +26,9 @@ public class Warhead {
 
     public boolean preventProne = false;
     
+    public boolean leavesSmudge = true;
+    public boolean isCraterSmudge = false;
+    
     public Warhead() {
 
     }

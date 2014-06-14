@@ -56,12 +56,14 @@ public class Pos extends Point {
     
     @Override
     public int hashCode() {
-	final int prime = 31;
+	final int prime = 3;
 	int result = 1;
-	result = prime * result + Float.floatToIntBits(this.x) + (prime * 2 + Float.floatToIntBits(this.y)) + (prime * 2 + Float.floatToIntBits(this.z));
+	result = prime * result + (int) this.getX() + (prime * 2 + (int) this.getY()) + (prime * 3 + (int) this.getZ());
 	return result;
     }
 
+    
+    
     @Override
     public boolean equals(Object obj) {
 	if (this == obj)
@@ -71,7 +73,7 @@ public class Pos extends Point {
 	if (getClass() != obj.getClass())
 	    return false;
 	Pos other = (Pos) obj;
-	if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x) || Float.floatToIntBits(y) != Float.floatToIntBits(other.y) || Float.floatToIntBits(z) != Float.floatToIntBits(other.z))
+	if ((int) x != (int) other.x || (int)y != (int) other.y || (int) z != (int) other.z)
 	    return false;
 	return true;
     }

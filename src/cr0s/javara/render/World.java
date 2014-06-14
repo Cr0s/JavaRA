@@ -19,6 +19,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
@@ -681,5 +682,33 @@ public class World implements TileBasedMap {
 	s.isVisible = true;
 	
 	this.spawnEntityInWorld(s);	
+    }
+
+    public ArrayList<Pos> chooseTilesInCircle(Pos targetTile, int i) {
+	return this.chooseTilesInCircle(targetTile, i, new CellChooser() {
+
+	    @Override
+	    public boolean isCellChoosable(Pos cellPos) {
+		return true;
+	    }    
+	});
+    }
+
+    public ArrayList<EntityActor> getActorsInCircle(Pos pos, float range) {
+	ArrayList<EntityActor> result = new ArrayList<EntityActor>(this.entities.size() / 2);
+	
+	for (Entity e : this.entities) {
+	    if (e instanceof EntityActor) {
+		EntityActor ea = (EntityActor) e;
+		
+		Pos loc = ea.getPosition();
+		
+		if (pos.distanceTo(loc) <= range) {
+		    result.add(ea);
+		}
+	    }
+	}
+	
+	return result;
     }
 }

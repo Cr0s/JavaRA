@@ -6,8 +6,10 @@ import java.util.LinkedList;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.combat.Combat;
 import cr0s.javara.combat.Projectile;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
@@ -36,9 +38,8 @@ public class Bullet extends Projectile {
     public boolean contrailUsePlayerColor = false;
     public int contrailDelay = 1;
 
-    private Pos pos, target;
+    private Pos target;
     private int length;
-    private int facing;
     private int ticks, smokeTicks;
     
     public Bullet(EntityActor srcActor, Pos srcPos, Pos passivePos,
@@ -65,25 +66,54 @@ public class Bullet extends Projectile {
 	    this.target = new Pos(newTargetX, newTargetY);
 	}
 	
-	this.facing = RotationUtil.getRotationFromXY(this.pos.getX(), this.pos.getY(), this.target.getX(), this.target.getY());
+	this.currentFacing = RotationUtil.getRotationFromXY(this.pos.getX(), this.pos.getY(), this.target.getX(), this.target.getY());
 	this.length = (int) Math.max(1, distanceToTarget);
 	
-	// TODO: anim work
 	
-	
-	
+	if (this.image != null) {
+	    initTexture(this.image, 1, 0);
+	}
     }
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
+	super.updateEntity(delta);
 	
+	this.pos = PointsUtil.lerpQuadratic(this.sourcePos, this.target, this.angle, this.ticks, this.length);
+	updateFacing();
+	
+	if (this.trail != null && --this.smokeTicks <= 0) {
+	    Pos delayedPos = PointsUtil.lerpQuadratic(this.sourcePos, this.target, this.angle, this.ticks - this.trailDelay, this.length);
+	    world.spawnSmokeAt(delayedPos, this.trail);
+	    
+	    this.smokeTicks = this.trailInterval;
+	    
+	    // TODO: check for walls
+	    if (this.ticks++ >= length) {
+		explode();
+	    }
+	}
     }
 
-    @Override
-    public void renderEntity(Graphics g) {
-	// TODO Auto-generated method stub
+    private void updateFacing() {
+	if (this.numFacings <= 1) {
+	    return;
+	}
 	
+	float at = (float) this.ticks / (this.length - 1);
+	float attitude = (float) (Math.tan(this.angle) * (1 - 2 * at) / (4 * 24));
+
+	float u = (this.currentFacing % 16) / (this.numFacings * 1.0f);
+	float scale = 12 * u * (1 - u);
+
+	this.currentFacing = (int) (this.currentFacing < 16
+		? this.currentFacing - scale * attitude
+		: this.currentFacing + scale * attitude);	
     }
- 
+    
+    private void explode() {
+	this.setDead();
+	
+	Combat.doImpacts(this.pos, this.weapon, this.sourceActor, this.firepowerModifier);
+    } 
 }

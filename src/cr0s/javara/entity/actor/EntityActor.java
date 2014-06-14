@@ -24,6 +24,7 @@ import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
+import cr0s.javara.util.Pos;
 
 public abstract class EntityActor extends Entity implements IOrderIssuer, IOrderResolver, INotifySelected {
 
@@ -138,4 +139,12 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
 	
 	return null;
     }
+
+    public Pos getPosition() {
+	return new Pos(this.boundingBox.getCenterX(), this.boundingBox.getCenterY(), this.posZ);
+    }
+    
+    public Pos getCellPosition() {
+	return getPosition().getCellPos();
+    }    
 }

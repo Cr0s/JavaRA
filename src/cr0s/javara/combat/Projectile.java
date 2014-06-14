@@ -1,5 +1,6 @@
 package cr0s.javara.combat;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
@@ -8,18 +9,26 @@ import cr0s.javara.entity.IEffect;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.render.Sequence;
+import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
 
 public abstract class Projectile extends Entity implements IEffect {    
     public Weapon weapon;
     public float firepowerModifier = 1.0f;
-    public int facing = 0;
     
-    public Pos sourcePos;
+    public Pos pos, sourcePos;
     public EntityActor sourceActor;
     
     public Pos passiveTargetPos;
     public EntityActor guidedTarget;
+    
+    protected ShpTexture tex;
+    protected Sequence projectileSq;
+    
+    protected int numFacings = 32;
+    protected int seqLength = 0;
     
     private Projectile(float posX, float posY, Team team, Player owner,
 	    float aSizeWidth, float aSizeHeight) {
@@ -40,8 +49,31 @@ public abstract class Projectile extends Entity implements IEffect {
 	this.sourceActor = srcActor;
     }
         
+    protected void initTexture(String textureName, int facings, int len) {
+	this.tex = ResourceManager.getInstance().getConquerTexture(textureName);
+	
+	this.numFacings = facings;
+	this.seqLength = len;
+	this.projectileSq = new Sequence(tex, 0, facings, len, 1, null);
+    }
+    
     @Override
     public boolean shouldRenderedInPass(int passNum) {
 	return passNum == 1;
+    }    
+    
+
+    @Override
+    public void updateEntity(int delta) {
+	if (this.projectileSq != null) {
+	    this.projectileSq.update(this.currentFacing);
+	}
+    }
+
+    @Override
+    public void renderEntity(Graphics g) {
+	if (this.projectileSq != null) {
+	    this.projectileSq.render(this.pos.getX(), this.pos.getY() - this.pos.getZ());
+	}
     }    
 }

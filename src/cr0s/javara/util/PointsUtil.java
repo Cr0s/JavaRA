@@ -27,6 +27,19 @@ public class PointsUtil {
 	return a + (b - a) * mul / div;
     }    
 
+    public static Pos lerpQuadratic(Pos a, Pos b, float pitch, int mul, int div) {
+	Pos ret = interpolatePos(a, b, mul, div);
+	
+	if (pitch == 0) {
+	    return ret;
+	}
+	
+	int offset = (int)(((((((long)a.distanceTo(b) * mul) / div) * (div - mul)) / div) * Math.tan(pitch)) / 24);
+	
+	ret.setZ(ret.getZ() + offset);
+	return ret;
+    }
+    
     public static int distanceSq(Point p1, Point p2) {
 	float dx = p1.getX() - p2.getX();
 	float dy = p1.getY() - p2.getY();
