@@ -27,7 +27,8 @@ public class BuildingOverlay {
     private Color blockedCellColor = new Color(255, 0, 0, 64);
     private Color freeCellColor = new Color(128, 128, 128, 64);
 
-    private LinkedList<Pos> lineBuildAllowedPositions = new LinkedList<Pos>();
+    private LinkedList<Pos> currentWallsList = new LinkedList<Pos>();
+    private final int MAX_WALLS = 10;
 
     public BuildingOverlay(Player p, World w) {
 	this.player = p;
@@ -36,16 +37,15 @@ public class BuildingOverlay {
 
     public void render(Graphics g) {
 	Color pColor = g.getColor();
-	boolean isWall = this.targetBuilding instanceof EntityWall;
 
 	if (this.targetBuilding != null) {
 	    drawCYCircles(g);
 	    g.setColor(pColor);
 
-	    if (!isWall) {
+	    if (!this.isBuildingWalls()) {
 		for (int bX = 0; bX < this.targetBuilding.getWidthInTiles(); bX++) {
 		    for (int bY = 0; bY < this.targetBuilding.getHeightInTiles(); bY++) {
-			if (!this.player.getBase().checkBuildingDistance(cellX, cellY, isWall)) {
+			if (!this.player.getBase().checkBuildingDistance(cellX, cellY, this.isBuildingWalls())) {
 			    g.setColor(blockedCellColor);
 			    if (this.targetBuilding.getBlockingCells()[bX][bY] != TileSet.SURFACE_CLEAR_ID) { 
 				g.fillRect((cellX + bX) * 24 , (cellY + bY) * 24, 24, 24);			
@@ -62,29 +62,28 @@ public class BuildingOverlay {
 		    }
 		}
 
-		g.setColor(pColor);
-
 		// War Factory workaround: WF texture consist from two textures: bottom and top, we need draw both to get full image of WF
 		if (this.targetBuilding instanceof EntityWarFactory) { 
 		    ((EntityWarFactory) this.targetBuilding).getBottomTexture().draw(cellX * 24, cellY * 24, filterColor);
 		}
 
 	    } else {
-		if (!this.player.getBase().checkBuildingDistance(cellX, cellY, isWall) || !world.isCellBuildable(cellX , cellY)) {
-		    g.setColor(blockedCellColor);
-		    g.fillRect(cellX * 24 , cellY * 24, 24, 24);
-		} else {
-		    g.setColor(freeCellColor);
+		boolean isPossibleToBuild = this.player.getBase().checkBuildingDistance(cellX, cellY, this.isBuildingWalls())
+			&& this.player.getBase().isPossibleToBuildHere(cellX, cellY, targetBuilding);
+		
+		g.setColor(isPossibleToBuild ? freeCellColor : blockedCellColor);
+		g.fillRect(cellX * 24, cellY * 24, 24, 24);	
+		
+		for (Pos wallPos : this.currentWallsList) {
+		    float x = wallPos.getX() * 24;
+		    float y = wallPos.getY() * 24;
 
-		    g.fillRect(cellX * 24 , cellY * 24, 24, 24);
-		    for (Pos p : this.lineBuildAllowedPositions) {
-			if (this.player.getBase().checkBuildingDistance((int) p.getX(), (int) p.getY(), !isWall) && world.isCellBuildable((int) p.getX(), (int) p.getY())) {
-			    g.fillRect(p.getX() * 24 , p.getY() * 24, 24, 24);
-			}
-		    }
+		    g.setColor(freeCellColor);
+		    g.fillRect(x, y, 24, 24);		    
 		}
 	    }
 
+	    g.setColor(pColor);
 	    this.targetBuilding.getTexture().draw(cellX * 24, cellY * 24, filterColor);
 	}
     }
@@ -106,17 +105,9 @@ public class BuildingOverlay {
 	cellX = (int) (-Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getInput().getMouseX()) / 24;
 	cellY = (int) (-Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getInput().getMouseY()) / 24;
 
-	if (this.targetBuilding instanceof EntityWall) {
-	    updateLineBuild(cellX, cellY);
-	}
-
 	if (!Main.getInstance().getPlayer().getBase().getProductionQueue().canBuild(this.targetBuilding)) {
 	    resetBuildingMode();
 	}
-    }
-
-    public void updateLineBuild(int cellX, int cellY) {
-	this.lineBuildAllowedPositions = this.player.getBase().getAllowedWalls(cellX, cellY, this.targetBuilding);
     }
 
     public void setBuildingMode(EntityBuilding eb) {
@@ -128,8 +119,19 @@ public class BuildingOverlay {
     }
 
     public void mouseClick(int button) {
-	if (button == 0 && targetBuilding != null) {
-	    boolean result = player.getBase().tryToBuild(cellX, cellY, targetBuilding);
+	if (button == 0 && isInBuildingMode()) {
+	    boolean result = false;
+
+	    if (!isBuildingWalls()) {
+		result = player.getBase().tryToBuild(cellX, cellY, targetBuilding);
+	    } else {
+		if (this.currentWallsList.isEmpty()) {
+		    this.currentWallsList.add(new Pos(cellX, cellY));
+		}
+		
+		result = player.getBase().tryToBuildWalls(this.currentWallsList, this.targetBuilding);
+		this.currentWallsList.clear();
+	    }
 
 	    if (result) {
 		this.resetBuildingMode();
@@ -139,10 +141,33 @@ public class BuildingOverlay {
 	    }
 	} else if (button == 1 && targetBuilding != null) {
 	    this.resetBuildingMode();
+	    this.currentWallsList.clear();
 	}
+    }
+
+    public void mouseDragged(int oldx, int oldy, int newx, int newy) {
+	if (!isBuildingWalls()) {
+	    return;
+	}
+
+	int cX = (int) (-Main.getInstance().getCamera().getOffsetX() + newx) / 24;
+	int cY = (int) (-Main.getInstance().getCamera().getOffsetY() + newy) / 24;	
+	Pos newCell = new Pos(cX, cY);
+
+	if (this.currentWallsList.size() != this.MAX_WALLS) {
+	    if (!this.currentWallsList.contains(newCell)) {
+		if (this.player.getBase().checkBuildingDistance(cX, cY, true) && this.player.getBase().isPossibleToBuildHere(cX, cY, this.targetBuilding)) {
+		    this.currentWallsList.add(newCell);
+		}
+	    }
+	}
+    }
+
+    public boolean isBuildingWalls() {
+	return this.targetBuilding instanceof EntityWall;
     }
 
     public boolean isInBuildingMode() {
 	return this.targetBuilding != null;
-    }
+    }   
 }

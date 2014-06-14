@@ -7,7 +7,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 
 public class EntityConcreteWall extends EntityWall {
 
-    private static final int BUILDING_COST = 100;
+    private static final int BUILDING_COST = 350;
 
     public EntityConcreteWall(Float aTileX, Float aTileY, Team aTeam, Player aPlayer) {
 	this(aTileX, aTileY, aTeam, aPlayer, 24, 24, "x");

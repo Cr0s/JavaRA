@@ -46,36 +46,40 @@ public class StateGameMap extends BasicGameState {
     }
 
     @Override
-    public void mouseDragged(final int arg0, final int arg1, final int newX, final int newY) {
+    public void mouseDragged(final int oldX, final int oldY, final int newX, final int newY) {
 	if (Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
-	    if (!this.selectionRectVisible) {
-		this.selectionRectVisible = true;
+	    if (!Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
+		if (!this.selectionRectVisible) {
+		    this.selectionRectVisible = true;
+		}
+
+		float startX = this.pressStart.getX();
+		float startY = this.pressStart.getY();
+
+		float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
+		float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
+		float s;
+
+		// Swap if necessary
+		if (startX > endX) {
+		    s = endX;
+		    endX = startX;
+		    startX = s;
+		}
+
+		if (startY > endY) {
+		    s = endY;
+		    endY = startY;
+		    startY = s;
+		}
+
+		int boxH = (int) (endY - startY);
+		int boxW = (int) (endX - startX);
+
+		this.selectionRect.setBounds(startX, startY, boxW, boxH);	
+	    } else {
+		Main.getInstance().getBuildingOverlay().mouseDragged(oldX, oldY, newX, newY);
 	    }
-
-	    float startX = this.pressStart.getX();
-	    float startY = this.pressStart.getY();
-
-	    float endX = -Main.getInstance().getCamera().getOffsetX() + newX;
-	    float endY = -Main.getInstance().getCamera().getOffsetY() + newY;
-	    float s;
-
-	    // Swap if necessary
-	    if (startX > endX) {
-		s = endX;
-		endX = startX;
-		startX = s;
-	    }
-
-	    if (startY > endY) {
-		s = endY;
-		endY = startY;
-		startY = s;
-	    }
-
-	    int boxH = (int) (endY - startY);
-	    int boxW = (int) (endX - startX);
-
-	    this.selectionRect.setBounds(startX, startY, boxW, boxH);	
 	}
     }
 
@@ -107,7 +111,6 @@ public class StateGameMap extends BasicGameState {
 	    target = new Target(e);
 	} else {
 	    target = new Target(new Pos((-Main.getInstance().getCamera().getOffsetX() + x) / 24, (-Main.getInstance().getCamera().getOffsetY() + y) / 24));
-	    Main.getInstance().getWorld().getMap().smudges.addSmudge(target.getTargetCell(), button == 1);
 	}
 
 	// We have no selected entities
@@ -121,7 +124,7 @@ public class StateGameMap extends BasicGameState {
 	    InputAttributes ia = new InputAttributes(button);
 	    OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(target);
 	    boolean moveFlashSpawned = false;
-	    
+
 	    if (targeterForEntity != null) {
 		// Issue orders to selected entities
 		for (Entity entity : Main.getInstance().getPlayer().selectedEntities) {
@@ -135,14 +138,14 @@ public class StateGameMap extends BasicGameState {
 
 		    if (order != null) {
 			ea.resolveOrder(order);
-			
+
 			if (order.orderString.equals("Move") && !moveFlashSpawned) {
 			    moveFlashSpawned = true;
-			    
+
 			    MoveFlash flash = new MoveFlash(order.targetPosition.getX() * 24, order.targetPosition.getY() * 24, ea.team, ea.owner, 24, 24);
 			    flash.setWorld(ea.world);
 			    flash.isVisible = true;
-			    
+
 			    ea.world.spawnEntityInWorld(flash);
 			}
 		    } else {
@@ -152,7 +155,7 @@ public class StateGameMap extends BasicGameState {
 			}
 		    }
 		}
-		
+
 		// Play sound only if order given
 		if (button == 1) { 
 		    targeterForEntity.entity.playOrderSound();
@@ -195,7 +198,7 @@ public class StateGameMap extends BasicGameState {
 		LinkedList<Entity> entities = Main.getInstance().getWorld().selectMovableEntitiesInsideBox(this.selectionRect);
 
 		Main.getInstance().getPlayer().selectedEntities.addAll(entities);
-		
+
 		OrderTargeter targeterForEntity = Main.getInstance().getPlayer().getBestOrderTargeterForTarget(new Target(new Pos(-Main.getInstance().getCamera().getOffsetX() + x, -Main.getInstance().getCamera().getOffsetY() + y)));
 		if (targeterForEntity != null) {
 		    targeterForEntity.entity.playSelectedSound();
@@ -337,7 +340,7 @@ public class StateGameMap extends BasicGameState {
 	Main.getInstance().getCamera().renderFinish(container, g);
 
 	Main.getInstance().getSideBar().render(g);
-	
+
 	CursorManager.getInstance().drawCursor(g);
     }
 
@@ -351,13 +354,13 @@ public class StateGameMap extends BasicGameState {
 
 	Main.getInstance().getWorld().update(delta);
 	Main.getInstance().getSideBar().update(delta);
-	
+
 	SoundManager.getInstance().update(delta);
     }
 
     private void updateCursor() {
 	CursorManager.getInstance().update();
-	
+
 	if (--this.cursorUpdateTicks <= 0) {
 	    this.cursorUpdateTicks = this.CURSOR_UPDATE_INTERVAL_TICKS;
 	    return;
@@ -367,7 +370,7 @@ public class StateGameMap extends BasicGameState {
 	    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
 	    return;
 	}
-	
+
 	this.cursorUpdateTicks = this.CURSOR_UPDATE_INTERVAL_TICKS;
 	int x = Main.getInstance().getContainer().getInput().getMouseX();
 	int y = Main.getInstance().getContainer().getInput().getMouseY();

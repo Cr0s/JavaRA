@@ -258,43 +258,17 @@ public class Base {
 	}
 
 	if (checkBuildingDistance(cellX, cellY, targetBuilding instanceof EntityWall)) {
-	    if (targetBuilding instanceof EntityWall) {
-		buildWallsAt(cellX, cellY, targetBuilding);
-	    } else {
 
-		EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
-		b.changeCellPos(cellX, cellY);
+	    EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
+	    b.changeCellPos(cellX, cellY);
 
-		Main.getInstance().getWorld().addBuildingTo(b);
-	    }
+	    Main.getInstance().getWorld().addBuildingTo(b);
 
 	    queue.getProductionForBuilding(targetBuilding).deployCurrentActor();
 
 	    return true;
 	} else {
 	    return false;
-	}
-    }
-
-    public void buildWallsAt(int cellX, int cellY,
-	    EntityBuilding targetBuilding) {
-	EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
-	b.changeCellPos(cellX, cellY);
-	Main.getInstance().getWorld().addBuildingTo(b);	
-
-	LinkedList<Pos> allowedWalls = getAllowedWalls(cellX, cellY, targetBuilding);
-	for (Pos p : allowedWalls) {
-	    if (p.getX() == cellX && p.getY() == cellY) {
-		continue;
-	    }
-	    
-	    if (!isPossibleToBuildHere((int) p.getX(), (int) p.getY(), targetBuilding)) {
-		continue;
-	    }
-	    
-	    EntityBuilding bb = (EntityBuilding) targetBuilding.newInstance();
-	    bb.changeCellPos((int) p.getX(), (int) p.getY());
-	    Main.getInstance().getWorld().addBuildingTo(bb);		    
 	}
     }
 
@@ -488,60 +462,31 @@ public class Base {
 	return this.buildingClasses;
     }
 
-    public LinkedList<Pos> getAllowedWalls(int cellX, int cellY,
-	    EntityBuilding targetBuilding) {
-	LinkedList<Pos> lineBuildAllowedPositions = new LinkedList<Pos>();
-
-	// Search in directions: Down, Right, Up, Left
-	int[] dx = { 0, 1, 0, -1 };
-	int[] dy = { -1, 0, 1, 0 };
-
-	LinkedList<Pos> tempList = new LinkedList<Pos>();
-	for (int i = 0; i < 4; i++) {
-	    boolean nodeFound = false;
-
-	    for (int range = 1; range < ((EntityWall) targetBuilding).lineBuildMaxLength; range++) {
-		int checkX = cellX + (dx[i] * range);
-		int checkY = cellY + (dy[i] * range);
-
-		EntityBuilding b = Main.getInstance().getWorld().getBuildingInCell(new Pos(checkX, checkY));
-
-		if (b != null) {
-		    if (b instanceof EntityWall) {
-			if (((EntityWall) b).textureName == ((EntityWall) targetBuilding).textureName) {
-			    nodeFound = true;
-			}
-			
-			break;
-		    } else {
-			break;
-		    }
-		} else {
-		    if (!Main.getInstance().getWorld().isCellBuildable(checkX , checkY)) {
-			break;
-		    }
-		}
+    public boolean tryToBuildWalls(LinkedList<Pos> currentWallsList, EntityBuilding targetBuilding) {
+	for (Pos wallPos : currentWallsList) {
+	    int cellX = (int) wallPos.getX();
+	    int cellY = (int) wallPos.getY();
+	    
+	    if (!isPossibleToBuildHere(cellX, cellY, targetBuilding)) {
+		return false;
 	    }
 
-	    if (nodeFound) {
-		for (int range = 0; range < ((EntityWall) targetBuilding).lineBuildMaxLength; range++) {
-		    int checkX = cellX + (dx[i] * range);
-		    int checkY = cellY + (dy[i] * range);
-
-		    if (!Main.getInstance().getWorld().isCellBuildable(checkX , checkY)) {
-			break;
-		    }
-
-		    tempList.add(new Pos(checkX, checkY));
-		}
+	    if (!this.queue.canBuild(targetBuilding)) {
+		return false;
 	    }
 
-	    if (!tempList.isEmpty()) {
-		lineBuildAllowedPositions.addAll(tempList);
-		tempList.clear();
+	    if (checkBuildingDistance(cellX, cellY, true)) {
+		    EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
+		    b.changeCellPos(cellX, cellY);
+
+		    Main.getInstance().getWorld().addBuildingTo(b);
+
+		queue.getProductionForBuilding(targetBuilding).deployCurrentActor();
+	    } else {
+		return false;
 	    }
 	}
-
-	return lineBuildAllowedPositions;
+	
+	return true;
     }
 }
