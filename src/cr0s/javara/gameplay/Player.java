@@ -8,6 +8,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
+import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
@@ -117,6 +118,11 @@ public class Player {
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}*/
 
+	Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
+	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, other);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht);
+	
 	this.base.gainCash(5000);
     }
 

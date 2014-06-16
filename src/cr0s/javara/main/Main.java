@@ -75,8 +75,8 @@ public class Main extends StateBasedGame {
      */
     public static void main(String[] argv) {
 	try {
-	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 800,
-		    600, false);
+	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 1200,
+		    700, false);
 
 	    container.setMinimumLogicUpdateInterval(50);
 	    container.setMaximumLogicUpdateInterval(50);

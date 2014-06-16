@@ -41,7 +41,7 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	setBibType(BibType.MIDDLE);
 	setProgressValue(-1);
 
-	setMaxHp(100);
+	setMaxHp(1500);
 	setHp(getMaxHp());
 
 	this.buildingSpeed = 100;

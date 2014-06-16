@@ -73,6 +73,10 @@ public class Sequence {
 	
 	int i = this.start + (f * this.length) + (this.currentFrame % this.length);
 	
+	if (i >= this.tex.numImages) {
+	    i = this.tex.numImages - 1;
+	}
+	
 	this.tex.getAsImage(i, this.remapColor).draw(x, y);
     }
 

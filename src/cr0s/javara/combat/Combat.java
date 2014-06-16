@@ -97,6 +97,11 @@ public class Combat {
     }
 
     public static void doImpacts(Pos pos,  Weapon weapon, EntityActor firedBy, float firepowerModifier) {
+	if (weapon.warheads == null) {
+	    System.err.println("[BUG] Weapon " + weapon.getClass().getName() + " trying to impact without warheads");
+	    return;
+	}
+	
 	for (Warhead wh : weapon.warheads) {
 	    doImpact(pos, wh, weapon, firedBy, firepowerModifier);
 	}
@@ -140,6 +145,6 @@ public class Combat {
 	    rawDamage = foff * rawDamage;
 	}
 	
-	return (float)(rawDamage * modifier * (float)warhead.getEffectivenessFor(target));
+	return (float)(rawDamage * modifier * (float) (warhead.getEffectivenessFor(target) / 100.0f));
     }
 }

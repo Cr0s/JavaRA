@@ -711,4 +711,8 @@ public class World implements TileBasedMap {
 	
 	return result;
     }
+
+    public float getRandomFloat(float from, float to) {
+	return from + (random.nextFloat() % (to - from));
+    }
 }

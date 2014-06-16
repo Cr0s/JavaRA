@@ -22,6 +22,8 @@ public class SoundManager {
 
     public Random r;
 
+    private float listenerX, listenerY;
+    
     private SoundManager() {
 	Soundly sound = Soundly.get();
 
@@ -29,8 +31,11 @@ public class SoundManager {
 
 	// Listener radius is player's vieport radius
 	Rectangle viewportRect = Main.getInstance().getCamera().viewportRect;
-	sound.setListenerRadius((float) Math.sqrt(viewportRect.getHeight() * viewportRect.getHeight() + viewportRect.getWidth() * viewportRect.getWidth()) / 2f);
-
+	System.out.println("Listener radius: " + ((float) Math.sqrt(viewportRect.getHeight() * viewportRect.getHeight() + viewportRect.getWidth() * viewportRect.getWidth()) / 2f));
+	
+	
+	Soundly.get().setListenerRadius(24 * 150);
+	
 	sound.setDistanceCheckingEnabled(true);
 	sound.setProximityEnabled(true); 
 
@@ -63,7 +68,7 @@ public class SoundManager {
 
     public void playSoundGlobal(XSound snd) {	
 	snd.setLooping(false);
-	snd.setPosition(0, 0);
+	snd.setPosition(listenerX, listenerY);
 	snd.setRadius(9000); // player must hear it everywhere on map
 	snd.setProximityEnabled(false);
 
@@ -86,20 +91,29 @@ public class SoundManager {
 
     public void update(int delta) {
 	Soundly.get().update(delta);
+	
+	listenerX = -Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getWidth() / 2;
+	listenerY = -Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getHeight() / 2;
+	
+	Soundly.get().setListenerPosition(listenerX, listenerY);
     }
 
     public void playSfxAt(String sound, Pos pos) {
 	XSound snd = ResourceManager.getInstance().loadSound("sounds.mix", sound + ".aud");
 
 	if (snd != null) {
-	    snd.setLayer(LAYER_SFX);
+	    snd.setLayer(this.LAYER_SFX);
 	    snd.setVolume(1);
 
-	    snd.setPosition(pos.getX(), pos.getY());
-	    snd.setRadius(24 * 10);
+	    snd.setLooping(false);
+	    snd.setRadius(100 * 24);
+	    snd.setPosition(pos.getX(), pos.getY(), 100);
+
 	    snd.setProximityEnabled(true);
 
 	    snd.queue();
+	} else {
+	    System.err.println("Sound not found: " + sound);
 	}
     }
 }

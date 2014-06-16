@@ -47,6 +47,8 @@ public abstract class Projectile extends Entity implements IEffect {
 	super(srcPos.getX(), srcPos.getY(), srcActor.team, srcActor.owner, width, height);
 	
 	this.sourceActor = srcActor;
+	this.sourcePos = srcPos;
+	this.passiveTargetPos = passivePos;
     }
         
     protected void initTexture(String textureName, int facings, int len) {
@@ -68,12 +70,15 @@ public abstract class Projectile extends Entity implements IEffect {
 	if (this.projectileSq != null) {
 	    this.projectileSq.update(this.currentFacing);
 	}
+	
+	this.posX = this.pos.getX();
+	this.posY = this.pos.getY() - this.pos.getZ(); // Z is height above ground
     }
 
     @Override
     public void renderEntity(Graphics g) {
 	if (this.projectileSq != null) {
-	    this.projectileSq.render(this.pos.getX(), this.pos.getY() - this.pos.getZ());
+	    this.projectileSq.render(this.pos.getX() - this.sizeWidth / 2, this.pos.getY() - this.pos.getZ() - this.sizeHeight / 2);
 	}
     }    
 }

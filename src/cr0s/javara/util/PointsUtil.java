@@ -34,9 +34,10 @@ public class PointsUtil {
 	    return ret;
 	}
 	
-	int offset = (int)(((((((long)a.distanceTo(b) * mul) / div) * (div - mul)) / div) * Math.tan(pitch)) / 24);
+	float offset = (float) ((((((double)a.distanceTo(b) * mul) / div) * (div - mul)) / div) * Math.tan(pitch));
 	
 	ret.setZ(ret.getZ() + offset);
+	
 	return ret;
     }
     

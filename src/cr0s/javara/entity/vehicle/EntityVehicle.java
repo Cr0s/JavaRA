@@ -7,6 +7,7 @@ import java.util.HashMap;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import cr0s.javara.combat.TargetType;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.gameplay.Player;
@@ -49,6 +50,8 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3
 	
 	this.fillsSpace = FillsSpace.ONE_CELL;
+	
+	this.targetTypes.add(TargetType.GROUND);
     }
 
     @Override

@@ -67,6 +67,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.setMaxHp(900);
 	
 	this.turret = new Turret(this, new Pos(0, 0), texture, 32, 32);
+	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);	
     }
 
     @Override

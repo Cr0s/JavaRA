@@ -1,5 +1,7 @@
 package cr0s.javara.combat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -9,17 +11,18 @@ import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.World;
+import cr0s.javara.resources.SoundManager;
 import cr0s.javara.util.Pos;
 
-public class Weapon {
+public abstract class Weapon {
     public int rateOfFire = 1;
     public int burst = 1;
     public boolean charges = false;
-    public TargetType validTargets[] = { TargetType.WATER, TargetType.GROUND };
+    public ArrayList<TargetType> validTargets = new ArrayList<TargetType>();
     public TreeSet<TargetType> invalidTargets = new TreeSet<TargetType>();
 
-    public int range = 5;
-    public int minRange = 0;
+    public float range = 5;
+    public float minRange = 0;
 
     public int burstDelay = 5;
 
@@ -28,7 +31,7 @@ public class Weapon {
 
     public String firingSound;
 
-    public Weapon(int rof, int weaponRange) {
+    public Weapon(int rof, float weaponRange) {
 	this.rateOfFire = rof;
 	this.range = weaponRange;
 
@@ -99,5 +102,14 @@ public class Weapon {
 	}
 
 	return false;
+    }
+
+    public abstract Projectile createProjectile(int fcng, Pos muzzlePosition,
+	    EntityActor srcActor, Pos centerPosition, Target tgt);
+
+    public void playReportSound(Pos pos) {
+	if (this.firingSound != null && !this.firingSound.isEmpty()) {
+	    SoundManager.getInstance().playSfxAt(this.firingSound, pos);
+	}
     }
 }

@@ -8,6 +8,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.combat.ArmorType;
+import cr0s.javara.combat.TargetType;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
@@ -121,6 +122,7 @@ public abstract class EntityBuilding extends EntityActor {
 	requiredToBuild.add(EntityConstructionYard.class);
 	
 	this.armorType = ArmorType.CONCRETE;
+	this.targetTypes.add(TargetType.GROUND);
     }
 
     @Override

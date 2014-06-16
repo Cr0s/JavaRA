@@ -15,65 +15,74 @@ import cr0s.javara.util.RotationUtil;
 public class Turret {
     private float offestX;
     private float offsetY;
-    
+
     private float turretX, turretY;
-    
+
     private EntityActor parentEntity;
-    
+
     private SpriteSheet turretTexture;
     private int numFacings;
     private int startFrame;
     private int turretRotation, newTurretRotation;
     private boolean isTurretRotatingNow;
     private RotationDirection turretRotationDirection;
-    
+
     private float targetX, targetY;
     private boolean isTargeting;
-    
+
     private int currentRecoil = 0;
     private int maxRecoil = 0;                 // in pixels
     private final static int MAX_RECOIL_DEFAULT = 2; 
-    
-    private final static int RECOIL_INTERVAL_TICKS = 10;
+
+    private final static int RECOIL_INTERVAL_TICKS = 5;
     private int recoilTicks = 0;
-    
+    private int recoilOffsetX, recoilOffsetY;
+
+
+    private int width, height;
+
     public Turret(EntityActor a, Pos parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings) {
 	this(a, parentOffset, texture, aStartFrame, aNumFacings, MAX_RECOIL_DEFAULT);
     }
-    
+
     public Turret(EntityActor a, Pos parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings, int aMaxRecoil) {
 	this.parentEntity = a;
-	
+
 	this.offestX = parentOffset.getX();
 	this.offsetY = parentOffset.getY();
-	
+
 	this.turretTexture = texture;
 	this.startFrame = aStartFrame;
 	this.numFacings = aNumFacings;
-	
+
 	this.maxRecoil = aMaxRecoil;
     }
-    
+
     public void update(int delta) {	
 	updateTurretPos();
-	
+
 	doTurretRotationTick();
-	
+
 	// Do a recoil
-	if (this.maxRecoil != 0 && this.currentRecoil > 0 && !this.isTurretRotatingNow) {
+	if (this.maxRecoil != 0 && this.currentRecoil >= 0) {
 	    if (++this.recoilTicks > this.RECOIL_INTERVAL_TICKS) {
 		this.recoilTicks = 0;
 	    }
-	    
+
 	    Pos recoilOffset = getRecoilOffset();
-	    
-	    this.turretX += recoilOffset.getX();
-	    this.turretY += recoilOffset.getY();
-	    
+
+	    this.recoilOffsetX = (int) (recoilOffset.getX() * this.currentRecoil);
+	    this.recoilOffsetY = (int) (recoilOffset.getY() * this.currentRecoil);		    
+
 	    this.currentRecoil--;
-	}	
+	}
     }
-    
+
+    public void setTurretSize(int w, int h) {
+	this.width = w;
+	this.height = h;
+    }
+
     private void updateTurretPos() {
 	if (this.parentEntity instanceof MobileEntity) {
 	    this.turretX = ((MobileEntity) this.parentEntity).getTextureX() + this.offestX;
@@ -82,25 +91,28 @@ public class Turret {
 	    this.turretX = this.parentEntity.posX + this.offestX;
 	    this.turretY = this.parentEntity.posY + this.offsetY;
 	}
+	
+	this.turretX += this.recoilOffsetX;
+	this.turretY += this.recoilOffsetY;
     }
 
     private Pos getRecoilOffset() {
 	float recoilX = 0;
 	float recoilY = 0;
-	
+
 	Pos recoilVector = RotationUtil.facingToRecoilVector(this.turretRotation);
 	recoilX = this.currentRecoil * recoilVector.getX();
 	recoilY = this.currentRecoil * recoilVector.getY();
-	
+
 	return new Pos(recoilX, recoilY);
     }
 
     public void render(Graphics g) {
 	updateTurretPos();
-	
+
 	this.turretTexture.renderInUse((int) turretX, (int) turretY, 0, this.startFrame + RotationUtil.quantizeFacings(this.turretRotation, this.numFacings));
     }
-    
+
     /**
      * Do a rotation tick.
      * @return result of rotation. True - rotaton is finished. False - rotation in process.
@@ -122,15 +134,15 @@ public class Turret {
 	} else {
 	    if (this.isTargeting) {
 		int rot = 0;
-		
+
 		if (parentEntity instanceof MobileEntity) {
 		    rot = RotationUtil.getRotationFromXY(((MobileEntity) parentEntity).getTextureX() + this.offestX, ((MobileEntity) parentEntity).getTextureY() + this.offsetY, this.targetX, this.targetY) % this.numFacings;
 		} else {
 		    rot = RotationUtil.getRotationFromXY(this.parentEntity.posX + this.offestX, this.parentEntity.posY + this.offsetY, this.targetX, this.targetY) % this.numFacings;		    
 		}
-		
+
 		this.rotateTurretTo(rot);	
-		
+
 		this.isTargeting = false;
 	    }
 	}
@@ -180,18 +192,24 @@ public class Turret {
 
     public void setTarget(Pos point) {
 	this.isTargeting = true;
-	
+
 	this.targetX = point.getX();
 	this.targetY = point.getY();
     }
-    
+
     public boolean isTargeting() {
 	return this.isTargeting;
     }
-    
+
     public void recoil() {
-	if (this.currentRecoil == 0) {
-	    this.currentRecoil = this.maxRecoil;
-	}
+	this.currentRecoil = this.maxRecoil;
+    }
+
+    public int getCurrentFacing() {
+	return this.turretRotation;
+    }
+
+    public Pos getCenterPos() {
+	return new Pos(this.turretX + this.width / 2, this.turretY + this.height / 2);
     }
 }

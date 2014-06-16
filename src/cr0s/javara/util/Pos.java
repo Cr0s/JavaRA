@@ -78,6 +78,14 @@ public class Pos extends Point {
 	return true;
     }
 
+    public Pos add(Pos other) {
+	this.setX(this.getX() + other.getX());
+	this.setY(this.getY() + other.getY());
+	this.setZ(this.getZ() + other.getZ());
+	
+	return this;
+    }
+    
     @Override
     public String toString() {
 	return "Pos (" + this.getX() + "; " + this.getY() + "; " + this.getZ() + ")";
