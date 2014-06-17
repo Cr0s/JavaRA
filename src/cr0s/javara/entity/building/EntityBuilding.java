@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.combat.ArmorType;
 import cr0s.javara.combat.TargetType;
+import cr0s.javara.combat.Warhead;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
@@ -22,6 +23,7 @@ import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.map.TileSet;
 import cr0s.javara.resources.SoundManager;
+import cr0s.javara.util.Pos;
 
 /**
  * Abstract class for any buildings in game.
@@ -84,6 +86,8 @@ public abstract class EntityBuilding extends EntityActor {
      */
     private String footprint;
     private int[][] blockingCells;
+    
+    public String explosionSound = "kaboom22";
     
     /**
      * Creates new building.
@@ -319,5 +323,24 @@ public abstract class EntityBuilding extends EntityActor {
 
     @Override
     public void resolveOrder(Order order) {
+    }
+    
+    public void explodeBuilding() {
+	SoundManager.getInstance().playSfxAt(this.explosionSound, ((EntityActor) this).getPosition());
+	
+	for (int bX = 0; bX < getWidthInTiles(); bX++) {
+	    for (int bY = 0; bY < getHeightInTiles(); bY++) {
+		world.spawnExplosionAt(new Pos(this.posX + bX * 24, this.posY + bY * 24), "fball1.shp");
+	    }
+	}
+    }
+    
+    @Override
+    public void giveDamage(EntityActor firedBy, int amount, Warhead warhead) {
+	super.giveDamage(firedBy, amount, warhead);
+	
+	if (getHp() <= 0) {
+	    explodeBuilding();
+	}
     }
 }

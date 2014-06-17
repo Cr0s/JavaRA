@@ -10,6 +10,8 @@ import org.newdawn.slick.Graphics;
 import cr0s.javara.combat.TargetType;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.Activity;
+import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.order.Order;
@@ -155,4 +157,12 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
     public boolean canEnterCell(Pos cellPos) {
 	return world.isCellPassable(cellPos);
     }
+    
+    @Override
+    public Activity moveToRange(Pos cellPos, int range) {
+	Move move = new Move(this, cellPos, range);
+	move.forceRange = true;
+	
+	return move;
+    }    
 }

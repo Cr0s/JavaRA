@@ -139,6 +139,8 @@ public class Armament {
 		    return null;
 		}
 
+		System.out.println("Firing");
+		
 		Barrel brl = this.barrels.get(this.burst % this.barrels.size());
 		final Pos muzzlePosition = this.getMuzzlePos(brl);
 		final int fcng = this.getMuzzleFacing(brl);
@@ -185,5 +187,9 @@ public class Armament {
 			angle += brl.yaw;
 
 			return RotationUtil.angleToFacing(angle);
+    }
+
+    public Weapon getWeapon() {
+	return this.weapon;
     }
 }

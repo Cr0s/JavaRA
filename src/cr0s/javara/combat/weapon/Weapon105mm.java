@@ -14,7 +14,7 @@ import cr0s.javara.util.Pos;
 public class Weapon105mm extends Weapon {
 
     private final static int ROF = 70;
-    private final static float WEAPON_RANGE = 5f;//3.75f;
+    private final static float WEAPON_RANGE = 5f;
     
     private final static int TEXTURE_WIDTH = 24;
     private final static int TEXTURE_HEIGHT = 24;

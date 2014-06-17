@@ -9,6 +9,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.AttackInfantry;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.building.EntityBuilding;
@@ -278,4 +279,9 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public void setCurrentAnimationState(AnimationState currentAnimationState) {
 	this.currentAnimationState = currentAnimationState;
     }    
+    
+    @Override
+    public Activity moveToRange(Pos cellPos, int range) {
+	return new MoveInfantry(this, cellPos, range);
+    }
 }

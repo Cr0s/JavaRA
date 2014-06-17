@@ -11,7 +11,7 @@ public class RotationUtil {
 
 	// Simply magic
 	int rot = 270 + (int) Math.toDegrees(Math.atan2(-dy, dx));
-	return (int) (rot / FACING_TO_DEGREE);
+	return (int) (rot / FACING_TO_DEGREE) % 32;
     }
 
     public static int quantizeFacings(int facing, int max) {

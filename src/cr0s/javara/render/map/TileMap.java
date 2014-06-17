@@ -383,4 +383,8 @@ public class TileMap {
     public boolean isInMap(Point targetCell) {
 	return this.isInMap(targetCell.getX(), targetCell.getY());
     }
+    
+    public boolean isCellInMap(Point targetCell) {
+	return this.isInMap(targetCell.getX() * 24, targetCell.getY() * 24);
+    }    
 }

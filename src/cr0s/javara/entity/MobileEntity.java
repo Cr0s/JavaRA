@@ -13,7 +13,9 @@ import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Drag;
+import cr0s.javara.entity.actor.activity.activities.Follow;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.building.EntityBuilding;
@@ -300,6 +302,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
     @Override
     public void resolveOrder(Order order) {
 	if (order.orderString.equals("Move") && order.targetPosition != null) {
+	    this.cancelActivity();
 	    this.moveTo(order.targetPosition);
 	}
     }
@@ -309,4 +312,17 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	this.posX = exitPoint.getX() * 24;
 	this.posY = exitPoint.getY() * 24;
     }
+
+
+    public Activity moveFollow(EntityActor self, Target target, int range) {
+	return new Follow(self, target, range);
+    }
+
+
+    public Activity moveWithinRange(Target target, int range) {
+	return this.moveToRange(target.centerPosition().getCellPos(), range);
+    }
+
+
+    protected abstract Activity moveToRange(Pos cellPos, int range);
 }

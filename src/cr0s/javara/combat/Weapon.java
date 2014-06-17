@@ -98,7 +98,7 @@ public abstract class Weapon {
 		return false;
 	    }
 	    
-	    return this.isValidAgainst(t.getTargetCell(), Main.getInstance().getWorld());
+	    return this.isValidAgainst(t.getTargetCell().getCellPos(), Main.getInstance().getWorld());
 	}
 
 	return false;

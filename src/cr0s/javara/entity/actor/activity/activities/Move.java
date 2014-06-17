@@ -1,6 +1,8 @@
 package cr0s.javara.entity.actor.activity.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
@@ -35,6 +37,9 @@ public class Move extends Activity {
     private boolean isNewPath;
     private int randomWaitTicks;
 
+    
+    public boolean forceRange = false;
+    
     public Move(MobileEntity me, Pos destinationCell) {
 	this.destCell = destinationCell;
 
@@ -44,9 +49,11 @@ public class Move extends Activity {
     }
 
     public Move(MobileEntity me, Pos destinationCell, int enoughRange) {
-	this(me, destinationCell);
-
+	this.destCell = destinationCell;
+	this.randomWaitTicks = me.world.getRandomInt(1, 3);
 	this.destRange = enoughRange;
+
+	chooseNewPath(me);
     }
 
     public Move(MobileEntity me, Pos destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
@@ -65,6 +72,14 @@ public class Move extends Activity {
     private Pos popPath(MobileEntity me) {
 	int px = 0, py = 0;
 
+	// We're close enough
+	if (forceRange && me.getPosition().getCellPos().distanceToSq(this.destCell) <= this.destRange * this.destRange) {
+	    this.currentPathIndex = this.currentPath.getLength(); // stop and skip all path
+	    this.currentPath = null;
+
+	    return null;
+	}	
+	
 	if (this.currentPath == null || currentPathIndex >= this.currentPath.getLength() || this.currentPath.getLength() < 1) {
 	    this.currentPath = null;
 	    return null;
@@ -75,7 +90,7 @@ public class Move extends Activity {
 	py = s.getY();
 
 	Pos nextCell = new Pos(px, py);
-
+	
 	if (!me.canEnterCell(nextCell) && me.world.isCellBlockedByEntity(nextCell)) {
 	    // This building we ignore
 	    if (this.ignoreBuilding != null && me.world.getBuildingInCell(nextCell) == this.ignoreBuilding) {
@@ -107,7 +122,7 @@ public class Move extends Activity {
 			blocker.notifyBlocking(me);
 		    }
 		}
-		
+
 		this.hasNotifiedBlocker = true;
 	    }
 
@@ -160,7 +175,7 @@ public class Move extends Activity {
 	    }
 
 	    this.destCell = newDestCell;
-	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
+	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (this.destCell.getY()));
 
 	    this.isNewPath = true;
 	}
@@ -170,15 +185,23 @@ public class Move extends Activity {
 	Pos res = this.destCell;
 
 	// Find free cells in range, starting from closest range
-	for (int range = 1; range <= this.destRange; range++) {
-	    ArrayList<Pos> cells = me.world.choosePassableCellsInCircle(destCell, range);
+	ArrayList<Pos> cells = new ArrayList<Pos>();
+	for (int range = 1; range < this.destRange; range++) {
+	    cells.addAll(me.world.choosePassableCellsInCircle(destCell, range));
+	}
 
-	    if (cells.size() != 0) {
-		return cells.get(me.world.getRandomInt(0, cells.size()));
+	// Sort by "closest cells goes first"
+	Pos closest = (cells != null) ? cells.get(0) : null;
+	int minDistance = 0;
+	for (Pos pos : cells) {
+	    int distance = pos.distanceToSq(me.getCenterPos());
+	    if (minDistance == 0 || distance < minDistance) {
+		closest = pos;
+		minDistance = distance;
 	    }
 	}
 
-	return res;
+	return closest;
     }    
 
     @Override
@@ -331,14 +354,14 @@ public class Move extends Activity {
 
 	private void turnFacing() {
 	    int oldFacing = me.currentFacing;
-	    
+
 	    int newFacing = me.currentFacing;
 	    if (this.rotationDirection == RotationDirection.LEFT) {
 		newFacing = (me.currentFacing + 1) % Turn.MAX_FACING;
 	    } else if (this.rotationDirection == RotationDirection.RIGHT) {
 		newFacing = (me.currentFacing - 1) % Turn.MAX_FACING;
 	    }
-	    
+
 	    // Turn by circle
 	    if (newFacing < 0) {
 		newFacing = Turn.MAX_FACING - 1;

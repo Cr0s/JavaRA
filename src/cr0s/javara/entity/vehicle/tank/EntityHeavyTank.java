@@ -1,5 +1,6 @@
 package cr0s.javara.entity.vehicle.tank;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +15,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.Weapon;
+import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IHaveCost;
@@ -26,6 +28,9 @@ import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Pos;
@@ -58,7 +63,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     private final int BUILDING_COST = 1150;
     private Turret turret;
 
-    Armament arma;
+    private AttackTurreted attack;
 
     public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -74,45 +79,32 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	this.turret = new Turret(this, new Pos(0, 0), this.texture, 32, 32);
 	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-	this.arma = new Armament(this, new Weapon105mm());
-	this.arma.addBarrel(new Pos(12, -3), 0);
-	this.arma.addBarrel(new Pos(12, 3), 0);
+	Armament arma = new Armament(this, new Weapon105mm());
+	arma.addBarrel(new Pos(12, -3), 0);
+	arma.addBarrel(new Pos(12, 3), 0);
+
+	attack = new AttackTurreted(this);
+	attack.armaments.add(arma);
+
+	this.ordersList.addAll(attack.getOrders());
     }
 
     @Override
     public void updateEntity(int delta) {
 	super.updateEntity(delta);
 
-	if (!this.isIdle()) { 
-	    this.turret.setTarget(new Pos(goalX * 24, goalY * 24));
-	} else {
-	    this.turret.rotateTurretTo(this.currentFacing);
+	if (!this.attack.isAttacking) {
+	    if (!this.isIdle()) { 
+		this.turret.setTarget(new Pos(goalX * 24, goalY * 24));
+	    } else {
+
+		this.turret.rotateTurretTo(this.currentFacing);
+	    }
 	}
-
-	int facing = RotationUtil.getRotationFromXY(this.getCenterPosX(), this.getCenterPosY(), -Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getInput().getMouseX(), -Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getInput().getMouseY());
-	this.turret.rotateTurretTo(facing);
-
-	float x = -Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getInput().getMouseX();
-	float y = -Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getInput().getMouseY();
 
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));	
 
-	this.arma.update(delta);
-	
-	if (Main.getInstance().getContainer().getInput().isKeyPressed(Input.KEY_ENTER)) {
-	    Entity e = Main.getInstance().getWorld().getEntityInPoint(x, y);
-
-	    // Is there entity under mouse
-	    Target target;
-	    if (e != null) {
-		target = new Target(e);
-	    } else {
-		target = new Target(new Pos(x / 24, y / 24));
-	    }	    
-
-	    this.arma.checkFire(this.currentFacing, target);
-	    this.arma.checkFire(this.currentFacing, target);
-	}
+	this.attack.update(delta);
     }
 
     @Override
@@ -244,5 +236,23 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	res.add(this.turret);
 
 	return res;
+    }    
+
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (super.issueOrder(self, targeter, target, ia) == null) {
+	    return this.attack.issueOrder(self, targeter, target, ia);
+	}
+
+	return super.issueOrder(self, targeter, target, ia);
+    }
+
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
+	    this.attack.resolveOrder(order);
+	} else {
+	    super.resolveOrder(order);
+	}
     }    
 }

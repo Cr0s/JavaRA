@@ -64,7 +64,7 @@ public class World implements TileBasedMap {
     boolean canRender = true;
 
     private int removeDeadTicks = 0;
-    private final int REMOVE_DEAD_INTERVAL_TICKS = 1000;
+    private final int REMOVE_DEAD_INTERVAL_TICKS = 20;
 
     private Random random;
 

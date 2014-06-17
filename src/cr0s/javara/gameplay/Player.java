@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
@@ -119,9 +120,21 @@ public class Player {
 	}*/
 
 	Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
-	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, other);
+	EntityHeavyTank eht = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
+
+	EntityHeavyTank eht2 = new EntityHeavyTank(24.0f * this.spawnX + 4 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht2);
+	
+	EntityHeavyTank eht3 = new EntityHeavyTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 2 * 24, team, this);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht3);	
+	
+	EntityConstructionYard y = new EntityConstructionYard(24.0f * this.spawnX + 0 * 24, 24.0f * this.spawnY + 0 * 24, team, other);
+	y.isVisible = true;
+	this.world.spawnEntityInWorld(y);
 	
 	this.base.gainCash(5000);
     }

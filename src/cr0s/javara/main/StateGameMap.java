@@ -158,7 +158,9 @@ public class StateGameMap extends BasicGameState {
 
 		// Play sound only if order given
 		if (button == 1) { 
-		    targeterForEntity.entity.playOrderSound();
+		    if (targeterForEntity.entity.owner == Main.getInstance().getPlayer()) {
+			targeterForEntity.entity.playOrderSound();
+		    }
 		}
 	    } else {
 		Main.getInstance().getWorld().cancelAllSelection();

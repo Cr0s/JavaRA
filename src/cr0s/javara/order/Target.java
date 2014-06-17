@@ -1,6 +1,5 @@
 package cr0s.javara.order;
 
-import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
@@ -18,6 +17,14 @@ public class Target {
 	this.targetCell = target;
     }
     
+    public Target(Entity te, Pos tpos) {
+	if (te != null) {
+	    this.targetEntity = te;
+	} else {
+	    this.targetCell = tpos;
+	}
+    }
+
     public boolean isCellTarget() {
 	return this.targetCell != null;
     }
@@ -34,35 +41,28 @@ public class Target {
 	return this.targetCell;
     }
 
-    public boolean isInRange(Pos actorCenter, float range) {
-	Pos targetPos = null;
-	
-	if (this.isCellTarget()) {
-	    targetPos = this.targetCell;
-	} else {
-	    if (this.targetEntity instanceof EntityActor) {
-		targetPos = ((EntityActor) this.targetEntity).getCellPosition();
-	    }
-	}
-	
-	if (targetPos == null) {
-	    return false;
-	}
-	
-	return targetPos.distanceTo(actorCenter.getCellPos()) <= range;
+    public boolean isInRange(Pos actorCenter, float rangeInCells) {
+	System.out.println("[Target] is in range: " + centerPosition().distanceTo(actorCenter) + " <= " + rangeInCells * 24.0f);
+	return centerPosition().distanceTo(actorCenter) <= rangeInCells * 24.0f;
     }
     
     public Pos centerPosition() {
 	Pos targetPos = null;
 	
 	if (this.isCellTarget()) {
-	    targetPos = this.targetCell;
+	    targetPos = this.targetCell.getCellPos();
+	    
+	    return new Pos(targetPos.getX() * 24 + 12, targetPos.getY() * 24 + 12);
 	} else {
 	    if (this.targetEntity instanceof EntityActor) {
-		targetPos = ((EntityActor) targetEntity).getCellPosition();
+		return ((EntityActor) targetEntity).getPosition();
 	    }
 	}
 	
-	return new Pos(targetPos.getX() * 24 + 12, targetPos.getY() * 24 + 12);
+	return null;
+    }
+    
+    public boolean isValidFor(EntityActor self) {
+	return (this.isEntityTarget() && !this.targetEntity.isDead()) || (this.isCellTarget() && self.world.getMap().isCellInMap(targetCell));
     }
 }
