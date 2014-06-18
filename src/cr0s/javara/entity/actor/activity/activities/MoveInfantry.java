@@ -36,6 +36,8 @@ public class MoveInfantry extends Activity {
     private boolean isNewPath;
     private int randomWaitTicks;
 
+    public boolean forceRange = false;
+    
     public MoveInfantry(MobileEntity me, Pos destinationCell) {
 	this.destCell = destinationCell;
 
@@ -45,9 +47,11 @@ public class MoveInfantry extends Activity {
     }
 
     public MoveInfantry(MobileEntity me, Pos destinationCell, int enoughRange) {
-	this(me, destinationCell);
-
+	this.destCell = destinationCell;
+	this.randomWaitTicks = me.world.getRandomInt(1, 3);
 	this.destRange = enoughRange;
+
+	chooseNewPath(me);
     }
 
     public MoveInfantry(MobileEntity me, Pos destinationCell, int enoughRange, EntityBuilding aIgnoreBuilding) {
@@ -64,8 +68,8 @@ public class MoveInfantry extends Activity {
     }
 
     private Pos popPath(MobileEntity me) {
-	int px = 0, py = 0;
-
+	int px = 0, py = 0;		
+	
 	if (this.currentPath == null || currentPathIndex >= this.currentPath.getLength() || this.currentPath.getLength() < 1) {
 	    this.currentPath = null;
 	    return null;
@@ -152,7 +156,7 @@ public class MoveInfantry extends Activity {
     }
 
     private void chooseNewPath(MobileEntity me) {
-	this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
+	this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (this.destCell.getY()));
 	this.currentPathIndex = 1;
 
 	this.isNewPath = true;
@@ -168,25 +172,18 @@ public class MoveInfantry extends Activity {
 	    }
 
 	    this.destCell = newDestCell;
-	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
+	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (this.destCell.getY()));
 
+	    if (this.currentPath != null) {
+		this.forceRange = false;
+	    }
+	    
 	    this.isNewPath = true;
 	}
     }
 
     public Pos chooseClosestToDestCell(MobileEntity me) {
-	Pos res = this.destCell;
-
-	// Find free cells in range, starting from closest range
-	for (int range = 1; range <= this.destRange; range++) {
-	    ArrayList<Pos> cells = me.world.choosePassableCellsInCircle(destCell, range);
-
-	    if (cells.size() != 0) {
-		return cells.get(me.world.getRandomInt(0, cells.size()));
-	    }
-	}
-
-	return res;
+	return me.world.chooseClosestPassableCellInRangeAroundOtherCell(me.getCellPos(), this.destCell, this.destRange);
     }    
 
     @Override
@@ -283,8 +280,8 @@ public class MoveInfantry extends Activity {
 
 	    this.lengthInTicks = (int) (40 - (10 * me.getMoveSpeed()));
 
-	    int facing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY()) % Turn.MAX_FACING;
-	    this.desiredFacing = RotationUtil.quantizeFacings(facing, EntityInfantry.MAX_FACING);
+	    int facing = RotationUtil.getRotationFromXY(start.getX(), start.getY(), end.getX(), end.getY());
+	    this.desiredFacing = RotationUtil.quantizeFacings(facing, this.me.getMaxFacings());
 	}
 
 	@Override
@@ -298,7 +295,7 @@ public class MoveInfantry extends Activity {
 	    }
 
 	    if (me.currentFacing != this.desiredFacing) {
-		me.currentFacing = this.desiredFacing % EntityInfantry.MAX_FACING;
+		me.currentFacing = this.desiredFacing % this.me.getMaxFacings();
 
 		// Don't move while our turn is not finished for new direction
 		if (isNewPath) { 
@@ -308,12 +305,12 @@ public class MoveInfantry extends Activity {
 		this.isNewPath = false;
 	    }
 
-	    me.setPos(nextPos);		    
+	    me.setPos(nextPos);
 
 	    ticks++;
 	    // If move is finished, return control to parent activity
 	    if ((me.getPos().getX() == end.getX() && me.getPos().getY() == end.getY()) || ticks >= lengthInTicks) {
-		me.currentFacing = this.desiredFacing % EntityInfantry.MAX_FACING;
+		me.currentFacing = this.desiredFacing % this.me.getMaxFacings();
 		me.currentSubcell = me.desiredSubcell;
 		me.finishMoving();
 

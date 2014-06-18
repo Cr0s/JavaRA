@@ -27,12 +27,16 @@ public class Explosion extends Entity implements IEffect {
     public Explosion(Pos pos, String texture) {
 	this(pos.getX(), pos.getY(), null, null, 24, 24);
 	
-	ShpTexture t = ResourceManager.getInstance().getConquerTexture(texture);
-	this.width = t.width;
-	this.height = t.height;
-	this.maxFrames = t.numImages;
-	
-	this.tex = new SpriteSheet(t.getAsCombinedImage(null), t.width, t.height);
+	if (texture != null && !texture.isEmpty()) {
+	    ShpTexture t = ResourceManager.getInstance().getConquerTexture(texture);
+	    this.width = t.width;
+	    this.height = t.height;
+	    this.maxFrames = t.numImages;
+
+	    this.tex = new SpriteSheet(t.getAsCombinedImage(null), t.width, t.height);
+	} else {
+	    this.setDead();
+	}
     }
     
     public Explosion(float posX, float posY, Team team, Player owner,

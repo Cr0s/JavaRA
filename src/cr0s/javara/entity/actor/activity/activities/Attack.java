@@ -14,7 +14,7 @@ public class Attack extends Activity {
     private AttackBase attack;
     private float range;
     
-    private static final int REPATH_DELAY_TICKS = 20;
+    private static final int REPATH_DELAY_TICKS = 1;
     private static final int REPATH_SPREAD = 5;
     
     private int repathDelay;
@@ -62,8 +62,13 @@ public class Attack extends Activity {
 	
 	// Face the target
 	int desiredFacing = RotationUtil.getRotationFromXY(self.getPosition().getX(), self.getPosition().getY(), this.target.centerPosition().getX(), this.target.centerPosition().getY());
+
+	if (self.getMaxFacings() != 32) {
+	    desiredFacing = RotationUtil.quantizeFacings(desiredFacing, self.getMaxFacings());
+	}
+	
 	if (desiredFacing != self.currentFacing) {
-	    Turn turn = new Turn(self, desiredFacing, 1);
+	    Turn turn = new Turn(self, desiredFacing, 0);
 	    turn.queueActivity(this);
 	    
 	    return turn;

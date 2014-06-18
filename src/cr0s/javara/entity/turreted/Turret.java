@@ -32,9 +32,9 @@ public class Turret {
 
     private int currentRecoil = 0;
     private int maxRecoil = 0;                 // in pixels
-    private final static int MAX_RECOIL_DEFAULT = 2; 
+    private final static int MAX_RECOIL_DEFAULT = 1; 
 
-    private final static int RECOIL_INTERVAL_TICKS = 5;
+    private final static int RECOIL_INTERVAL_TICKS = 3;
     private int recoilTicks = 0;
     private int recoilOffsetX, recoilOffsetY;
 

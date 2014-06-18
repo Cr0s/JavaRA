@@ -60,8 +60,8 @@ public class RotationUtil {
 	return new Pos(resX, resY);
     }
 
-    public static float facingToAngle(final int sourceFacing) {
-	int facingDegrees = (int) Math.floor(sourceFacing * FACING_TO_DEGREE);
+    public static float facingToAngle(final int sourceFacing, final int maxFacings) {
+	int facingDegrees = (int) Math.floor(sourceFacing * (360.0f / maxFacings));
 	
 	return (float) Math.toRadians(facingDegrees);
     }

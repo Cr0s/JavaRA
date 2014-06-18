@@ -40,6 +40,8 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     public ArmorType armorType = ArmorType.NONE;
     public TreeSet<TargetType> targetTypes = new TreeSet<TargetType>();
     
+    public int maxFacings = 32;
+    
     public EntityActor(float posX, float posY, Team team, Player owner,
 	    final float aSizeWidth, final float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
@@ -147,4 +149,8 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     public Pos getCellPosition() {
 	return getPosition().getCellPos();
     }   
+    
+    public int getMaxFacings() {
+	return this.maxFacings;
+    }
 }

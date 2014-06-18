@@ -34,6 +34,10 @@ public class Warhead {
     }
 
     public int getEffectivenessFor(EntityActor e) {
+	if (!this.effectiveness.containsKey(e.armorType)) {
+	    return 100;
+	}
+	
 	return this.effectiveness.get(e.armorType);
     }
 

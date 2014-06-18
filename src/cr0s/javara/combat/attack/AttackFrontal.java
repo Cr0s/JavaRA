@@ -12,7 +12,8 @@ import cr0s.javara.util.RotationUtil;
 
 public class AttackFrontal extends AttackBase {
     
-    private final float ANGLE_TOLERANCE = 11.25f;
+    private static final float RANGE_TOLERANCE = 2.0f;
+    private final float ANGLE_TOLERANCE = 1f;
     
     public AttackFrontal(EntityActor s) {
 	super(s);
@@ -25,9 +26,12 @@ public class AttackFrontal extends AttackBase {
 	}
 
 	int facingToTarget = RotationUtil.getRotationFromXY(self.getPosition().getX(), self.getPosition().getY(), tgt.centerPosition().getX(), tgt.centerPosition().getY());
-	float angle = RotationUtil.facingToAngle(facingToTarget);
+	if (this.self.getMaxFacings() != 32) {
+	    facingToTarget = RotationUtil.quantizeFacings(facingToTarget, this.self.getMaxFacings());
+	}
+	float angle = RotationUtil.facingToAngle(facingToTarget, this.self.getMaxFacings());
 	
-	if (Math.abs(RotationUtil.facingToAngle(this.self.currentFacing) - angle) % 360 > ANGLE_TOLERANCE) {
+	if (Math.abs(RotationUtil.facingToAngle(this.self.currentFacing, this.self.getMaxFacings()) - angle) % 360 > ANGLE_TOLERANCE) {
 	    return false;
 	}
 	
@@ -41,6 +45,6 @@ public class AttackFrontal extends AttackBase {
 	    return null;
 	}
 	
-	return new Attack(this, this.self, tgt, arma.getWeapon().range, allowMove);
+	return new Attack(this, this.self, tgt, arma.getWeapon().range - this.RANGE_TOLERANCE, allowMove);
     }
 }

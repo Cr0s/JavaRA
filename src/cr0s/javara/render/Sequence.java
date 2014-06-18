@@ -71,7 +71,7 @@ public class Sequence {
 	    f = this.currentFacing;
 	}
 	
-	int i = this.start + (f * this.length) + (this.currentFrame % this.length);
+	int i = this.start + ((f % this.facings) * this.length) + (this.currentFrame % this.length);
 	
 	if (i >= this.tex.numImages) {
 	    i = this.tex.numImages - 1;

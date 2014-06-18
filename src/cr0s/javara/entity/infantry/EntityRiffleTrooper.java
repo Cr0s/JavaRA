@@ -6,6 +6,9 @@ import org.newdawn.slick.BigImage;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.combat.Armament;
+import cr0s.javara.combat.attack.AttackFrontal;
+import cr0s.javara.combat.weapon.WeaponM1Carabine;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
@@ -15,6 +18,7 @@ import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.Sequence;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.Pos;
 
 public class EntityRiffleTrooper extends EntityInfantry implements ISelectable, IHaveCost {
 
@@ -39,8 +43,18 @@ public class EntityRiffleTrooper extends EntityInfantry implements ISelectable, 
 	this.runSequence = new Sequence(texture, 16, 8, 6, 2, owner.playerColor);
 	this.runSequence.setIsLoop(true);
 
+	this.attackingSequence = new Sequence(texture, 64, 8, 8, 2, owner.playerColor);
+	this.attackingSequence.setIsLoop(true);
+	
 	this.idleSequences.add(new Sequence(texture, 256, 0, 16, 2, owner.playerColor));
 	this.idleSequences.add(new Sequence(texture, 272, 0, 16, 2, owner.playerColor));
+	
+	this.attack = new AttackFrontal(this);
+	Armament arma = new Armament(this, new WeaponM1Carabine());
+	arma.addBarrel(new Pos(0, 0), 0);
+	this.attack.addArmament(arma);
+	
+	this.ordersList.addAll(this.attack.getOrders());
     }
 
     @Override 

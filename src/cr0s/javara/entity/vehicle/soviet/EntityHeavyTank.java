@@ -80,7 +80,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	this.turret = new Turret(this, new Pos(0, 0), this.texture, 32, 32);
 	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
-	Armament arma = new Armament(this, new WeaponSCUD());
+	Armament arma = new Armament(this, new Weapon105mm());
 	arma.addBarrel(new Pos(12, -3), 0);
 	arma.addBarrel(new Pos(12, 3), 0);
 
@@ -103,7 +103,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	    }
 	}
 
-	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));	
+	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, TEXTURE_WIDTH / 2, TEXTURE_HEIGHT / 2);
 
 	this.attack.update(delta);
     }

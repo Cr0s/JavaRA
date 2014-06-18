@@ -91,7 +91,7 @@ public class Armament {
 			? ((IHaveTurret) this.self).getTurrets().get(0).getCurrentFacing() 
 			: this.self.currentFacing;
 
-			float angle = RotationUtil.facingToAngle(sourceFacing);
+			float angle = RotationUtil.facingToAngle(sourceFacing, this.self.getMaxFacings());
 
 			// Offset muzzle to required length from center
 			float offsetFromCenter = b.offset.getX();
@@ -138,8 +138,6 @@ public class Armament {
 		if (!this.weapon.isValidAgainst(tgt)) {
 		    return null;
 		}
-
-		System.out.println("Firing");
 		
 		Barrel brl = this.barrels.get(this.burst % this.barrels.size());
 		final Pos muzzlePosition = this.getMuzzlePos(brl);
@@ -183,7 +181,7 @@ public class Armament {
 			? ((IHaveTurret) this.self).getTurrets().get(0).getCurrentFacing() 
 				: this.self.currentFacing;
 
-			float angle = RotationUtil.facingToAngle(sourceFacing);
+			float angle = RotationUtil.facingToAngle(sourceFacing, this.self.getMaxFacings());
 			angle += brl.yaw;
 
 			return RotationUtil.angleToFacing(angle);

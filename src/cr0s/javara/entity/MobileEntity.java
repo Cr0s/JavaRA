@@ -17,6 +17,7 @@ import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Drag;
 import cr0s.javara.entity.actor.activity.activities.Follow;
 import cr0s.javara.entity.actor.activity.activities.Move;
+import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
@@ -89,6 +90,7 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 	    Path currentPath = null;
 	    int pathIndex = 0;
 	    
+	    // For vehicles
 	    if ((this.currentActivity instanceof Move) && ((Move) this.currentActivity).currentPath != null) {
 		currentPath = ((Move) this.currentActivity).currentPath;
 		pathIndex = ((Move) currentActivity).currentPathIndex;
@@ -96,6 +98,16 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
 		currentPath = ((Move.MovePart) this.currentActivity).parentMove.currentPath;
 		pathIndex = ((Move.MovePart) this.currentActivity).parentMove.currentPathIndex;	
 	    }
+	    
+	    // For infantry
+	    if ((this.currentActivity instanceof MoveInfantry) && ((MoveInfantry) this.currentActivity).currentPath != null) {
+		currentPath = ((MoveInfantry) this.currentActivity).currentPath;
+		pathIndex = ((MoveInfantry) currentActivity).currentPathIndex;
+	    } else if ((this.currentActivity instanceof MoveInfantry.MovePart) && ((MoveInfantry.MovePart) this.currentActivity).parentMove.currentPath != null) {
+		currentPath = ((MoveInfantry.MovePart) this.currentActivity).parentMove.currentPath;
+		pathIndex = ((MoveInfantry.MovePart) this.currentActivity).parentMove.currentPathIndex;	
+	    }
+	    
 	    
 	    if (currentPath == null) {
 		return;

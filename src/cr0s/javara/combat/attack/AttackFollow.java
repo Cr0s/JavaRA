@@ -71,9 +71,9 @@ public class AttackFollow extends AttackBase {
 	    Armament weapon = attack.chooseArmamentForTarget(this.target);
 	    if (weapon != null) {
 		int range = (int) Math.max(0,  weapon.getWeapon().range - rangeTolerance);
-		attack.target = target;
+		this.attack.target = target;
 		
-		if (this.me != null) {
+		if (this.me != null && !target.isInRange(me.getPosition(), weapon.getWeapon().range)) {
 		    Follow f = (Follow) me.moveFollow(self, target, range);
 		    f.queueActivity(this);
 		    

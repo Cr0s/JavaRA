@@ -199,4 +199,8 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 	    arma.update(delta);
 	}
     }
+
+    public boolean isReloading() {
+	return this.armaments.size() != 0 && !this.armaments.get(0).isReloading();
+    }
 }

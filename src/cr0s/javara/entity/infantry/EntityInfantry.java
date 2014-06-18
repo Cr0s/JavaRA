@@ -7,14 +7,21 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.combat.ArmorType;
+import cr0s.javara.combat.attack.AttackBase;
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.Activity;
-import cr0s.javara.entity.actor.activity.activities.AttackInfantry;
+import cr0s.javara.entity.actor.activity.activities.Attack;
+import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.Sequence;
@@ -65,6 +72,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     private HashMap<String, Integer[]> orderSounds;
     private final int MAX_VERSIONS = 4;    
 
+    protected AttackBase attack;
+
     public EntityInfantry(Float posX, Float posY, Team team, Player owner) {
 	this(posX, posY, team, owner, SubCell.CENTER);
     }
@@ -97,8 +106,10 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3	
 
 	this.randomTicksBeforeIdleSeq = (int) (this.MIN_IDLE_DELAY_TICKS + Math.random() * (this.MAX_IDLE_DELAY_TICKS - this.MIN_IDLE_DELAY_TICKS));
-	
+
 	this.armorType = ArmorType.NONE;
+	
+	this.maxFacings = this.MAX_FACING;
     }
 
     @Override
@@ -130,6 +141,10 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public void updateEntity(int delta) {
 	super.updateEntity(delta);
 
+	if (this.attack != null) {
+	    this.attack.update(delta);
+	}
+
 	if (this.currentSequence != null) { 
 	    this.currentSequence.update(this.currentFacing);
 	}
@@ -138,9 +153,11 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	if ((this.currentActivity instanceof MoveInfantry || this.currentActivity instanceof MoveInfantry.MovePart) && this.getCurrentAnimationState() != AnimationState.WAITING) {
 	    this.setCurrentAnimationState(AnimationState.MOVING);
 	    this.currentSequence = this.runSequence;
-	} else if (currentActivity instanceof AttackInfantry) {
-	    this.setCurrentAnimationState(AnimationState.ATTACKING);
-	    this.currentSequence = this.attackingSequence;
+	} else if (currentActivity instanceof Attack) {
+	    if (this.attack.isAttacking && !this.attack.isReloading()) {
+		this.setCurrentAnimationState(AnimationState.ATTACKING);
+		this.currentSequence = this.attackingSequence;
+	    }
 	} else if (this.isIdle()) {
 	    if (this.getCurrentAnimationState() != AnimationState.IDLE && this.getCurrentAnimationState() != AnimationState.IDLE_ANIMATING) {
 		this.setCurrentAnimationState(AnimationState.IDLE);
@@ -169,6 +186,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
     @Override
     public void renderEntity(Graphics g) {
+	drawPath(g);
+	
 	//if (this.sheet != null) {
 	this.currentSequence.render(this.posX, this.posY);
 	//}
@@ -279,9 +298,35 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public void setCurrentAnimationState(AnimationState currentAnimationState) {
 	this.currentAnimationState = currentAnimationState;
     }    
+
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (super.issueOrder(self, targeter, target, ia) == null && this.attack != null) {
+	    return this.attack.issueOrder(self, targeter, target, ia);
+	}
+
+	return super.issueOrder(self, targeter, target, ia);
+    }
+
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
+	    this.attack.resolveOrder(order);
+	} else {
+	    super.resolveOrder(order);
+	}
+    }      
     
     @Override
     public Activity moveToRange(Pos cellPos, int range) {
-	return new MoveInfantry(this, cellPos, range);
+	MoveInfantry move = new MoveInfantry(this, cellPos, range);
+	move.forceRange = true;
+	
+	return move;
+    }      
+    
+    @Override
+    public int getMaxFacings() {
+	return this.maxFacings;
     }
 }

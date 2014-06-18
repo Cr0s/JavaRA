@@ -37,9 +37,8 @@ public class Move extends Activity {
     private boolean isNewPath;
     private int randomWaitTicks;
 
-    
     public boolean forceRange = false;
-    
+
     public Move(MobileEntity me, Pos destinationCell) {
 	this.destCell = destinationCell;
 
@@ -72,14 +71,6 @@ public class Move extends Activity {
     private Pos popPath(MobileEntity me) {
 	int px = 0, py = 0;
 
-	// We're close enough
-	if (forceRange && me.getPosition().getCellPos().distanceToSq(this.destCell) <= this.destRange * this.destRange) {
-	    this.currentPathIndex = this.currentPath.getLength(); // stop and skip all path
-	    this.currentPath = null;
-
-	    return null;
-	}	
-	
 	if (this.currentPath == null || currentPathIndex >= this.currentPath.getLength() || this.currentPath.getLength() < 1) {
 	    this.currentPath = null;
 	    return null;
@@ -90,7 +81,7 @@ public class Move extends Activity {
 	py = s.getY();
 
 	Pos nextCell = new Pos(px, py);
-	
+
 	if (!me.canEnterCell(nextCell) && me.world.isCellBlockedByEntity(nextCell)) {
 	    // This building we ignore
 	    if (this.ignoreBuilding != null && me.world.getBuildingInCell(nextCell) == this.ignoreBuilding) {
@@ -159,7 +150,7 @@ public class Move extends Activity {
     }
 
     private void chooseNewPath(MobileEntity me) {
-	this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (destCell.getY()));
+	this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (this.destCell.getY()));
 	this.currentPathIndex = 1;
 
 	this.isNewPath = true;
@@ -182,26 +173,7 @@ public class Move extends Activity {
     }
 
     public Pos chooseClosestToDestCell(MobileEntity me) {
-	Pos res = this.destCell;
-
-	// Find free cells in range, starting from closest range
-	ArrayList<Pos> cells = new ArrayList<Pos>();
-	for (int range = 1; range < this.destRange; range++) {
-	    cells.addAll(me.world.choosePassableCellsInCircle(destCell, range));
-	}
-
-	// Sort by "closest cells goes first"
-	Pos closest = (cells.size() != 0) ? cells.get(0) : null;
-	int minDistance = 0;
-	for (Pos pos : cells) {
-	    int distance = pos.distanceToSq(me.getCenterPos());
-	    if (minDistance == 0 || distance < minDistance) {
-		closest = pos;
-		minDistance = distance;
-	    }
-	}
-
-	return closest;
+	return me.world.chooseClosestPassableCellInRangeAroundOtherCell(me.getCellPos(), this.destCell, this.destRange);
     }    
 
     @Override

@@ -42,8 +42,8 @@ public class Target {
     }
 
     public boolean isInRange(Pos actorCenter, float rangeInCells) {
-	//System.out.println("[Target] is in range: " + centerPosition().distanceTo(actorCenter) + " <= " + rangeInCells * 24.0f);
-	return centerPosition().distanceTo(actorCenter) <= rangeInCells * 24.0f;
+	System.out.println("[Target] is in range: " + centerPosition().distanceTo(actorCenter) + " < " + rangeInCells * 24.0f);
+	return centerPosition().distanceTo(actorCenter) < rangeInCells * 24.0f;
     }
     
     public Pos centerPosition() {
@@ -55,7 +55,7 @@ public class Target {
 	    return new Pos(targetPos.getX() * 24 + 12, targetPos.getY() * 24 + 12);
 	} else {
 	    if (this.targetEntity instanceof EntityActor) {
-		return ((EntityActor) targetEntity).getPosition();
+		return ((EntityActor) this.targetEntity).getPosition();
 	    }
 	}
 	

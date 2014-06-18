@@ -715,4 +715,29 @@ public class World implements TileBasedMap {
     public float getRandomFloat(float from, float to) {
 	return from + (random.nextFloat() % (to - from));
     }
+    
+    public Pos chooseClosestPassableCellInRangeAroundOtherCell(Pos myCellPos, Pos destCell, float destRange) {
+	// Find free cells in range, starting from closest range
+	ArrayList<Pos> cells = new ArrayList<Pos>();
+	for (int range = 1; range <= destRange; range++) {
+	    cells.addAll(choosePassableCellsInCircle(destCell, range));
+	}
+
+	// Select closest to us and within range
+	Pos closest = (cells.size() != 0) ? cells.get(0) : null;
+	float minDistance = 0;
+	for (Pos pos : cells) {
+	    float distance = (float) pos.distanceTo(myCellPos);
+	    if (pos.distanceTo(destCell) >= destRange) { // not within range, ignore
+		continue;
+	    }
+	    
+	    if (minDistance == 0 || distance < minDistance) {
+		closest = pos;
+		minDistance = distance;
+	    }
+	}
+
+	return closest;	
+    }
 }

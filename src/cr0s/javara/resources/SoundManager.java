@@ -99,6 +99,10 @@ public class SoundManager {
     }
 
     public void playSfxAt(String sound, Pos pos) {
+	if (sound == null || sound.isEmpty()) {
+	    return;
+	}
+	
 	XSound snd = ResourceManager.getInstance().loadSound("sounds.mix", sound + ".aud");
 
 	if (snd != null) {

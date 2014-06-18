@@ -29,10 +29,11 @@ public class WeaponSCUD extends Weapon {
     private final static int BURST_DELAY = 3;
     
     private final static int DAMAGE = 450;
-    private final static float SPREAD = 0.333f;
+    private final static float SPREAD = 1f;
     private static final float PROJECTILE_SPEED = 10.0f;
     private static final int BULLET_ANGLE = 45;
     private static final int NUM_FACINGS = 32;
+    private static final float INACCURACY = 0.2f;
     
     public WeaponSCUD() {
 	super(ROF, WEAPON_RANGE);
@@ -56,9 +57,11 @@ public class WeaponSCUD extends Weapon {
 	
 	wh.canAttackOre = true;
 	
-	wh.effectiveness.put(ArmorType.CONCRETE, 50);
-	wh.effectiveness.put(ArmorType.NONE, 20);
-	wh.effectiveness.put(ArmorType.LIGHT, 75);
+	wh.effectiveness.put(ArmorType.NONE, 90);
+	wh.effectiveness.put(ArmorType.WOOD, 75);
+	wh.effectiveness.put(ArmorType.LIGHT, 70);
+	wh.effectiveness.put(ArmorType.HEAVY, 40);
+
 	
 	this.warheads.add(wh);
 	
@@ -67,7 +70,6 @@ public class WeaponSCUD extends Weapon {
 	
 	this.burst = BURST;
 	this.burstDelay = BURST_DELAY;
-	
 	
     }
     
@@ -84,7 +86,8 @@ public class WeaponSCUD extends Weapon {
 	blt.trailInterval = 5;
 	blt.trailDelay = 1;
 	
-	blt.currentFacing = srcActor.currentFacing;
+	blt.currentFacing = fcng;
+	blt.inaccuracy = INACCURACY;
 	
 	// Spawn muzzle flash
 	if (this.MUZZLE_FLASH != null && !this.MUZZLE_FLASH.isEmpty()) {
