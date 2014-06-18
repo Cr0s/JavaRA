@@ -191,7 +191,7 @@ public class Move extends Activity {
 	}
 
 	// Sort by "closest cells goes first"
-	Pos closest = (cells != null) ? cells.get(0) : null;
+	Pos closest = (cells.size() != 0) ? cells.get(0) : null;
 	int minDistance = 0;
 	for (Pos pos : cells) {
 	    int distance = pos.distanceToSq(me.getCenterPos());

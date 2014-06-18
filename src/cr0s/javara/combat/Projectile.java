@@ -27,7 +27,7 @@ public abstract class Projectile extends Entity implements IEffect {
     protected ShpTexture tex;
     protected Sequence projectileSq;
     
-    protected int numFacings = 32;
+    public int numFacings = 32;
     protected int seqLength = 0;
     
     private Projectile(float posX, float posY, Team team, Player owner,
@@ -51,7 +51,8 @@ public abstract class Projectile extends Entity implements IEffect {
 	this.passiveTargetPos = passivePos;
     }
         
-    protected void initTexture(String textureName, int facings, int len) {
+    public void initTexture(String textureName, int facings, int len) {
+
 	this.tex = ResourceManager.getInstance().getConquerTexture(textureName);
 	
 	this.numFacings = facings;

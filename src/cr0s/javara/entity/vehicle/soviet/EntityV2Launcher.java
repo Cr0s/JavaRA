@@ -1,4 +1,4 @@
-package cr0s.javara.entity.vehicle.tank;
+package cr0s.javara.entity.vehicle.soviet;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,9 +14,12 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.combat.Weapon;
+import cr0s.javara.combat.attack.AttackFrontal;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.weapon.Weapon105mm;
+import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
@@ -36,19 +39,17 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
+public class EntityV2Launcher extends EntityVehicle implements ISelectable, Mover, IHaveCost {
 
-    private String TEXTURE_NAME = "3tnk.shp";
+    private String TEXTURE_NAME = "v2rl.shp";
     private SpriteSheet texture;
 
-    private final int ROTATION_START_TEXTURE_INDEX = 0;
-    private final int ROTATION_END_TEXTURE_INDEX = 31;
-
-    private final int MAX_ROTATION = 32;	
-
-    private static final int TEXTURE_WIDTH = 36;
-    private static final int TEXTURE_HEIGHT = 36;
-    private static final int SHROUD_REVEALING_RANGE = 8;
+    private static final int TEXTURE_WIDTH = 40;
+    private static final int TEXTURE_HEIGHT = 40;
+    private static final int ATTACK_OFFSET = 64;
+    private static final int ATTACKING_FACINGS = 8;
+    
+    private static final int SHROUD_REVEALING_RANGE = 5;
     private static final int WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS = 15;
     private static final int WAIT_FOR_BLOCKER_TIME_SPREAD_TICKS = 5;
 
@@ -61,11 +62,10 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     private final float SHIFT = 12;
 
     private final int BUILDING_COST = 1150;
-    private Turret turret;
 
-    private AttackTurreted attack;
+    private AttackFrontal attack;
 
-    public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
+    public EntityV2Launcher(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture = new SpriteSheet(ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME).getAsCombinedImage(owner.playerColor), TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -73,17 +73,15 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
 	this.isVisible = true;
 
-	this.setMaxHp(550);
+	this.setMaxHp(200);
 	this.setHp(this.getMaxHp());
+	
+	this.armorType = ArmorType.LIGHT;
 
-	this.turret = new Turret(this, new Pos(0, 0), this.texture, 32, 32);
-	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	Armament arma = new Armament(this, new WeaponSCUD());
+	arma.addBarrel(new Pos(0, 0), 0);
 
-	Armament arma = new Armament(this, new Weapon105mm());
-	arma.addBarrel(new Pos(12, -3), 0);
-	arma.addBarrel(new Pos(12, 3), 0);
-
-	attack = new AttackTurreted(this);
+	attack = new AttackFrontal(this);
 	attack.armaments.add(arma);
 
 	this.ordersList.addAll(attack.getOrders());
@@ -93,16 +91,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     public void updateEntity(int delta) {
 	super.updateEntity(delta);
 
-	if (!this.attack.isAttacking) {
-	    if (!this.isIdle()) { 
-		this.turret.setTarget(new Pos(goalX * 24, goalY * 24));
-	    } else {
-
-		this.turret.rotateTurretTo(this.currentFacing);
-	    }
-	}
-
-	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));	
+	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 7, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));	
 
 	this.attack.update(delta);
     }
@@ -115,42 +104,20 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	    g.setLineWidth(1);
 	    g.setColor(owner.playerColor);
 	    g.draw(boundingBox);
-	    //g.drawOval(posX - 1, posY - 1, this.boundingBox.getWidth() + 1, this.boundingBox.getHeight() + 1);
 	}
 
-	//g.drawRect(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 	texture.startUse();
-	texture.getSubImage(0, currentFacing).drawEmbedded(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
-	this.turret.render(g);
+	
+	int textureIndex = (this.attack.armaments.get(0).isReloading() ? 32 : 0) + currentFacing;
+	if (this.attack.isAttacking) {
+	    int attackingFacing = RotationUtil.quantizeFacings(this.currentFacing, this.ATTACKING_FACINGS) % this.ATTACKING_FACINGS;
+	    textureIndex = this.ATTACK_OFFSET + (this.attack.armaments.get(0).isReloading() ? this.ATTACKING_FACINGS : 0) + attackingFacing;
+	}
+	
+	texture.getSubImage(0, textureIndex).drawEmbedded(this.getTextureX(), this.getTextureY(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
+	
 	texture.endUse();
-
-	/*
-	Pos actorCenter = (this instanceof IHaveTurret)
-		? ((IHaveTurret) this).getTurrets().get(0).getCenterPos()
-			: this.getPosition();
-		g.setColor(Color.white);
-		g.fillOval(actorCenter.getX() - 2, actorCenter.getY() - 2, 4, 4);
-		g.setColor(owner.playerColor);		
-
-		float angle = RotationUtil.facingToAngle(this.turret.getCurrentFacing());
-		g.setColor(Color.red);
-		g.setLineWidth(1);
-		g.drawLine(actorCenter.getX(), actorCenter.getY(), (float) (actorCenter.getX() - 30 * Math.sin(angle)), (float) (actorCenter.getY() - 30 * Math.cos(angle)));
-
-		g.setColor(Color.green);
-		g.drawLine((float) (actorCenter.getX() - 15 * Math.cos(angle)), (float) (actorCenter.getY() - 15 * -Math.sin(angle)),
-			(float) (actorCenter.getX() + 15 * Math.cos(angle)), (float) (actorCenter.getY() + 15 * -Math.sin(angle)));
-
-		g.setColor(Color.white);
-		for (int i = 0; i < this.arma.getBarrels().size(); i++) {
-		    Barrel b = this.arma.getBarrels().get(i);
-
-		    Pos muzzlePos = this.arma.getMuzzlePos(b);
-
-		    //g.setColor(i % 2 == 0 ? Color.green : Color.red);
-		    g.fillRect(muzzlePos.getX() - 2, muzzlePos.getY() - 2, 4, 4);
-		}*/
 
 	drawPath(g);
     }
@@ -218,25 +185,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     @Override
     public int getBuildingCost() {
 	return this.BUILDING_COST;
-    }
-
-    @Override
-    public void drawTurrets(Graphics g) {
-    }
-
-    @Override
-    public void updateTurrets(int delta) {
-	this.turret.update(delta);
-    }
-
-    @Override
-    public List<Turret> getTurrets() {
-	LinkedList<Turret> res = new LinkedList<Turret>();
-
-	res.add(this.turret);
-
-	return res;
-    }    
+    }  
 
     @Override
     public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {

@@ -23,7 +23,7 @@ import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
-import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
+import cr0s.javara.entity.vehicle.soviet.EntityHeavyTank;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.EntityBlockingMap.SubCell;

@@ -40,7 +40,6 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 
     protected boolean canAttack(Target tgt) {
 	if (this.self.world == null || this.self.isDead() || tgt == null || !tgt.isValidFor(this.self)) {
-	    System.out.println("canTAttack(): Target is invalid");
 	    return false;
 	}
 
@@ -50,7 +49,6 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 	    }
 	}
 
-	System.out.println("canTAttack(): Armament is reloading");
 	return false;
     }
 

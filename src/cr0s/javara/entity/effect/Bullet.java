@@ -46,13 +46,17 @@ public class Bullet extends Projectile {
 
     public Bullet(EntityActor srcActor, Pos srcPos, Pos passivePos,
 	    EntityActor targetActor, int width, int height, float sMax, int aMax, int ang, String img, Weapon weap, float spd) {
+	this(srcActor, srcPos, passivePos, targetActor, width, height, sMax, aMax, ang, img, weap, spd, 1);
+    }
+    public Bullet(EntityActor srcActor, Pos srcPos, Pos passivePos,
+	    EntityActor targetActor, int width, int height, float sMax, int aMax, int ang, String img, Weapon weap, float spd, int numFacings) {
 	super(srcActor, srcPos, passivePos, targetActor, width, height);
 
 	this.angle = ang;
 	this.speedMax = sMax;
 	this.angleMax = aMax;
 	this.image = img;
-	
+
 	this.weapon = weap;
 	this.speed = spd;
 
@@ -80,9 +84,10 @@ public class Bullet extends Projectile {
 	this.currentFacing = RotationUtil.getRotationFromXY(this.pos.getX(), this.pos.getY(), this.target.getX(), this.target.getY());
 	this.length = (int) Math.max(1, distanceToTarget / this.speed);
 
+	this.numFacings = numFacings;
 
 	if (this.image != null) {
-	    initTexture(this.image, 1, 0);
+	    initTexture(this.image, this.numFacings, 0);
 	}
     }
 
@@ -95,6 +100,8 @@ public class Bullet extends Projectile {
 
 	if (this.trail != null && --this.smokeTicks <= 0) {
 	    Pos delayedPos = PointsUtil.lerpQuadratic(this.sourcePos, this.target, (float) Math.toRadians(this.angle), this.ticks - this.trailDelay, this.length);
+	    delayedPos.setY(delayedPos.getY() - delayedPos.getZ()); // don't forget about height above ground
+	    
 	    world.spawnSmokeAt(delayedPos, this.trail);
 
 	    this.smokeTicks = this.trailInterval;
@@ -110,16 +117,26 @@ public class Bullet extends Projectile {
 	if (this.numFacings <= 1) {
 	    return;
 	}
+	
+	final int PREDICTION_LENGTH = 10 + (int) Math.max(0, 10 - this.speed);
+	if (this.length - this.ticks < PREDICTION_LENGTH) {
+	    return;
+	}
 
-	float at = (float) this.ticks / (this.length - 1);
-	float attitude = (float) (Math.tan(this.angle) * (1 - 2 * at) / (4 * 24));
+	// Calculate coordinate of next flight point
+	Pos nextFlightPoint = PointsUtil.lerpQuadratic(this.sourcePos, this.target, (float) Math.toRadians(this.angle), this.ticks + PREDICTION_LENGTH, this.length);
 
-	float u = (this.currentFacing % 16) / (this.numFacings * 1.0f);
-	float scale = 12 * u * (1 - u);
+	Pos currentPos = this.pos;
+	int nextX = (int) nextFlightPoint.getX();
+	int nextY = (int) nextFlightPoint.getY();
+	int nextZ = (int) nextFlightPoint.getZ();
+	
+	int newFacing = RotationUtil.getRotationFromXY(currentPos.getX(), (int) (currentPos.getY() - currentPos.getZ()), nextX, nextY - nextZ);
+	if (this.numFacings != 32) {
+	    newFacing = RotationUtil.quantizeFacings(newFacing, this.numFacings);
+	}
 
-	this.currentFacing = (int) (this.currentFacing < 16
-		? this.currentFacing - scale * attitude
-			: this.currentFacing + scale * attitude);	
+	this.currentFacing = newFacing;
     }
 
     private void explode() {

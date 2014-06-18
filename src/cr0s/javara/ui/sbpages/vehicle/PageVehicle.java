@@ -4,8 +4,9 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
-import cr0s.javara.entity.vehicle.tank.EntityHeavyTank;
-import cr0s.javara.entity.vehicle.tank.EntityMammothTank;
+import cr0s.javara.entity.vehicle.soviet.EntityHeavyTank;
+import cr0s.javara.entity.vehicle.soviet.EntityMammothTank;
+import cr0s.javara.entity.vehicle.soviet.EntityV2Launcher;
 import cr0s.javara.main.Main;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.GameSideBar;
@@ -42,7 +43,7 @@ public class PageVehicle extends SideBarPage {
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 0, 7, false, null));
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 1, 7, false, null));
 	
-	addButton(new VehicleSidebarButton("V2 Rocket Launcher", "v2rlicon.shp", this.getPosition(), 0, 8, false, null));
+	addButton(new VehicleSidebarButton("V2 Rocket Launcher", "v2rlicon.shp", this.getPosition(), 0, 8, true, new EntityV2Launcher(0f, 0f, Main.getInstance().getTeam(), Main.getInstance().getPlayer())));
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 1, 8, false, null));
 	
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 0, 9, false, null));

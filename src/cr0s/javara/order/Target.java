@@ -42,7 +42,7 @@ public class Target {
     }
 
     public boolean isInRange(Pos actorCenter, float rangeInCells) {
-	System.out.println("[Target] is in range: " + centerPosition().distanceTo(actorCenter) + " <= " + rangeInCells * 24.0f);
+	//System.out.println("[Target] is in range: " + centerPosition().distanceTo(actorCenter) + " <= " + rangeInCells * 24.0f);
 	return centerPosition().distanceTo(actorCenter) <= rangeInCells * 24.0f;
     }
     
