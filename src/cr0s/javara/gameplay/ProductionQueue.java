@@ -18,7 +18,7 @@ import cr0s.javara.entity.building.soviet.EntityFireTurret;
 import cr0s.javara.entity.building.soviet.EntityTeslaCoil;
 import cr0s.javara.entity.infantry.EntityGrenadeTrooper;
 import cr0s.javara.entity.infantry.EntityInfantry;
-import cr0s.javara.entity.infantry.EntityRiffleTrooper;
+import cr0s.javara.entity.infantry.EntityRifleTrooper;
 import cr0s.javara.entity.infantry.EntityRocketTrooper;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
@@ -135,7 +135,7 @@ public class ProductionQueue {
 	addButton(new InfantrySidebarButton("", "e1icon.shp", this.getPosition(), 0, 9, false, null));
 	addButton(new InfantrySidebarButton("", "e6icon.shp", this.getPosition(), 1, 9, false, null));
 	 */
-	this.sovietInfantry.put("e1icon.shp", new EntityRiffleTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
+	this.sovietInfantry.put("e1icon.shp", new EntityRifleTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
 	//this.sovietInfantry.put("e6icon.shp", new EntityEngineer(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
 	this.sovietInfantry.put("e2icon.shp", new EntityGrenadeTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
 	this.sovietInfantry.put("e3icon.shp", new EntityRocketTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));

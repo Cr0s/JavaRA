@@ -103,7 +103,7 @@ public class Player {
 	    EntityInfantry e = null;
 	    switch (this.world.getRandomInt(0, 3)) {
 	    case 0:
-		e = new EntityRiffleTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
+		e = new EntityRifleTrooper(randomPoint.getX() * 24, randomPoint.getY() * 24, team, this, world.blockingEntityMap.getFreeSubCell(randomPoint, SubCell.CENTER));
 		break;
 		
 	    case 1:

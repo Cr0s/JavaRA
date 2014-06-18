@@ -20,15 +20,15 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
 
-public class EntityRiffleTrooper extends EntityInfantry implements ISelectable, IHaveCost {
+public class EntityRifleTrooper extends EntityInfantry implements ISelectable, IHaveCost {
 
     private final int BUILD_COST = 100;
     
-    public EntityRiffleTrooper(Float posX, Float posY, Team team, Player owner) {
+    public EntityRifleTrooper(Float posX, Float posY, Team team, Player owner) {
 	this(posX, posY, team, owner, SubCell.CENTER);
     }    
     
-    public EntityRiffleTrooper(Float posX, Float posY, Team team, Player owner,
+    public EntityRifleTrooper(Float posX, Float posY, Team team, Player owner,
 	    SubCell sub) {
 	super(posX, posY, team, owner, sub);
 
