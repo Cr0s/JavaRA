@@ -1,5 +1,6 @@
 package cr0s.javara.entity.vehicle.soviet;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -7,6 +8,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.Path;
 
@@ -66,12 +68,14 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
     private final float MOVE_SPEED = 0.07f;
 
     private final float SHIFT = 12;
-    
+
     private final int BUILDING_COST = 2000;
     private Turret turret;
 
     private AttackTurreted attack;    
-    
+    Pos choosen;
+
+    private ArrayList<Pos> cells = new ArrayList<Pos>();
     public EntityMammothTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -82,10 +86,10 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
 	this.setHp(900);
 	this.setMaxHp(900);
-	
+
 	this.turret = new Turret(this, new Pos(0, 0), texture, 32, 32);
 	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);
-	
+
 	Armament arma = new Armament(this, new Weapon120mm());
 	arma.addBarrel(new Pos(14, -3, 6), 0);
 	arma.addBarrel(new Pos(14, 3, 6), 0);
@@ -93,7 +97,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	Armament arma2 = new Armament(this, new WeaponMammothTusk());
 	arma2.addBarrel(new Pos(-3, -6, 6), -30);
 	arma2.addBarrel(new Pos(-3, 6, 6), 30);
-	
+
 	attack = new AttackTurreted(this);
 	attack.armaments.add(arma);
 	attack.armaments.add(arma2);
@@ -104,7 +108,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
     @Override
     public void updateEntity(int delta) {
 	super.updateEntity(delta);
-	
+
 	if (!this.attack.isAttacking) {
 	    if (!this.isIdle() && (this.currentActivity instanceof Move || this.currentActivity instanceof Move.MovePart)) { 
 		this.turret.setTarget(new Pos(goalX * 24, goalY * 24));
@@ -112,15 +116,16 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 		this.turret.rotateTurretTo(this.currentFacing);
 	    }
 	}
-	
+
 	attack.update(delta);
+
 	boundingBox.setBounds(this.posX, this.posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
     }
 
     @Override
     public void renderEntity(Graphics g) {
 	super.renderEntity(g);
-	
+
 	if (Main.DEBUG_MODE) {
 	    g.setLineWidth(1);
 	    g.setColor(owner.playerColor);
@@ -160,7 +165,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
 		    //g.setColor(i % 2 == 0 ? Color.green : Color.red);
 		    g.fillRect(muzzlePos.getX() - 2, muzzlePos.getY() - 2, 4, 4);
-		    
+
 		    float a = RotationUtil.facingToAngle(arma.getMuzzleFacing(b), this.getMaxFacings());
 		    float x = (float) (muzzlePos.getX() - Math.sin(a) * 10);
 		    float y = (float) (muzzlePos.getY() - Math.cos(a) * 10);
@@ -168,6 +173,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 		}		
 
 	}*/
+	
 	drawPath(g);
     }
 
@@ -215,12 +221,12 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
     public Path findPathFromTo(MobileEntity e, int aGoalX, int aGoalY) {
 	return world.getVehiclePathfinder().findPathFromTo(this, aGoalX, aGoalY);
     }
-    
+
     @Override
     public int getMinimumEnoughRange() {
 	return 2;
     }    
-    
+
     @Override
     public int getWaitAverageTime() {
 	return this.WAIT_FOR_BLOCKER_AVERAGE_TIME_TICKS;
@@ -248,12 +254,12 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
     @Override
     public List<Turret> getTurrets() {
 	LinkedList<Turret> res = new LinkedList<Turret>();
-	
+
 	res.add(this.turret);
-	
+
 	return res;
     }  
-    
+
     @Override
     public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
 	if (super.issueOrder(self, targeter, target, ia) == null) {
@@ -261,7 +267,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	}
 
 	this.attack.cancelAttack();
-	
+
 	return super.issueOrder(self, targeter, target, ia);
     }
 

@@ -48,9 +48,9 @@ public class Move extends Activity {
     }
 
     public Move(MobileEntity me, Pos destinationCell, int enoughRange) {
-	this.destCell = destinationCell;
 	this.randomWaitTicks = me.world.getRandomInt(1, 3);
 	this.destRange = enoughRange;
+	this.destCell = destinationCell;
 
 	chooseNewPath(me);
     }
@@ -158,7 +158,7 @@ public class Move extends Activity {
 	// It seems destination cell are blocked, try to choose nearest free cell as new destination cell
 	if (this.currentPath == null) {
 	    Pos newDestCell = chooseClosestToDestCell(me);
-
+	    
 	    // Give up
 	    if (newDestCell == null) {
 		this.isNewPath = false;
@@ -167,7 +167,7 @@ public class Move extends Activity {
 
 	    this.destCell = newDestCell;
 	    this.currentPath = me.findPathFromTo(me, (int) (this.destCell.getX()), (int) (this.destCell.getY()));
-
+	    this.currentPathIndex = 1;
 	    this.isNewPath = true;
 	}
     }

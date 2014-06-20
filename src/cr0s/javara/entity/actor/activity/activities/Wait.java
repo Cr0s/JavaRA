@@ -2,6 +2,7 @@ package cr0s.javara.entity.actor.activity.activities;
 
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
+import cr0s.javara.util.Action;
 
 public class Wait extends Activity {
 
@@ -19,5 +20,4 @@ public class Wait extends Activity {
 	
 	return this;
     }
-
 }

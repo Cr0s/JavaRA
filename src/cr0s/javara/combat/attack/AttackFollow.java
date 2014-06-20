@@ -63,7 +63,7 @@ public class AttackFollow extends AttackBase {
 		return this.nextActivity;
 	    }
 	    
-	    final int rangeTolerance = 2;
+	    final int rangeTolerance = 0;
 	    
 	    Armament weapon = this.attack.chooseArmamentForTarget(this.target);
 	    if (weapon != null) {

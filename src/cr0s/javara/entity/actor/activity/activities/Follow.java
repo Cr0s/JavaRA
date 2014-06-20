@@ -4,17 +4,14 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.order.Target;
+import cr0s.javara.util.Pos;
+import cr0s.javara.util.WaitAction;
 
 public class Follow extends Activity {
 
     private EntityActor self;
     private Target target;
     private int range;
-    
-    private static final int REPATH_DELAY_TICKS = 20;
-    private static final int REPATH_SPREAD = 5;
-    
-    private int repathDelay;
     
     public Follow (EntityActor self, Target tgt, int range) {
 	this.self = self;
@@ -28,15 +25,24 @@ public class Follow extends Activity {
 	    return this.nextActivity;
 	}
 	
-	if (this.target.isInRange(self.getPosition(), this.range) || --this.repathDelay > 0) {
-	    return this;
+	final Pos cachedPosition = this.target.centerPosition();
+	Activity move = ((MobileEntity) this.self).moveWithinRange(this.target, this.range);
+	
+	if (this.target.isInRange(self.getPosition(), this.range)) {
+	    WaitFor wait = new WaitFor(new WaitAction() {
+		@Override
+		public boolean waitFor() {
+		    return !Follow.this.target.isValidFor(Follow.this.self) || !Follow.this.target.centerPosition().equals(cachedPosition);
+		}
+	    });
+	    
+	    wait.queueActivity(move);
+	    move.queueActivity(this);
+	    
+	    return wait;
 	}
 	
-	this.repathDelay = this.self.world.getRandomInt(this.REPATH_DELAY_TICKS - this.REPATH_SPREAD, this.REPATH_DELAY_TICKS + this.REPATH_SPREAD);
-	
-	Activity move = ((MobileEntity) this.self).moveWithinRange(this.target, this.range);
 	move.queueActivity(this);
-	
 	return move;
     }
 

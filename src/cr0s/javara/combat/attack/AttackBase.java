@@ -209,5 +209,9 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     public void cancelAttack() {
 	this.isAttacking = false;
 	this.target = null;
-    }    
+    }   
+    
+    public Target getTarget() {
+	return this.target;
+    }
 }
