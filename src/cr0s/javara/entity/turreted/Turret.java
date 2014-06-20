@@ -216,7 +216,7 @@ public class Turret {
     public boolean faceTarget(Pos centerPosition) {
 	int facingToTarget = RotationUtil.getRotationFromXY(this.getCenterPos().getX(), this.getCenterPos().getY(), centerPosition.getX(), centerPosition.getY());
 	//System.out.println("[FaceTarget] arg: " + centerPosition + " | self: " + this.getCenterPos() + " | facing: " + facingToTarget);
-	setTarget(centerPosition);
+	//setTarget(centerPosition);
 	this.rotateTurretTo(facingToTarget);
 	
 	return this.turretRotation == facingToTarget;

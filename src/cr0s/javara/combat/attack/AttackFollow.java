@@ -9,10 +9,7 @@ import cr0s.javara.entity.actor.activity.activities.Follow;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.Target;
 
-public class AttackFollow extends AttackBase {
-
-    private Target target;
-    
+public class AttackFollow extends AttackBase {    
     public AttackFollow(EntityActor s) {
 	super(s);
     }
@@ -22,7 +19,7 @@ public class AttackFollow extends AttackBase {
 	super.update(delta);
 	
 	if (this.isAttacking) {
-	    this.doAttack(target);
+	    this.doAttack(this.target);
 	}
 	
 	this.isAttacking = this.target != null && this.target.isValidFor(self);
@@ -58,23 +55,23 @@ public class AttackFollow extends AttackBase {
 
 	@Override
 	public Activity tick(EntityActor a) {
-	    if (this.isCancelled() || !this.target.isValidFor(self)) {
+	    if (this.isCancelled() || !this.target.isValidFor(this.self)) {
 		return this.nextActivity;
 	    }
 	    
-	    if (self.isDead()) {
+	    if (this.self.isDead()) {
 		return this.nextActivity;
 	    }
 	    
 	    final int rangeTolerance = 2;
 	    
-	    Armament weapon = attack.chooseArmamentForTarget(this.target);
+	    Armament weapon = this.attack.chooseArmamentForTarget(this.target);
 	    if (weapon != null) {
 		int range = (int) Math.max(0,  weapon.getWeapon().range - rangeTolerance);
-		this.attack.target = target;
+		this.attack.target = this.target;
 		
-		if (this.me != null && !target.isInRange(me.getPosition(), weapon.getWeapon().range)) {
-		    Follow f = (Follow) me.moveFollow(self, target, range);
+		if (this.me != null && !this.target.isInRange(this.self.getPosition(), weapon.getWeapon().range)) {
+		    Follow f = (Follow) this.me.moveFollow(this.self, this.target, range);
 		    f.queueActivity(this);
 		    
 		    return f;

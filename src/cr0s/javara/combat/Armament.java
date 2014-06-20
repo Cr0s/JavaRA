@@ -87,6 +87,8 @@ public class Armament {
 		? ((IHaveTurret) this.self).getTurrets().get(0).getCenterPos()
 		: this.self.getPosition();
 
+		actorCenter.setY(actorCenter.getY() - b.offset.getZ());
+		
 		int sourceFacing = (this.self instanceof IHaveTurret) 
 			? ((IHaveTurret) this.self).getTurrets().get(0).getCurrentFacing() 
 			: this.self.currentFacing;
@@ -103,6 +105,7 @@ public class Armament {
 			muzzleX -= offsetSide * Math.cos(angle);
 			muzzleY -= offsetSide * -Math.sin(angle);
 
+			
 			return new Pos(muzzleX, muzzleY);
     }
 

@@ -28,6 +28,8 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 
     private ArrayList<OrderTargeter> orders = new ArrayList<OrderTargeter>();
 
+    protected Target target;
+    
     public AttackBase(EntityActor s) {
 	this.self = s;
 
@@ -203,4 +205,9 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     public boolean isReloading() {
 	return this.armaments.size() != 0 && !this.armaments.get(0).isReloading();
     }
+    
+    public void cancelAttack() {
+	this.isAttacking = false;
+	this.target = null;
+    }    
 }
