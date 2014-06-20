@@ -245,6 +245,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	    return this.attack.issueOrder(self, targeter, target, ia);
 	}
 
+	this.attack.cancelAttack();
+	
 	return super.issueOrder(self, targeter, target, ia);
     }
 
