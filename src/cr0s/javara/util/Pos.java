@@ -79,15 +79,42 @@ public class Pos extends Point {
     }
 
     public Pos add(Pos other) {
-	this.setX(this.getX() + other.getX());
-	this.setY(this.getY() + other.getY());
-	this.setZ(this.getZ() + other.getZ());
+	Pos p = new Pos(0, 0);
+	p.setX(this.getX() + other.getX());
+	p.setY(this.getY() + other.getY());
+	p.setZ(this.getZ() + other.getZ());
 	
-	return this;
+	return p;
     }
     
     @Override
     public String toString() {
 	return "Pos (" + this.getX() + "; " + this.getY() + "; " + this.getZ() + ")";
     }
+
+    public Pos sub(Pos other) {
+	Pos p = new Pos(0, 0);
+	p.setX(this.getX() - other.getX());
+	p.setY(this.getY() - other.getY());
+	p.setZ(this.getZ() - other.getZ());
+	
+	return p;
+    }
+
+    public Pos rotate2D(float angle) {
+	return new Pos(this.getX() * (float) Math.sin(angle), this.getY() * (float) Math.cos(angle), this.getZ());
+    }
+    
+    public Pos mul(float c) {
+	Pos p = new Pos(0, 0);
+	p.setX(this.getX() * c);
+	p.setY(this.getY() * c);
+	p.setZ(this.getZ() * c);
+	
+	return p;
+    }
+
+    public float getHorizontalLength() {
+	return (float) Math.sqrt(this.getX() * this.getX() + this.getY() * this.getY());
+    }    
 }

@@ -203,7 +203,7 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     }
 
     public boolean isReloading() {
-	return this.armaments.size() != 0 && !this.armaments.get(0).isReloading();
+	return this.armaments.size() != 0 && this.armaments.get(0).isReloading();
     }
     
     public void cancelAttack() {

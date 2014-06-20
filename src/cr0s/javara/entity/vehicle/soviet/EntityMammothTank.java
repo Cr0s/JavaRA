@@ -14,6 +14,8 @@ import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.weapon.Weapon105mm;
+import cr0s.javara.combat.weapon.Weapon120mm;
+import cr0s.javara.combat.weapon.WeaponMammothTusk;
 import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IHaveCost;
@@ -84,13 +86,13 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.turret = new Turret(this, new Pos(0, 0), texture, 32, 32);
 	this.turret.setTurretSize(TEXTURE_WIDTH, TEXTURE_HEIGHT);
 	
-	Armament arma = new Armament(this, new Weapon105mm());
+	Armament arma = new Armament(this, new Weapon120mm());
 	arma.addBarrel(new Pos(14, -3, 6), 0);
 	arma.addBarrel(new Pos(14, 3, 6), 0);
 
-	Armament arma2 = new Armament(this, new WeaponSCUD());//new WeaponMammothTusk());
-	arma2.addBarrel(new Pos(3, -7, 6), -45);
-	arma2.addBarrel(new Pos(3, 7, 6), 45);
+	Armament arma2 = new Armament(this, new WeaponMammothTusk());
+	arma2.addBarrel(new Pos(-3, -6, 6), -30);
+	arma2.addBarrel(new Pos(-3, 6, 6), 30);
 	
 	attack = new AttackTurreted(this);
 	attack.armaments.add(arma);
@@ -133,7 +135,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.turret.render(g);
 	texture.endUse();
 
-	for (Armament arma : this.attack.armaments) {
+	/*for (Armament arma : this.attack.armaments) {
 	Pos actorCenter = (this instanceof IHaveTurret)
 		? ((IHaveTurret) this).getTurrets().get(0).getCenterPos()
 			: this.getPosition();
@@ -158,9 +160,14 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
 		    //g.setColor(i % 2 == 0 ? Color.green : Color.red);
 		    g.fillRect(muzzlePos.getX() - 2, muzzlePos.getY() - 2, 4, 4);
+		    
+		    float a = RotationUtil.facingToAngle(arma.getMuzzleFacing(b), this.getMaxFacings());
+		    float x = (float) (muzzlePos.getX() - Math.sin(a) * 10);
+		    float y = (float) (muzzlePos.getY() - Math.cos(a) * 10);
+		    g.drawLine(muzzlePos.getX(), muzzlePos.getY(), x, y);
 		}		
 
-	}
+	}*/
 	drawPath(g);
     }
 

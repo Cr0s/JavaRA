@@ -701,8 +701,8 @@ public class World implements TileBasedMap {
 	    if (e instanceof EntityActor) {
 		EntityActor ea = (EntityActor) e;
 		
-		Pos loc = ea.getPosition();
-		
+		Pos loc = new Pos(ea.boundingBox.getCenterX(), ea.boundingBox.getCenterY());
+
 		if (pos.distanceTo(loc) <= range) {
 		    result.add(ea);
 		}

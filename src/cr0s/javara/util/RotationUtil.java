@@ -2,6 +2,8 @@ package cr0s.javara.util;
 
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
+
 public class RotationUtil {
     public static final float FACING_TO_DEGREE = 11.25f;
     
@@ -69,5 +71,28 @@ public class RotationUtil {
     public static int angleToFacing(float angle) {
 	float facingDegrees = (float) Math.toDegrees(angle);
 	return (int) (facingDegrees / FACING_TO_DEGREE);
+    }
+
+    public static float cycle(float angle, int size) {	
+	if (angle > size) {
+	    return angle - size;
+	} else if (angle < 0) {
+	    return size + angle;
+	} else {
+	    return angle;
+	}
+    }
+    
+    public static int tickFacing(int currentFacing, int desiredFacing, int rot) {
+	int leftTurn = (currentFacing - desiredFacing) % 32;
+	int rightTurn = (desiredFacing - currentFacing) % 32;
+	
+	if (Math.min(leftTurn, rightTurn) < rot) {
+	    return desiredFacing;
+	} else if (rightTurn < leftTurn) {
+	    return (int) cycle(currentFacing + rot, 32);
+	} else {
+	    return (int) cycle(currentFacing - rot, 32);
+	}
     }
 }

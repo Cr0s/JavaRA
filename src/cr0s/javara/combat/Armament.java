@@ -175,7 +175,7 @@ public class Armament {
 		return brl;
     }
 
-    private int getMuzzleFacing(Barrel brl) {
+    public int getMuzzleFacing(Barrel brl) {
 	Pos actorCenter = (this.self instanceof IHaveTurret)
 		? ((IHaveTurret) this.self).getTurrets().get(0).getCenterPos()
 			: this.self.getPosition();
@@ -184,10 +184,11 @@ public class Armament {
 			? ((IHaveTurret) this.self).getTurrets().get(0).getCurrentFacing() 
 				: this.self.currentFacing;
 
-			float angle = RotationUtil.facingToAngle(sourceFacing, this.self.getMaxFacings());
+			float angle = (float) Math.toDegrees(RotationUtil.facingToAngle(sourceFacing, this.self.getMaxFacings()));
 			angle += brl.yaw;
+			angle = RotationUtil.cycle(angle, 360);
 
-			return RotationUtil.angleToFacing(angle);
+			return (int) RotationUtil.cycle(RotationUtil.angleToFacing((float) Math.toRadians(angle)), this.self.getMaxFacings());
     }
 
     public Weapon getWeapon() {

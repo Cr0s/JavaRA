@@ -108,7 +108,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	this.randomTicksBeforeIdleSeq = (int) (this.MIN_IDLE_DELAY_TICKS + Math.random() * (this.MAX_IDLE_DELAY_TICKS - this.MIN_IDLE_DELAY_TICKS));
 
 	this.armorType = ArmorType.NONE;
-	
+
 	this.maxFacings = this.MAX_FACING;
     }
 
@@ -149,14 +149,27 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	    this.currentSequence.update(this.currentFacing);
 	}
 
+	// TODO: refactor this crap
 	this.boundingBox.setBounds(this.posX + this.texture.width / 3 + 2, this.posY + this.texture.height / 2 - 15, 13, 18);
 	if ((this.currentActivity instanceof MoveInfantry || this.currentActivity instanceof MoveInfantry.MovePart) && this.getCurrentAnimationState() != AnimationState.WAITING) {
 	    this.setCurrentAnimationState(AnimationState.MOVING);
 	    this.currentSequence = this.runSequence;
 	} else if (currentActivity instanceof Attack) {
+	    if (this.currentSequence == this.runSequence) {
+		this.currentSequence = this.attackingSequence;
+	    }
+	    
 	    if (this.attack.isAttacking && !this.attack.isReloading()) {
+		//System.out.println("Attacking");
 		this.setCurrentAnimationState(AnimationState.ATTACKING);
 		this.currentSequence = this.attackingSequence;
+	    } else {
+		if (this.attackingSequence.isFinished()) {
+		    //System.out.println("Reloading");
+		    this.setCurrentAnimationState(AnimationState.WAITING);
+		    this.currentSequence = this.standSequence;
+		    this.attackingSequence.reset();
+		}
 	    }
 	} else if (this.isIdle()) {
 	    if (this.getCurrentAnimationState() != AnimationState.IDLE && this.getCurrentAnimationState() != AnimationState.IDLE_ANIMATING) {
@@ -187,7 +200,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     @Override
     public void renderEntity(Graphics g) {
 	drawPath(g);
-	
+
 	//if (this.sheet != null) {
 	this.currentSequence.render(this.posX, this.posY);
 	//}
@@ -316,15 +329,15 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	    super.resolveOrder(order);
 	}
     }      
-    
+
     @Override
     public Activity moveToRange(Pos cellPos, int range) {
 	MoveInfantry move = new MoveInfantry(this, cellPos, range);
 	move.forceRange = true;
-	
+
 	return move;
     }      
-    
+
     @Override
     public int getMaxFacings() {
 	return this.maxFacings;

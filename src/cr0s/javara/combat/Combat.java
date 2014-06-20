@@ -60,7 +60,7 @@ public class Combat {
 
 	switch (warhead.model) {
 	case NORMAL:
-	    float maxSpread = warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2));
+	    float maxSpread = warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2)) * 24.0f;
 	    ArrayList<EntityActor> hitActors = world.getActorsInCircle(pos, maxSpread);
 
 	    for (EntityActor victim : hitActors) {
@@ -140,7 +140,7 @@ public class Combat {
 	float rawDamage = warhead.damage;
 	if (withFalloff)
 	{
-	    float distance = (float) Math.max(0, target.getPosition().distanceTo(pos) - 0.416);
+	    float distance = (float) Math.max(0, target.getPosition().distanceTo(pos) - 0.5f) / 24.0f;
 	    float foff = getDamageFalloff(distance * 1f / warhead.spread);
 	    rawDamage = foff * rawDamage;
 	}
