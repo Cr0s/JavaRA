@@ -127,8 +127,8 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 
 	@Override
 	public boolean canTarget(Entity self, Target target) {
-	    return (target.isCellTarget() && canTargetCell(target)) 
-		    || (target.isEntityTarget() && target.getTargetEntity() instanceof EntityActor && canTargetActor(target));
+	    return (target.isCellTarget() && this.canTargetCell(target)) 
+		    || (target.isEntityTarget() && target.getTargetEntity() instanceof EntityActor && this.canTargetActor(target));
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     }
 
     public boolean hasAnyValidWeapons(Target tgt) {
-	return chooseArmamentForTarget(tgt) != null;
+	return this.chooseArmamentForTarget(tgt) != null;
     }
 
     @Override

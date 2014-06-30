@@ -48,7 +48,11 @@ public class AttackFollow extends AttackBase {
 	
 	public AttackActivity(AttackFollow a, EntityActor self, Target tgt, boolean allowMove) {
 	    this.attack = a;
-	    this.me = (MobileEntity) self;
+	    
+	    if (self instanceof MobileEntity) {
+		this.me = (MobileEntity) self;
+	    }
+	    
 	    this.target = tgt;
 	    this.self = self;
 	}

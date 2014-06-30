@@ -54,7 +54,7 @@ public class AutoTarget {
 
     private void tick() {
 	if (this.nextScanTime > 0) {
-	    --nextScanTime;
+	    --this.nextScanTime;
 	}
     }
 

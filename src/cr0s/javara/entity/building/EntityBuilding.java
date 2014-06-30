@@ -130,7 +130,9 @@ public abstract class EntityBuilding extends EntityActor {
     }
 
     @Override
-    public abstract void updateEntity(int delta);
+    public void updateEntity(int delta) {
+	super.updateEntity(delta);
+    }
 
     @Override
     public abstract void renderEntity(Graphics g);

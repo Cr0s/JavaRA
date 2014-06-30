@@ -1,5 +1,8 @@
 package cr0s.javara.entity.building.soviet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -7,6 +10,11 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.combat.Armament;
+import cr0s.javara.combat.attack.AttackTurreted;
+import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.weapon.WeaponFireballLauncher;
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
@@ -17,15 +25,22 @@ import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.IOreCapacitor;
 import cr0s.javara.entity.building.IPowerConsumer;
+import cr0s.javara.entity.turreted.IHaveTurret;
+import cr0s.javara.entity.turreted.Turret;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.order.InputAttributes;
+import cr0s.javara.order.Order;
+import cr0s.javara.order.OrderTargeter;
+import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
+import cr0s.javara.util.Pos;
 
-public class EntityFireTurret extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost, IDefense {
+public class EntityFireTurret extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost, IDefense, IHaveTurret {
 
     private SpriteSheet sheet;
     
@@ -40,6 +55,13 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
     private static final int SHROUD_REVEALING_RANGE = 3;
     
     private static final int BUILDING_COST = 600;
+    
+    private AttackTurreted attack;
+    private Armament arma;
+    
+    private AutoTarget autoTarget;
+
+    private Turret turret;
     
     public EntityFireTurret(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "x");
@@ -56,6 +78,18 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	this.unitProductionAlingment = Alignment.SOVIET;
 
 	this.requiredToBuild.add(EntityBarracks.class);
+	
+	this.attack = new AttackTurreted(this);
+	this.arma = new Armament(this, new WeaponFireballLauncher());
+	this.arma.addBarrel(new Pos(8, 0, 0), 0);
+	
+	this.attack.addArmament(this.arma);
+	
+	this.autoTarget = new AutoTarget(this, this.attack);
+	
+	this.ordersList.addAll(this.attack.getOrders());
+	
+	this.turret = new Turret(this, new Pos(12, 12), null, 0, 8);
     }
     
     private void initTextures() {
@@ -89,6 +123,10 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
+	
+	this.attack.update(delta);
+	this.autoTarget.update(delta);
     }
 
     @Override
@@ -134,5 +172,43 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
     @Override
     public int getBuildingCost() {
 	return BUILDING_COST;
-    }        
+    }  
+    
+    @Override
+    public Order issueOrder(Entity self, OrderTargeter targeter, Target target, InputAttributes ia) {
+	if (super.issueOrder(self, targeter, target, ia) == null) {
+	    return this.attack.issueOrder(self, targeter, target, ia);
+	}
+
+	this.attack.cancelAttack();
+	
+	return super.issueOrder(self, targeter, target, ia);
+    }
+
+    @Override
+    public void resolveOrder(Order order) {
+	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
+	    this.attack.resolveOrder(order);
+	} else {
+	    super.resolveOrder(order);
+	}
+    }
+
+    @Override
+    public void drawTurrets(Graphics g) {
+	
+    }
+
+    @Override
+    public void updateTurrets(int delta) {
+	this.turret.update(delta);
+    }
+
+    @Override
+    public List<Turret> getTurrets() {
+	ArrayList<Turret> a = new ArrayList<Turret>();
+	a.add(this.turret);
+	
+	return a;
+    }       
 }

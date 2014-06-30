@@ -85,10 +85,6 @@ public class SmudgeLayer {
     public void addSmudge(Pos pos, boolean crater) {
 	if (Main.getInstance().getWorld().getRandomInt(0, 100) < SMOKE_PERCENTAGE) {
 	    Main.getInstance().getWorld().spawnSmokeAt(new Pos(pos.getX() * 24 + 12, pos.getY() * 24 + 12), SMOKE_SPRITE);
-	    
-	    if (!crater) {
-		Main.getInstance().getWorld().spawnExplosionAt(new Pos(pos.getX() * 24 + 12, pos.getY() * 24 + 12), "atomsfx.shp");
-	    }
 	}
 	
 	Smudge s = crater ? this.craters.get(pos) : this.scorches.get(pos);
