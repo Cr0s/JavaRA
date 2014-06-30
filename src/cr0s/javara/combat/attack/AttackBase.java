@@ -76,6 +76,18 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 	return maxRange;
     }
 
+    public void attackTarget(Target tgt, boolean queued, boolean allowMove) {
+	if (!tgt.isValidFor(this.self)) {
+	    return;
+	}
+	
+	if (!queued) {
+	    this.self.cancelActivity();
+	}
+	
+	this.self.queueActivity(this.getAttackActivity(tgt, allowMove));
+    }
+    
     public class AttackTargeter extends OrderTargeter {
 	AttackBase ab;
 
@@ -178,14 +190,8 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 		return;
 	    }
 	    
-	    this.attackTarget(tgt, true);
+	    this.attackTarget(tgt, false, true);
 	}
-    }
-
-    private void attackTarget(Target tgt, boolean allowMove) {
-	this.self.cancelActivity();
-	
-	this.self.queueActivity(this.getAttackActivity(tgt, allowMove));
     }
 
     public boolean isReachableTarget(Target tgt, boolean allowMove) {

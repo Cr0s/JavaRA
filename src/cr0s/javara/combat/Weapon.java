@@ -91,6 +91,10 @@ public abstract class Weapon {
     }
 
     public boolean isValidAgainst(Target t) {
+	if (t == null) {
+	    return false;
+	}
+	
 	if (t.isEntityTarget()) {
 	    return this.isValidAgainst((EntityActor) t.getTargetEntity());
 	} else if (t.isCellTarget()) {

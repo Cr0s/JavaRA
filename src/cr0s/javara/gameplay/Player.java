@@ -137,6 +137,18 @@ public class Player {
 	y.isVisible = true;
 	this.world.spawnEntityInWorld(y);
 	
+	eht = new EntityMammothTank(24.0f * this.spawnX - 3 * 24, 24.0f * this.spawnY - 3 * 24, team, other);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht);
+
+	eht2 = new EntityMammothTank(24.0f * this.spawnX - 4 * 24, 24.0f * this.spawnY - 3 * 24, team, other);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(eht2);
+	
+	emt3 = new EntityMammothTank(24.0f * this.spawnX - 3 * 24, 24.0f * this.spawnY - 2 * 24, team, other);
+	eht.isVisible = true;
+	this.world.spawnEntityInWorld(emt3);	
+	
 	this.base.gainCash(5000);
     }
 

@@ -16,6 +16,7 @@ import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.Weapon;
 import cr0s.javara.combat.attack.AttackTurreted;
+import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
@@ -65,7 +66,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     private Turret turret;
 
     private AttackTurreted attack;
-
+    private AutoTarget autoTarget;
+    
     public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -87,6 +89,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	attack = new AttackTurreted(this);
 	attack.armaments.add(arma);
 
+	this.autoTarget = new AutoTarget(this, this.attack);
+	
 	this.ordersList.addAll(attack.getOrders());
     }
 
@@ -106,6 +110,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 6, posY + (TEXTURE_WIDTH / 4) - 12, TEXTURE_WIDTH / 2, TEXTURE_HEIGHT / 2);
 
 	this.attack.update(delta);
+	this.autoTarget.update(delta);
     }
 
     @Override

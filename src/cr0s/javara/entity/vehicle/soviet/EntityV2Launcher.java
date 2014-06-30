@@ -18,6 +18,7 @@ import cr0s.javara.combat.ArmorType;
 import cr0s.javara.combat.Weapon;
 import cr0s.javara.combat.attack.AttackFrontal;
 import cr0s.javara.combat.attack.AttackTurreted;
+import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
@@ -64,7 +65,8 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
     private final int BUILDING_COST = 1150;
 
     private AttackFrontal attack;
-
+    private AutoTarget autoTarget;
+    
     public EntityV2Launcher(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -84,6 +86,8 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 	attack = new AttackFrontal(this);
 	attack.armaments.add(arma);
 
+	this.autoTarget = new AutoTarget(this, this.attack);
+	
 	this.ordersList.addAll(attack.getOrders());
     }
 
@@ -94,6 +98,7 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 	boundingBox.setBounds(posX + (TEXTURE_WIDTH / 4) - 7, posY + (TEXTURE_WIDTH / 4) - 12, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));	
 
 	this.attack.update(delta);
+	this.autoTarget.update(delta);
     }
 
     @Override

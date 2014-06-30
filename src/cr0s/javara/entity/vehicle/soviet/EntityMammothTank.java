@@ -15,6 +15,7 @@ import org.newdawn.slick.util.pathfinding.Path;
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.attack.AttackTurreted;
+import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.Weapon120mm;
 import cr0s.javara.combat.weapon.WeaponMammothTusk;
@@ -72,10 +73,13 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
     private final int BUILDING_COST = 2000;
     private Turret turret;
 
-    private AttackTurreted attack;    
+    private AttackTurreted attack;
     Pos choosen;
 
     private ArrayList<Pos> cells = new ArrayList<Pos>();
+    private AutoTarget autoTarget;
+    
+    
     public EntityMammothTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -102,7 +106,9 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	attack.armaments.add(arma);
 	attack.armaments.add(arma2);
 
-	this.ordersList.addAll(attack.getOrders());	
+	this.ordersList.addAll(attack.getOrders());
+	
+	this.autoTarget = new AutoTarget(this, this.attack);
     }
 
     @Override
@@ -118,7 +124,8 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	}
 
 	attack.update(delta);
-
+	this.autoTarget.update(delta);
+	
 	boundingBox.setBounds(this.posX, this.posY, (TEXTURE_WIDTH / 2), (TEXTURE_HEIGHT / 2));
     }
 
