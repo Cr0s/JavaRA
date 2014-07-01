@@ -11,45 +11,45 @@ import cr0s.javara.entity.effect.MuzzleFlash;
 import cr0s.javara.order.Target;
 import cr0s.javara.util.Pos;
 
-public class WeaponSCUD extends Weapon {
+public class WeaponGrenade extends Weapon {
 
-    private final static int ROF = 240;
-    private final static float WEAPON_RANGE = 10f;
+    private final static int ROF = 60;
+    private final static float WEAPON_RANGE = 4f;
     
-    private final static int TEXTURE_WIDTH = 41;
-    private final static int TEXTURE_HEIGHT = 41;
+    private final static int TEXTURE_WIDTH = 8;
+    private final static int TEXTURE_HEIGHT = 8;
     
-    private final static String BULLET_TEXTURE = "v2.shp";
+    private final static String BULLET_TEXTURE = "bomb.shp";
     
-    private final static String MUZZLE_FLASH = "";
+    private final static String MUZZLE_FLASH = null;
     private final static int MUZZLE_FLASH_FACINGS = 0;
     private final static int MUZZLE_FLASH_LENGTH = 0;
     
     private final static int BURST = 1;
     private final static int BURST_DELAY = 3;
     
-    private final static int DAMAGE = 450;
-    private final static float SPREAD = 4f;
+    private final static int DAMAGE = 60;
+    private final static float SPREAD = 1.5f;
     private static final float PROJECTILE_SPEED = 10.0f;
     private static final int BULLET_ANGLE = 45;
-    private static final int NUM_FACINGS = 32;
-    private static final float INACCURACY = 0.2f;
+    private static final int NUM_FACINGS = 8;
+    private static final float INACCURACY = 0.5f;
     
-    public WeaponSCUD() {
+    public WeaponGrenade() {
 	super(ROF, WEAPON_RANGE);
 	
-	this.minRange = 3;
+	this.minRange = 0;
 	Warhead wh = new Warhead();
 	
 	wh.damage = DAMAGE;
 	wh.spread = SPREAD;
-	wh.explosion = "veh-hit1.shp";
+	wh.explosion = "veh-hit2.shp";
 	wh.impactSound = "kaboom25";
 	
-	wh.waterExplosion = "h2o_exp1.shp";
+	wh.waterExplosion = "h2o_exp3.shp";
 	wh.waterImpactSound = "splash9";
 	
-	this.firingSound = "missile1";
+	this.firingSound = "grenade1";
 	
 	wh.infDeath = "3";
 	wh.leavesSmudge = true;
@@ -57,12 +57,11 @@ public class WeaponSCUD extends Weapon {
 	
 	wh.canAttackOre = true;
 	
-	wh.effectiveness.put(ArmorType.NONE, 90);
-	wh.effectiveness.put(ArmorType.WOOD, 75);
-	wh.effectiveness.put(ArmorType.LIGHT, 70);
-	wh.effectiveness.put(ArmorType.HEAVY, 40);
+	wh.effectiveness.put(ArmorType.NONE, 50);
+	wh.effectiveness.put(ArmorType.WOOD, 100);
+	wh.effectiveness.put(ArmorType.LIGHT, 25);
+	wh.effectiveness.put(ArmorType.HEAVY, 5);
 
-	
 	this.warheads.add(wh);
 	
 	this.validTargets.add(TargetType.GROUND);
@@ -73,7 +72,7 @@ public class WeaponSCUD extends Weapon {
 	
     }
     
-    protected WeaponSCUD(int rof, float weaponRange) {
+    protected WeaponGrenade(int rof, float weaponRange) {
 	super(rof, weaponRange);
     }
 
@@ -82,21 +81,9 @@ public class WeaponSCUD extends Weapon {
 	    EntityActor srcActor, Pos centerPosition, Target tgt) {
 	// Spawn bullet projectile
 	Bullet blt = new Bullet(srcActor, muzzlePosition, centerPosition, (EntityActor) tgt.getTargetEntity(), TEXTURE_WIDTH, TEXTURE_HEIGHT, 0, 0, BULLET_ANGLE, BULLET_TEXTURE, this, PROJECTILE_SPEED, NUM_FACINGS);
-	blt.trail = "smokey.shp";
-	blt.trailInterval = 5;
-	blt.trailDelay = 1;
 	
 	blt.currentFacing = fcng;
 	blt.inaccuracy = INACCURACY;
-	
-	// Spawn muzzle flash
-	if (this.MUZZLE_FLASH != null && !this.MUZZLE_FLASH.isEmpty()) {
-	    MuzzleFlash mz = new MuzzleFlash(muzzlePosition, this.MUZZLE_FLASH, fcng, MUZZLE_FLASH_FACINGS, MUZZLE_FLASH_LENGTH);
-	    mz.isVisible = true;
-	    mz.setWorld(srcActor.world);
-	    
-	    srcActor.world.spawnEntityInWorld(mz);
-	}
 	
 	return blt;
     }

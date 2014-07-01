@@ -29,7 +29,7 @@ public class WeaponFireballLauncher extends Weapon {
     private final static int BURST_DELAY = 20;
     
     private final static int DAMAGE = 150;
-    private final static float SPREAD = 0.125f;
+    private final static float SPREAD = 3f;
     private static final float PROJECTILE_SPEED = 2.0f;
     private static final int BULLET_ANGLE = 0;
     
@@ -81,8 +81,8 @@ public class WeaponFireballLauncher extends Weapon {
 	// Spawn bullet projectile
 	Bullet blt = new Bullet(srcActor, muzzlePosition, centerPosition, (EntityActor) tgt.getTargetEntity(), TEXTURE_WIDTH, TEXTURE_HEIGHT, 0, 0, BULLET_ANGLE, BULLET_TEXTURE, this, PROJECTILE_SPEED);
 	blt.trail = "fb2.shp";
-	//blt.trailInterval = 5;
-	//blt.trailDelay = 3;
+	blt.trailInterval = 3;
+	blt.trailDelay = 1;
 	
 	// Spawn muzzle flash
 	if (this.MUZZLE_FLASH != null) {

@@ -132,23 +132,7 @@ public class Player {
 	EntityMammothTank emt3 = new EntityMammothTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 2 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(emt3);	
-	
-	EntityConstructionYard y = new EntityConstructionYard(24.0f * this.spawnX + 1 * 24, 24.0f * this.spawnY + 4 * 24, team, other);
-	y.isVisible = true;
-	this.world.spawnEntityInWorld(y);
-	
-	eht = new EntityMammothTank(24.0f * this.spawnX - 3 * 24, 24.0f * this.spawnY - 3 * 24, team, other);
-	eht.isVisible = true;
-	this.world.spawnEntityInWorld(eht);
-
-	eht2 = new EntityMammothTank(24.0f * this.spawnX - 4 * 24, 24.0f * this.spawnY - 3 * 24, team, other);
-	eht.isVisible = true;
-	this.world.spawnEntityInWorld(eht2);
-	
-	emt3 = new EntityMammothTank(24.0f * this.spawnX - 3 * 24, 24.0f * this.spawnY - 2 * 24, team, other);
-	eht.isVisible = true;
-	this.world.spawnEntityInWorld(emt3);	
-	
+		
 	this.base.gainCash(5000);
     }
 

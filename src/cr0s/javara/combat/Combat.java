@@ -62,7 +62,7 @@ public class Combat {
 
 	switch (warhead.model) {
 	case NORMAL:
-	    float maxSpread = warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2));
+	    float maxSpread = (warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2))) * 24.0f;
 	    ArrayList<EntityActor> hitActors = world.getActorsInCircle(pos, maxSpread);
 
 	    for (EntityActor victim : hitActors) {

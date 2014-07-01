@@ -143,7 +143,7 @@ public class Main extends StateBasedGame {
     }
 
     public void initGame() {
-	Random r = new Random(System.currentTimeMillis());
+	Random r = new Random();
 
 	this.observerShroudRenderer = new ShroudRenderer(w);
 
@@ -161,6 +161,11 @@ public class Main extends StateBasedGame {
 
 	this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
 	this.gsb.initSidebarPages();
+	
+	Team team2 = new Team();
+	Player otherPlayer = new Player(w, "Enemy", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+	player.setTeam(team2);
+	w.addPlayer(otherPlayer);
     }
 
 

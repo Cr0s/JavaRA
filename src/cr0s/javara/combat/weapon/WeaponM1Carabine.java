@@ -29,7 +29,7 @@ public class WeaponM1Carabine extends Weapon {
     private final static int BURST_DELAY = 3;
     
     private final static int DAMAGE = 15;
-    private final static float SPREAD = 0.125f;
+    private final static float SPREAD = 0.1f;
     private static final float PROJECTILE_SPEED = 36f;
     private static final int BULLET_ANGLE = 0;
     

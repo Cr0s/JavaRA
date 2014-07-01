@@ -18,6 +18,8 @@ public class MinimapRenderer {
     private World w;
 
     private Image minimapImage;
+    
+    private static final int ENTITY_ADDITIONAL_SIZE = 1; // grow entity rectangle point in pixels to see on mini map more clear
 
     public MinimapRenderer(World aWorld, int aWidth, int aHeight) {
 	this.w = aWorld;
@@ -48,13 +50,13 @@ public class MinimapRenderer {
 	    return null;
 	}
 
-	int surfaceId = w.getMap().getSurfaceIdAt(cellX, cellY);
-	Color c = w.getMap().getTileSet().terrainColors.get(surfaceId);
+	int surfaceId = this.w.getMap().getSurfaceIdAt(cellX, cellY);
+	Color c = this.w.getMap().getTileSet().terrainColors.get(surfaceId);
 
 	if (c != null) {
 	    return c;
 	} else {
-	    return w.getMap().getTileSet().terrainColors.get(TileSet.SURFACE_CLEAR_ID);
+	    return this.w.getMap().getTileSet().terrainColors.get(TileSet.SURFACE_CLEAR_ID);
 	}
     }
 
@@ -63,20 +65,17 @@ public class MinimapRenderer {
 	try {
 	    gr = this.minimapImage.getGraphics();
 
-
-	    final int ENTITY_ADDITIONAL_SIZE = 1; // grow entity rectangle point in pixels to see on mini map more clear
-
 	    if (Main.getInstance().getPlayer().getShroud() != null) {
 		gr.setColor(Color.black);
-		gr.fillRect(0, 0, width, height);
+		gr.fillRect(0, 0, this.width, this.height);
 	    }
 
 	    // Render terrain
-	    for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
+	    for (int x = 0; x < this.width; x++) {
+		for (int y = 0; y < this.height; y++) {
 		    int r, g, b;
 
-		    Color targetColor = getMapCellColor((int) (w.getMap().getBounds().getMinX() / 24 + x), (int) (w.getMap().getBounds().getMinY() / 24 + y));
+		    Color targetColor = this.getMapCellColor((int) (this.w.getMap().getBounds().getMinX() / 24 + x), (int) (this.w.getMap().getBounds().getMinY() / 24 + y));
 
 		    if (targetColor != null) {
 			gr.setColor(targetColor);
@@ -91,9 +90,14 @@ public class MinimapRenderer {
 		    continue;
 		}
 		
-		int cellPosX = (int) (e.posX - w.getMap().getBounds().getMinX()) / 24;
-		int cellPosY = (int) (e.posY - w.getMap().getBounds().getMinY()) / 24;
+		int cellPosX = (int) (e.posX - this.w.getMap().getBounds().getMinX()) / 24;
+		int cellPosY = (int) (e.posY - this.w.getMap().getBounds().getMinY()) / 24;
 
+		// Don't draw shrouded entities
+		if (Main.getInstance().getPlayer().getShroud() != null && !Main.getInstance().getPlayer().getShroud().isExplored(cellPosX, cellPosY)) {
+		    continue;
+		}
+		
 		gr.setColor(e.owner.playerColor.multiply(filterColor));
 		gr.fillRect(cellPosX - ENTITY_ADDITIONAL_SIZE, cellPosY - ENTITY_ADDITIONAL_SIZE, (int) e.sizeWidth / 24 + ENTITY_ADDITIONAL_SIZE, (int) e.sizeHeight / 24 + ENTITY_ADDITIONAL_SIZE);
 	    }

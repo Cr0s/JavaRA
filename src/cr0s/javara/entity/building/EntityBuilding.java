@@ -330,8 +330,8 @@ public abstract class EntityBuilding extends EntityActor {
     public void explodeBuilding() {
 	SoundManager.getInstance().playSfxAt(this.explosionSound, ((EntityActor) this).getPosition());
 	
-	for (int bX = 0; bX < getWidthInTiles(); bX++) {
-	    for (int bY = 0; bY < getHeightInTiles(); bY++) {
+	for (int bX = 0; bX < this.getWidthInTiles(); bX++) {
+	    for (int bY = 0; bY < this.getHeightInTiles(); bY++) {
 		world.spawnExplosionAt(new Pos(this.posX + bX * 24, this.posY + bY * 24), "fball1.shp");
 	    }
 	}
@@ -339,10 +339,26 @@ public abstract class EntityBuilding extends EntityActor {
     
     @Override
     public void giveDamage(EntityActor firedBy, int amount, Warhead warhead) {
-	super.giveDamage(firedBy, amount, warhead);
-	
-	if (getHp() <= 0) {
+	if (!this.isDead() && getHp() - amount <= 0) {
+	    this.setHp(0);
+	    this.setDead();
+	    
 	    explodeBuilding();
 	}
+		
+	// Play half damage sound and effect
+	if (this.getHp() >= this.getMaxHp() / 2 && this.getHp() - amount < this.getMaxHp() / 2) {
+	    SoundManager.getInstance().playSfxAt("kaboom1", this.getPosition());
+	    
+	    for (int bX = 0; bX < this.getWidthInTiles(); bX++) {
+		for (int bY = 0; bY < this.getHeightInTiles(); bY++) {
+		    if (world.getRandom().nextBoolean()) { 
+			world.spawnExplosionAt(new Pos(this.posX + bX * 24 + 12, this.posY + bY * 24 + 12), "fire1.shp");
+		    }
+		}
+	    }	    
+	}
+	
+	this.setHp(this.getHp() - amount);	
     }
 }

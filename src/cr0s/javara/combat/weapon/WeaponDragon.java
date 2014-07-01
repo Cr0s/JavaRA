@@ -33,7 +33,7 @@ public class WeaponDragon extends Weapon {
     private final static int BURST_DELAY = 3;
     
     private final static int DAMAGE = 50;
-    private final static float SPREAD = 0.125f;
+    private final static float SPREAD = 2.5f;
     private static final float PROJECTILE_SPEED = 10.0f;
     
     private static final int MISSILE_ANGLE = 0;

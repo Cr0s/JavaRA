@@ -29,7 +29,7 @@ public class Weapon105mm extends Weapon {
     private final static int BURST_DELAY = 3;
     
     private final static int DAMAGE = 40;
-    private final static float SPREAD = 0.125f;
+    private final static float SPREAD = 2f;
     private static final float PROJECTILE_SPEED = 15.0f;
     private static final int BULLET_ANGLE = 0;
     
@@ -57,6 +57,8 @@ public class Weapon105mm extends Weapon {
 	wh.effectiveness.put(ArmorType.CONCRETE, 50);
 	wh.effectiveness.put(ArmorType.NONE, 20);
 	wh.effectiveness.put(ArmorType.LIGHT, 75);
+	wh.effectiveness.put(ArmorType.WOOD, 95);
+	wh.effectiveness.put(ArmorType.HEAVY, 95);
 	
 	this.warheads.add(wh);
 	
