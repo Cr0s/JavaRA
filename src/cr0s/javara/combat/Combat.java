@@ -10,11 +10,13 @@ import cr0s.javara.util.Pos;
 
 public class Combat {
     public static String getImpactSound(Warhead warhead, boolean isWater) {
-	if (isWater && warhead.waterImpactSound != null)
+	if (isWater && warhead.waterImpactSound != null) {
 	    return warhead.waterImpactSound;
+	}
 
-	if (warhead.impactSound != null)
+	if (warhead.impactSound != null) {
 	    return warhead.impactSound;
+	}
 
 	return null;	
     }
@@ -60,7 +62,7 @@ public class Combat {
 
 	switch (warhead.model) {
 	case NORMAL:
-	    float maxSpread = warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2)) * 24.0f;
+	    float maxSpread = warhead.spread * (float) (Math.log(Math.abs(warhead.damage)) / Math.log(2));
 	    ArrayList<EntityActor> hitActors = world.getActorsInCircle(pos, maxSpread);
 
 	    for (EntityActor victim : hitActors) {
@@ -141,10 +143,10 @@ public class Combat {
 	if (withFalloff)
 	{
 	    float distance = (float) Math.max(0, target.getPosition().distanceTo(pos) - 0.5f) / 24.0f;
-	    float foff = getDamageFalloff(distance * 1f / warhead.spread);
+	    float foff = getDamageFalloff(distance);
 	    rawDamage = foff * rawDamage;
 	}
 	
-	return (float)(rawDamage * modifier * (float) (warhead.getEffectivenessFor(target) / 100.0f));
+	return (float) (rawDamage * modifier * (float) (warhead.getEffectivenessFor(target) / 100.0f));
     }
 }
