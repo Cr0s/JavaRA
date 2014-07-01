@@ -8,9 +8,11 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.combat.Armament;
+import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.WeaponFireballLauncher;
@@ -39,6 +41,7 @@ import cr0s.javara.order.Target;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
+import cr0s.javara.util.RotationUtil;
 
 public class EntityFireTurret extends EntityBuilding implements ISelectable, IPowerConsumer, IShroudRevealer, IHaveCost, IDefense, IHaveTurret {
 
@@ -89,7 +92,8 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	
 	this.ordersList.addAll(this.attack.getOrders());
 	
-	this.turret = new Turret(this, new Pos(12, 12), null, 0, 8);
+	this.turret = new Turret(this, new Pos(0, 0), null, 0, 32);
+	this.turret.width = this.turret.height = 24;
     }
     
     private void initTextures() {
@@ -113,6 +117,12 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	    g.setColor(owner.playerColor);
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
+	}
+
+	if (this.isSelected) {
+	    Circle c = new Circle(this.getPosition().getX(), this.getPosition().getY(), this.attack.getMaxRange() * 24);
+	    g.setColor(Color.yellow);
+	    g.draw(c);
 	}
     }
 

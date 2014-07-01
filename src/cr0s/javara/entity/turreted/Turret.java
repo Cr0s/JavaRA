@@ -39,7 +39,7 @@ public class Turret {
     private int recoilOffsetX, recoilOffsetY;
 
 
-    private int width, height;
+    public int width, height;
 
     public Turret(EntityActor a, Pos parentOffset, SpriteSheet texture, int aStartFrame, int aNumFacings) {
 	this(a, parentOffset, texture, aStartFrame, aNumFacings, MAX_RECOIL_DEFAULT);

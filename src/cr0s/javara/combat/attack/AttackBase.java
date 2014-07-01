@@ -133,7 +133,7 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 
 	@Override
 	public CursorType getCursorForTarget(Entity self, Target target) {
-	    return CursorType.CURSOR_ATTACK;
+	    return canTarget(self, target) ? CursorType.CURSOR_ATTACK : CursorType.CURSOR_POINTER;
 	}
     }
 
@@ -163,9 +163,12 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     @Override
     public Order issueOrder(Entity self, OrderTargeter targeter, Target target,
 	    InputAttributes ia) {
+	if (ia.mouseButton != 1) {
+	    return null;
+	}
+	
 	if (targeter instanceof AttackTargeter) {
 	    if (target.isCellTarget()) {
-		//String order, Entity subj, Pos targetLoc, Entity targetEnt, String targetStr, Pos extraLoc
 		return new Order("Attack", null, target.getTargetCell());
 	    } else {
 		if (target.getTargetEntity() instanceof EntityActor) {
