@@ -7,6 +7,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.render.map.TileMap;
+import cr0s.javara.util.Pos;
 
 
 
@@ -87,5 +88,10 @@ public class Camera {
 	
 	public Rectangle getMapTilesBounds() {
 		return mapTilesBounds;
+	}
+
+	public void scrollBy(Pos offset) {
+	    this.offsetX += Math.floor(offset.getX());
+	    this.offsetY += Math.floor(offset.getY());
 	}
 }

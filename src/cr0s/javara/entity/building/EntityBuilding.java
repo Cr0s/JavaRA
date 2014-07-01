@@ -13,6 +13,7 @@ import cr0s.javara.combat.Warhead;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
+import cr0s.javara.entity.effect.ScreenShaker;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.main.Main;
@@ -335,6 +336,8 @@ public abstract class EntityBuilding extends EntityActor {
 		world.spawnExplosionAt(new Pos(this.posX + bX * 24, this.posY + bY * 24), "fball1.shp");
 	    }
 	}
+	
+	ScreenShaker.getInstance().addEffect((int) (2 * (this.getHeightInTiles() + this.getWidthInTiles())), this.getPosition(), (int) (2 * (this.getHeightInTiles() + this.getWidthInTiles())));
     }
     
     @Override

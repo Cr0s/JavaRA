@@ -121,18 +121,23 @@ public class Player {
 	}*/
 
 	Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
-	EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
+	EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 12 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
 
-	EntityMammothTank eht2 = new EntityMammothTank(24.0f * this.spawnX + 4 * 24, 24.0f * this.spawnY + 3 * 24, team, this);
+	EntityMammothTank eht2 = new EntityMammothTank(24.0f * this.spawnX + 14 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht2);
 	
-	EntityMammothTank emt3 = new EntityMammothTank(24.0f * this.spawnX + 3 * 24, 24.0f * this.spawnY + 2 * 24, team, this);
+	EntityMammothTank emt3 = new EntityMammothTank(24.0f * this.spawnX + 13 * 24, 24.0f * this.spawnY + 6 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(emt3);	
 		
+	EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
+	m.isVisible = true;
+
+	this.world.spawnEntityInWorld(m);	
+	
 	this.base.gainCash(5000);
     }
 

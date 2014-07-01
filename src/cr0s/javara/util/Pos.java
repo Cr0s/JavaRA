@@ -116,5 +116,14 @@ public class Pos extends Point {
 
     public float getHorizontalLength() {
 	return (float) Math.sqrt(this.getX() * this.getX() + this.getY() * this.getY());
+    }
+
+    public Pos mul(Pos other) {
+	Pos p = new Pos(0, 0);
+	p.setX(this.getX() * other.getX());
+	p.setY(this.getY() * other.getY());
+	p.setZ(this.getZ() * other.getZ());
+	
+	return p;
     }    
 }

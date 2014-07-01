@@ -31,10 +31,10 @@ public class SoundManager {
 
 	// Listener radius is player's vieport radius
 	Rectangle viewportRect = Main.getInstance().getCamera().viewportRect;
-	System.out.println("Listener radius: " + ((float) Math.sqrt(viewportRect.getHeight() * viewportRect.getHeight() + viewportRect.getWidth() * viewportRect.getWidth()) / 2f));
+	float radius = ((float) Math.sqrt(viewportRect.getHeight() * viewportRect.getHeight() + viewportRect.getWidth() * viewportRect.getWidth()) / 2f);
 	
 	
-	Soundly.get().setListenerRadius(24 * 150);
+	Soundly.get().setListenerRadius(radius * 24);
 	
 	sound.setDistanceCheckingEnabled(true);
 	sound.setProximityEnabled(true); 

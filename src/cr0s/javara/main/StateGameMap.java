@@ -15,6 +15,7 @@ import org.newdawn.slick.state.StateBasedGame;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.effect.MoveFlash;
+import cr0s.javara.entity.effect.ScreenShaker;
 import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
@@ -351,6 +352,8 @@ public class StateGameMap extends BasicGameState {
 	    throws SlickException {
 
 	Main.getInstance().getController().update(container, delta);
+	
+	ScreenShaker.getInstance().update(delta);
 	Main.getInstance().getCamera().update(container, delta);
 	updateCursor();
 

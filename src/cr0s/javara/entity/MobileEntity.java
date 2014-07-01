@@ -82,9 +82,9 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
     }
     
     protected void drawPath(Graphics g) {
-	//if (!Main.DEBUG_MODE) {
-	//    return;
-	//}
+	if (!Main.DEBUG_MODE) {
+	    return;
+	}
 
 	if (this.currentActivity != null) {
 	    Path currentPath = null;
