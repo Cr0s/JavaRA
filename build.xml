@@ -5,7 +5,7 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="JavaRA">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../Downloads/Архивы/eclipse-java-kepler-R-win32/eclipse"/>
+    <property name="ECLIPSE_HOME" value="!!!YOUR ECLIPSE HOME DIR!!!"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
@@ -21,7 +21,6 @@
         <pathelement location="lib/lwjgl_util.jar"/>
         <pathelement location="lib/lwjgl_util_applet.jar"/>
         <pathelement location="lib/tinylinepp.jar"/>
-        <pathelement location="../../Downloads/redhorizon-master/redhorizon-master/Libraries/blowfishj-2.41.jar"/>
         <pathelement location="lib/snakeyaml-1.13.jar"/>
     </path>
     <target name="init">
@@ -59,18 +58,8 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="LameTest">
-        <java classname="org.newdawn.slick.tests.LameTest" failonerror="true" fork="yes">
-            <classpath refid="JavaRA.classpath"/>
-        </java>
-    </target>
     <target name="Main">
         <java classname="cr0s.javara.main.Main" failonerror="true" fork="yes">
-            <classpath refid="JavaRA.classpath"/>
-        </java>
-    </target>
-    <target name="Scroller">
-        <java classname="test.Scroller" failonerror="true" fork="yes">
             <classpath refid="JavaRA.classpath"/>
         </java>
     </target>
