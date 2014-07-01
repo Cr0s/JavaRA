@@ -107,7 +107,7 @@ public class ResourceManager {
 	    List<Path> mixFiles = listDirectoryMixes(Paths.get(RESOURCE_FOLDER));
 
 	    for (Path f : mixFiles) {
-		randomAccessFile = new RandomAccessFile(f.toString(), "r");
+		randomAccessFile = new RandomAccessFile(f.toString().toLowerCase(), "r");
 		FileChannel inChannel = randomAccessFile.getChannel();
 
 		MixFile mix = new MixFile(f.getFileName().toString(), inChannel);
@@ -280,7 +280,7 @@ public class ResourceManager {
 	}
 
 	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
-		.get(PAL_FOLDER + name).toString(), "r")) {
+		.get(PAL_FOLDER + name).toString().toLowerCase(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 	    PalFile palfile = new PalFile(name, inChannel);
 
@@ -355,7 +355,7 @@ public class ResourceManager {
 	
 	try {
 	    randomAccessFile = new RandomAccessFile(Paths
-			.get(RESOURCE_FOLDER + name).toString(), "r");
+			.get(RESOURCE_FOLDER + name).toString().toLowerCase(), "r");
 	    
 	    FileChannel inChannel = randomAccessFile.getChannel();
 	    
