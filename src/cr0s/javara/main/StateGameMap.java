@@ -20,6 +20,8 @@ import cr0s.javara.order.InputAttributes;
 import cr0s.javara.order.Order;
 import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
+import cr0s.javara.perfomance.PerfomanceGraphRenderer;
+import cr0s.javara.perfomance.Profiler;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.cursor.CursorManager;
 import cr0s.javara.ui.cursor.CursorType;
@@ -41,7 +43,7 @@ public class StateGameMap extends BasicGameState {
 
     private final int CURSOR_UPDATE_INTERVAL_TICKS = 100;
     private int cursorUpdateTicks = CURSOR_UPDATE_INTERVAL_TICKS;
-
+    
     public StateGameMap(final GameContainer container) {
 	this.container = container;
     }
@@ -329,7 +331,9 @@ public class StateGameMap extends BasicGameState {
     @Override
     public final void render(final GameContainer arg0, final StateBasedGame arg1, final Graphics g)
 	    throws SlickException {
+	//Profiler.getInstance().startForSection("Render: world");
 	Main.getInstance().getWorld().render(g);
+	//Profiler.getInstance().stopForSection("Render: world");
 
 	if (this.selectionRectVisible) {
 	    g.setLineWidth(2);
@@ -344,6 +348,8 @@ public class StateGameMap extends BasicGameState {
 
 	Main.getInstance().getSideBar().render(g);
 
+	PerfomanceGraphRenderer.render(g, new Pos(10, arg0.getHeight() - PerfomanceGraphRenderer.HEIGHT - 10));
+	
 	CursorManager.getInstance().drawCursor(g);
     }
 
@@ -351,6 +357,8 @@ public class StateGameMap extends BasicGameState {
     public final void update(final GameContainer arg0, final StateBasedGame arg1, final int delta)
 	    throws SlickException {
 
+	Profiler.getInstance().startForSection("Tick");
+	
 	Main.getInstance().getController().update(container, delta);
 	
 	ScreenShaker.getInstance().update(delta);
@@ -358,9 +366,12 @@ public class StateGameMap extends BasicGameState {
 	updateCursor();
 
 	Main.getInstance().getWorld().update(delta);
+	Main.getInstance().getBuildingOverlay().update(delta);
 	Main.getInstance().getSideBar().update(delta);
 
 	SoundManager.getInstance().update(delta);
+	
+	Profiler.getInstance().stopForSection("Tick");
     }
 
     private void updateCursor() {

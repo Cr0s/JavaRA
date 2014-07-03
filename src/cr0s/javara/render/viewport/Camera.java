@@ -94,4 +94,8 @@ public class Camera {
 	    this.offsetX += Math.floor(offset.getX());
 	    this.offsetY += Math.floor(offset.getY());
 	}
+	
+	public void scrollCenterToCell(Pos pos) {
+	    setOffset(-Math.max(map.getBounds().getMinX(), (pos.getX() * 24) - viewportRect.getWidth() / 2), -Math.max(map.getBounds().getMinY(), (pos.getY() * 24)  - viewportRect.getHeight() / 2));	    
+	}
 }

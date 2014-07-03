@@ -157,8 +157,10 @@ public class Main extends StateBasedGame {
 
 	Pos playerSpawn = player.getPlayerSpawnPoint();	
 
-	this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
+	//this.getCamera().setOffset(-Math.max(w.getMap().getBounds().getMinX(), (playerSpawn.getX() * 24) - this.getContainer().getWidth() / 2), -Math.max(w.getMap().getBounds().getMinY(), (playerSpawn.getY() * 24)));
 
+	this.getCamera().scrollCenterToCell(playerSpawn);
+	
 	this.gsb = new GameSideBar(Main.getInstance().getTeam(), Main.getInstance().getPlayer());
 	this.gsb.initSidebarPages();
 	

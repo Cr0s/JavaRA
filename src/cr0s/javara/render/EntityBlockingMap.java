@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.perfomance.Profiler;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.util.Pos;
 
@@ -28,7 +29,9 @@ public class EntityBlockingMap {
     }
     
     public void update() {
+	Profiler.getInstance().startForSection("World: blocking map clear");
 	clearMap();
+	Profiler.getInstance().stopForSection("World: blocking map clear");
     }
     
     public void occupyForMobileEntity(MobileEntity me) {

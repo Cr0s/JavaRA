@@ -21,7 +21,7 @@ public class Shroud {
 	this.explorationMap = new boolean[w.getMap().getWidth()][w.getMap().getHeight()];
     }
     
-    public boolean isExplored(int tileX, int tileY) {
+    public boolean isExplored(final int tileX, final int tileY) {
 	if (tileX < 0 || tileY < 0 || tileX >= w.getMap().getWidth() || tileY >= w.getMap().getHeight()) {
 	    return false;
 	}
@@ -49,7 +49,7 @@ public class Shroud {
     public boolean isAreaShrouded(int centerX, int centerY, int width, int height) {
 	for (int x = centerX - (width / 2); x <= centerX + (width / 2); x++) {
 	    for (int y = centerY - (height / 2); y <= centerY + (height / 2); y++) {
-		if (this.explorationMap[x][y]) {
+		if (this.isExplored(x, y)) {
 		    return false;
 		}
 	    }

@@ -30,6 +30,7 @@ import cr0s.javara.gameplay.Player;
 import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
+import cr0s.javara.perfomance.Profiler;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.map.InfantryPathfinder;
 import cr0s.javara.render.map.SmudgeLayer;
@@ -107,12 +108,15 @@ public class World implements TileBasedMap {
     }
 
     public void update(int delta) {
+	Profiler.getInstance().startForSection("World tick");
+	
+	Profiler.getInstance().startForSection("World: shroud tick");
 	if (Main.getInstance().getPlayer().getShroud() != null) {
 	    Main.getInstance().getPlayer().getShroud().getRenderer().update(Main.getInstance().getPlayer().getShroud());
 	} else {
 	    Main.getInstance().getObserverShroudRenderer().update(null);
 	}
-
+	Profiler.getInstance().stopForSection("World: shroud tick");
 
 	if (removeDeadTicks++ > REMOVE_DEAD_INTERVAL_TICKS) {
 	    LinkedList<Entity> list = new LinkedList<Entity>();
@@ -146,6 +150,7 @@ public class World implements TileBasedMap {
 	this.blockingEntityMap.update();
 	
 	// Update all entities
+	Profiler.getInstance().startForSection("World: entity tick");
 	for (Entity e : this.entities) {
 	    if (!e.isDead()) { 
 		// Set up blocking map parameters
@@ -187,10 +192,11 @@ public class World implements TileBasedMap {
 		}
 	    }
 	}  	
-
+	Profiler.getInstance().stopForSection("World: entity tick");
+	
 	updatePlayersBases();
-
-	Main.getInstance().getBuildingOverlay().update(delta);
+	
+	Profiler.getInstance().stopForSection("World tick");
     }
 
     /**
@@ -208,11 +214,14 @@ public class World implements TileBasedMap {
 	    e1.printStackTrace();
 	}		
 
+	//Profiler.getInstance().startForSection("r: Map");
 	map.render(container, g, camera);
-
+	//Profiler.getInstance().stopForSection("r: Map");
+	
 	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
 
+	//Profiler.getInstance().startForSection("r: Entity");
 	// Render bibs
 	for (Entity e : this.entities) {		    
 	    if (!e.isDead() && e.isVisible && camera.isEntityInsideViewport(e)) { 
@@ -253,13 +262,17 @@ public class World implements TileBasedMap {
 	}	
 
 	renderSelectionBoxes(g);
+	
+	//Profiler.getInstance().stopForSection("r: Entity");
 
+	//Profiler.getInstance().startForSection("r: Shroud");
 	if (Main.getInstance().getPlayer().getShroud() != null) {
 	    Main.getInstance().getPlayer().getShroud().getRenderer().renderShrouds(g);
 	} else {
 	    Main.getInstance().getObserverShroudRenderer().renderShrouds(g);
 	}
-
+	//Profiler.getInstance().stopForSection("r: Shroud");
+	
 	Main.getInstance().getBuildingOverlay().render(g);
     }
 

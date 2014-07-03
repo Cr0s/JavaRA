@@ -18,6 +18,7 @@ import cr0s.javara.gameplay.Production;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
+import cr0s.javara.perfomance.Profiler;
 import cr0s.javara.render.map.MinimapRenderer;
 import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.SoundManager;
@@ -25,6 +26,7 @@ import cr0s.javara.ui.sbpages.building.PageBuildingSoviet;
 import cr0s.javara.ui.sbpages.infantry.PageInfantry;
 import cr0s.javara.ui.sbpages.vehicle.PageVehicle;
 import cr0s.javara.ui.sbpages.SideBarPage;
+import cr0s.javara.util.Pos;
 
 public class GameSideBar {
     private Team team;
@@ -237,6 +239,21 @@ public class GameSideBar {
     }
 
     public void update(int delta) {
+	Profiler.getInstance().startForSection("Sidebar tick");
+	
+	// Check mouse clicked inside radar
+	int mouseX = Main.getInstance().getContainer().getInput().getMouseX();
+	int mouseY = Main.getInstance().getContainer().getInput().getMouseY();
+	
+	if (this.currentPage == null && this.radarRect.contains(mouseX, mouseY) && Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
+	    mouseX = (int) (mouseX - this.radarRect.getMinX());
+	    mouseY = (int) (mouseY - this.radarRect.getMinY());
+	    
+	    Pos mapCellToScroll = this.minimapPixelToCell(new Pos(mouseX, mouseY));
+	    Main.getInstance().getCamera().scrollCenterToCell(mapCellToScroll);
+	    return;
+	}
+	
 	if (Main.getInstance().getPlayer().getBase().isLowPower()) {
 	    if (--this.lowPowerAdviceTicks <= 0) {
 		this.lowPowerAdviceTicks = this.LOW_POWER_ADVICE_INTERVAL;
@@ -310,6 +327,8 @@ public class GameSideBar {
 	if (this.currentPage != null) {
 	    this.currentPage.update(delta);
 	}
+	
+	Profiler.getInstance().stopForSection("Sidebar tick");
     }
 
     public Player getPlayer() {
@@ -511,11 +530,8 @@ public class GameSideBar {
 	return new Point(viewOrigin.getMinX() + this.radarRect.getWidth() / 24 * previewScale * (p.getX()- mapOrigin.getMinX()), viewOrigin.getMinY() + this.radarRect.getHeight() / 24 * previewScale * (p.getMinY() - mapOrigin.getMinY()));
     }
 
-    public Point minimapPixelToCell(Point p)
+    public Pos minimapPixelToCell(final Pos p)
     {
-	Point viewOrigin = new Point(this.radarRect.getMinX(), this.radarRect.getMinY());
-	Point mapOrigin = new Point(Main.getInstance().getWorld().getMap().getBounds().getMinX(), Main.getInstance().getWorld().getMap().getBounds().getMinY());
-
-	return new Point(mapOrigin.getMinX() + (1f / previewScale) * (p.getMinX() - viewOrigin.getMinX()), mapOrigin.getMinY() + (1f / previewScale) * (p.getMinY() - viewOrigin.getMinY()));
+	return p;
     }    
 }
