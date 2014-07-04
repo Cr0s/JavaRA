@@ -31,6 +31,7 @@ import cr0s.javara.main.Main;
 import cr0s.javara.order.ITargetLines;
 import cr0s.javara.order.TargetLine;
 import cr0s.javara.perfomance.Profiler;
+import cr0s.javara.render.EntityBlockingMap.Influence;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.map.InfantryPathfinder;
 import cr0s.javara.render.map.SmudgeLayer;
@@ -699,17 +700,20 @@ public class World implements TileBasedMap {
 	});
     }
 
-    public ArrayList<EntityActor> getActorsInCircle(Pos pos, float range) {
-	ArrayList<EntityActor> result = new ArrayList<EntityActor>(this.entities.size() / 2);
+    public ArrayList<EntityActor> getActorsInCircle(final Pos pos, float range) {
+	ArrayList<EntityActor> result = new ArrayList<EntityActor>();
+	ArrayList<Pos> tiles = this.chooseTilesInCircle(pos.getCellPos(), (int) Math.floor(range / 24.0f));
 	
-	for (Entity e : this.entities) {
-	    if (e instanceof EntityActor) {
-		EntityActor ea = (EntityActor) e;
-		
-		Pos loc = new Pos(ea.boundingBox.getCenterX(), ea.boundingBox.getCenterY());
-
-		if (pos.distanceTo(loc) <= range) {
-		    result.add(ea);
+	for (Pos tile : tiles) {
+	    LinkedList<Influence> influences = this.blockingEntityMap.getCellInfluences(tile);
+	    
+	    if (influences == null) {
+		continue;
+	    }
+	    
+	    for (Influence cellInf : influences) {
+		if (cellInf.entity != null && (cellInf.entity instanceof EntityActor)) {
+		    result.add((EntityActor) cellInf.entity);
 		}
 	    }
 	}
