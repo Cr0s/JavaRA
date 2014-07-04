@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
@@ -14,6 +15,7 @@ import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.infantry.EntityInfantry.AnimationState;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.render.World;
+import cr0s.javara.render.EntityBlockingMap.Influence;
 import cr0s.javara.util.PointsUtil;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
@@ -113,11 +115,19 @@ public class MoveInfantry extends Activity {
 	    }
 
 
-	    MobileEntity blocker = me.world.getMobileEntityInCell(nextCell);
+	    // Notify all friendly blockers inside cell
+	    if (!this.hasNotifiedBlocker) {
+		for (Influence i : me.world.blockingEntityMap.getCellInfluences(nextCell)) {
+		    Entity blocker = i.entity;
 
-	    // Notify blocker 
-	    if (blocker != null && !hasNotifiedBlocker) {
-		blocker.notifyBlocking(me);
+		    if (blocker instanceof MobileEntity) {
+			// Notify blocker 
+			if (blocker != null && ((MobileEntity) blocker).isFrendlyTo(me)) {
+			    ((MobileEntity) blocker).notifyBlocking(me);
+			}
+		    }
+		}
+
 		this.hasNotifiedBlocker = true;
 	    }
 	    
