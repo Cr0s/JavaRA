@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.IOreCapacitor;
@@ -202,7 +203,7 @@ public class Base {
 	    }
 	}
 
-	this.isLowPower = (this.powerConsumptionLevel > this.powerLevel);
+	this.isLowPower = this.powerConsumptionLevel > this.powerLevel;
     }
 
     public boolean isLowPower() {

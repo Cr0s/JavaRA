@@ -62,7 +62,7 @@ public class GameSideBar {
     public static final String PAGE_BUILDING_SOVIET = "sovbuild";
     public static final String PAGE_VEHICLE = "vehicle";
     public static final String PAGE_INFANTRY = "infantry";
-    
+
     private Rectangle currentViewportRect = new Rectangle(0, 0, 0, 0);
     private Rectangle radarRect = new Rectangle(0, 0, 0, 0);
     private float previewScale;
@@ -240,20 +240,20 @@ public class GameSideBar {
 
     public void update(int delta) {
 	Profiler.getInstance().startForSection("Sidebar tick");
-	
+
 	// Check mouse clicked inside radar
 	int mouseX = Main.getInstance().getContainer().getInput().getMouseX();
 	int mouseY = Main.getInstance().getContainer().getInput().getMouseY();
-	
+
 	if (this.currentPage == null && this.radarRect.contains(mouseX, mouseY) && Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
 	    mouseX = (int) (mouseX - this.radarRect.getMinX());
 	    mouseY = (int) (mouseY - this.radarRect.getMinY());
-	    
+
 	    Pos mapCellToScroll = this.minimapPixelToCell(new Pos(mouseX, mouseY));
 	    Main.getInstance().getCamera().scrollCenterToCell(mapCellToScroll);
 	    return;
 	}
-	
+
 	if (Main.getInstance().getPlayer().getBase().isLowPower()) {
 	    if (--this.lowPowerAdviceTicks <= 0) {
 		this.lowPowerAdviceTicks = this.LOW_POWER_ADVICE_INTERVAL;
@@ -283,10 +283,12 @@ public class GameSideBar {
 	// Update radar rect
 	this.radarRect.setBounds(Main.getInstance().getContainer().getWidth() - BAR_WIDTH - BAR_SPACING_W + 2, BAR_SPACING_H + 2, BAR_WIDTH - 4, RADAR_HEIGHT);
 
-	if (--this.minimapUpdateTicks <= 0) {
-	    this.minimapUpdateTicks = this.MINIMAP_UPDATE_INTERVAL_TICKS;
+	if (Main.getInstance().getPlayer().getBase().isRadarDomePresent && !Main.getInstance().getPlayer().getBase().isLowPower()) {
+	    if (--this.minimapUpdateTicks <= 0) {
+		this.minimapUpdateTicks = this.MINIMAP_UPDATE_INTERVAL_TICKS;
 
-	    this.minimap.update(this.getBackgroundColor());
+		this.minimap.update(this.getBackgroundColor());
+	    }
 	}
 
 	// Update current viewport rect
@@ -325,9 +327,11 @@ public class GameSideBar {
 	this.sideBarCategoriesOpened[3][0] = this.sideBarCategoriesOpened[3][1] = base.isAnySuperPowerPresent;
 
 	if (this.currentPage != null) {
+	    Profiler.getInstance().startForSection("Sidebar page update");
 	    this.currentPage.update(delta);
+	    Profiler.getInstance().stopForSection("Sidebar page update");
 	}
-	
+
 	Profiler.getInstance().stopForSection("Sidebar tick");
     }
 
@@ -371,7 +375,7 @@ public class GameSideBar {
 		    } 
 		} else {
 		    SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-		    
+
 		    if (!production.isReady() && !production.isBuilding()) {
 			if (!(production.getTargetActor() instanceof EntityInfantry)) { 
 			    SoundManager.getInstance().playSpeechSoundGlobal("abldgin1");

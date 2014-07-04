@@ -346,6 +346,8 @@ public abstract class EntityBuilding extends EntityActor {
 	    this.setHp(0);
 	    this.setDead();
 	    
+	    this.owner.getBase().removeBuilding(this);
+	    
 	    explodeBuilding();
 	}
 		
