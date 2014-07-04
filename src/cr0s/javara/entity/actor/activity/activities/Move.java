@@ -8,6 +8,7 @@ import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.util.pathfinding.Path;
 import org.newdawn.slick.util.pathfinding.Path.Step;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
@@ -104,13 +105,15 @@ public class Move extends Activity {
 	    }
 
 	    // Notify all friendly blockers inside cell
-	    if (!hasNotifiedBlocker) {
+	    if (!this.hasNotifiedBlocker) {
 		for (Influence i : me.world.blockingEntityMap.getCellInfluences(nextCell)) {
-		    MobileEntity blocker = (MobileEntity) i.entity;
+		    Entity blocker = i.entity;
 
-		    // Notify blocker 
-		    if (blocker != null && blocker.isFrendlyTo(me)) {
-			blocker.notifyBlocking(me);
+		    if (blocker instanceof MobileEntity) {
+			// Notify blocker 
+			if (blocker != null && ((MobileEntity) blocker).isFrendlyTo(me)) {
+			    ((MobileEntity) blocker).notifyBlocking(me);
+			}
 		    }
 		}
 
@@ -158,7 +161,7 @@ public class Move extends Activity {
 	// It seems destination cell are blocked, try to choose nearest free cell as new destination cell
 	if (this.currentPath == null) {
 	    Pos newDestCell = chooseClosestToDestCell(me);
-	    
+
 	    // Give up
 	    if (newDestCell == null) {
 		this.isNewPath = false;

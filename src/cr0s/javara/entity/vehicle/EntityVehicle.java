@@ -162,7 +162,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 
     @Override
     public boolean canEnterCell(Pos cellPos) {
-	return world.isCellPassable(cellPos);
+	return world.blockingEntityMap.isEntityInCell(cellPos, this) || world.isCellPassable(cellPos);
     }
 
     @Override

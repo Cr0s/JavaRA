@@ -5,15 +5,17 @@ import java.util.LinkedList;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.perfomance.Profiler;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
+import cr0s.javara.render.map.TileSet;
 import cr0s.javara.util.Pos;
 
 public class EntityBlockingMap {
     private World world;
     private LinkedList<Influence> blockingMap[][];
     
-    public enum SubCell { FULL_CELL, TOP_LEFT, TOP_RIGHT, CENTER, BOTTOM_LEFT, BOTTOM_RIGHT };
+    public enum SubCell { FULL_CELL, TOP_LEFT, TOP_RIGHT, CENTER, BOTTOM_LEFT, BOTTOM_RIGHT, FULL_CELL_PASSABLE };
     public enum FillsSpace { ONE_OR_MORE_CELLS, ONE_CELL, ONE_SUBCELL, DONT_FILLS }
     
     public EntityBlockingMap(World w) {
@@ -138,14 +140,27 @@ public class EntityBlockingMap {
 	    return false;
 	}
 	
-	// Whole cell is free
-	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null) {
+	if (isFullCellOccupied(pos)) {
+	    return false;
+	}
+	
+	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null || this.blockingMap[(int) pos.getX()][(int) pos.getY()].isEmpty()) {
 	    return true;
 	}
 	
-	// Cell 100% occupied, but we need whole cell, so this cell absolutely is not free
-	if (!this.blockingMap[(int) pos.getX()][(int) pos.getY()].isEmpty() && sub == SubCell.FULL_CELL) {
-	    return false;
+	if (sub == SubCell.FULL_CELL) {
+	    boolean isFree = false;
+	    
+	    for (Influence cellInf : this.blockingMap[(int) pos.getX()][(int) pos.getY()]) {
+		if (cellInf.subcell != SubCell.FULL_CELL_PASSABLE) {
+		     isFree = false;
+		     break;
+		} else {
+		    isFree = true;
+		}
+	    }
+	    
+	    return isFree;
 	}
 	
 	for (Influence cellInf : this.blockingMap[(int) pos.getX()][(int) pos.getY()]) {
@@ -159,7 +174,7 @@ public class EntityBlockingMap {
     
     public boolean isFullCellOccupied(Pos pos) {
 	// Whole cell is free
-	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null) {
+	if (this.blockingMap[(int) pos.getX()][(int) pos.getY()] == null || this.blockingMap[(int) pos.getX()][(int) pos.getY()].isEmpty()) {
 	    return false;
 	}
 	
@@ -171,6 +186,10 @@ public class EntityBlockingMap {
 	
 	return false;
     }    
+    
+    public boolean isAnyInfluenceInCell(Pos pos) {
+	return this.blockingMap[(int) pos.getX()][(int) pos.getY()] != null;
+    }
     
     public class Influence {
 	public SubCell subcell;
@@ -192,6 +211,10 @@ public class EntityBlockingMap {
 	}
 	
 	for (SubCell sc : SubCell.values()) {
+	    if (sc == SubCell.FULL_CELL || sc == SubCell.FULL_CELL_PASSABLE) {
+		continue;
+	    }
+	    
 	    if (this.isSubcellFree(pos, sc)) {
 		return sc;
 	    }
@@ -202,5 +225,40 @@ public class EntityBlockingMap {
 
     public LinkedList<Influence> getCellInfluences(Pos pos) {
 	return this.blockingMap[(int) pos.getX()][(int) pos.getY()];
+    }
+
+    public void occupyForBuilding(EntityBuilding eb) {
+	for (int by = 0; by < eb.getHeightInTiles(); by++) {
+	    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
+		int x = ((eb.getTileX() + 12) / 24) + bx;
+		int y = ((eb.getTileY() + 12) / 24) + by;
+		int blockType = eb.getBlockingCells()[bx][by];
+		
+		switch (blockType) {
+		case TileSet.SURFACE_BUILDING:
+		    occupySubCell(new Pos(x, y), SubCell.FULL_CELL, eb);
+		    break;
+		    
+		case TileSet.SURFACE_BUILDING_CLEAR_ID:
+		case TileSet.SURFACE_CLEAR_ID:
+		    occupySubCell(new Pos(x, y), SubCell.FULL_CELL_PASSABLE, eb);
+		    break;
+		}
+	    }
+	}
+    }
+    
+    public boolean isEntityInCell(Pos pos, Entity e) {
+	if (!isAnyInfluenceInCell(pos)) {
+	    return false;
+	}
+	
+	for (Influence cellInf : this.blockingMap[(int) pos.getX()][(int) pos.getY()]) {
+	    if (cellInf.entity == e) {
+		return true;
+	    }
+	}
+	
+	return false;
     }
 }

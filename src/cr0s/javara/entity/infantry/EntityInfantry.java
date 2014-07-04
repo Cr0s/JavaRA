@@ -119,7 +119,7 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
     @Override
     public boolean canEnterCell(Pos cellPos) {
-	return world.isCellPassable(cellPos, (this.desiredSubcell == null) ? this.currentSubcell : this.desiredSubcell);
+	return world.blockingEntityMap.isEntityInCell(cellPos, this) || world.isCellPassable(cellPos, (this.desiredSubcell == null) ? this.currentSubcell : this.desiredSubcell);
     }
 
     @Override

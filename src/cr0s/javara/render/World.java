@@ -132,16 +132,6 @@ public class World implements TileBasedMap {
 
 
 	for (Entity e : this.entitiesToAdd) {
-	    if (e instanceof EntityBuilding) {
-		EntityBuilding eb = (EntityBuilding) e;
-
-		for (int by = 0; by < eb.getHeightInTiles(); by++) {
-		    for (int bx = 0; bx < eb.getWidthInTiles(); bx++) {
-			this.blockingMap[((eb.getTileX() + 12) / 24) + bx][((eb.getTileY() + 12) / 24) + by] = eb.getBlockingCells()[bx][by];
-		    }
-		}
-	    }
-
 	    this.entities.add(e);
 	}
 	
@@ -156,6 +146,8 @@ public class World implements TileBasedMap {
 		// Set up blocking map parameters
 		if (e instanceof MobileEntity) {
 		    this.blockingEntityMap.occupyForMobileEntity((MobileEntity) e);
+		} else if (e instanceof EntityBuilding) {
+		    this.blockingEntityMap.occupyForBuilding((EntityBuilding) e);
 		}
 	    }
 	}
@@ -249,17 +241,17 @@ public class World implements TileBasedMap {
 	map.renderMapEntities(container, g, camera);
 
 	// Debug: render blocked cells
-	if (Main.DEBUG_MODE) {
+	//if (Main.DEBUG_MODE) {
 	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
 		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
-		    if (!this.blockingEntityMap.isSubcellFree(new Pos(x, y), SubCell.FULL_CELL)) {
+		    if (!this.isCellPassable(new Pos(x, y))) {
 			g.setColor(blockedColor);
 			g.fillRect(x * 24, y * 24, 24, 24);
 			g.setColor(pColor);
 		    }		
 		}
 	    }
-	}	
+	//}	
 
 	renderSelectionBoxes(g);
 	
@@ -483,7 +475,7 @@ public class World implements TileBasedMap {
 	    return false;
 	}
 
-	return (isMcvDeploy || this.blockingEntityMap.isSubcellFree(new Pos(x, y), SubCell.FULL_CELL)) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
+	return (isMcvDeploy || !this.blockingEntityMap.isAnyInfluenceInCell(new Pos(x, y))) && (this.map.getResourcesLayer().isCellEmpty(x, y)) && (blockingMap[x][y] == 0 
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_CLEAR_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_BEACH_ID
 		|| this.blockingMap[x][y] == this.map.getTileSet().SURFACE_ROAD_ID);	
