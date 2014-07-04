@@ -357,7 +357,11 @@ public abstract class EntityBuilding extends EntityActor {
 	    
 	    for (int bX = 0; bX < this.getWidthInTiles(); bX++) {
 		for (int bY = 0; bY < this.getHeightInTiles(); bY++) {
-		    if (world.getRandom().nextBoolean()) { 
+		    if (this.blockingCells[bX][bY] == TileSet.SURFACE_BUILDING_CLEAR_ID) {
+			continue;
+		    }
+		    
+		    if (world.getRandomInt(0, 10) >= 8) { 
 			world.spawnExplosionAt(new Pos(this.posX + bX * 24 + 12, this.posY + bY * 24 + 12), "fire1.shp");
 		    }
 		}
