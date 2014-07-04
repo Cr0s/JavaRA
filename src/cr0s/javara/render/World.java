@@ -554,17 +554,11 @@ public class World implements TileBasedMap {
 	return this.entities;
     }
 
-    // TODO: use actor/blocking map for this to get O(1) instead O(n) complexity
     public EntityBuilding getBuildingInCell(Pos cellPos) {
-	float worldX = cellPos.getX() * 24 + 12;
-	float worldY = cellPos.getY() * 24 + 12;
-
-	for (Entity e : this.entities) {
-	    if (e instanceof EntityBuilding && !e.isDead()) {		
-		if (e.boundingBox.getMinX() <= worldX && e.boundingBox.getMaxX() >= worldX 
-			&& e.boundingBox.getMinY() <= worldY && e.boundingBox.getMaxY() >= worldY) {
-		    return (EntityBuilding) e;
-		}
+	LinkedList<Influence> cellInf = this.blockingEntityMap.getCellInfluences(cellPos);
+	for (Influence i : cellInf) {
+	    if (i.entity instanceof EntityBuilding) {
+		return ((EntityBuilding) i.entity);
 	    }
 	}
 
