@@ -566,14 +566,10 @@ public class World implements TileBasedMap {
     }
 
     public MobileEntity getMobileEntityInCell(Pos cellPos) {
-	float worldX = cellPos.getX() * 24 + 12; // center of cell
-	float worldY = cellPos.getY() * 24 + 12; // center of cell
-
-	for (Entity e : this.entities) {
-	    if (e instanceof MobileEntity) {
-		if (e.boundingBox.contains(worldX, worldY)) {
-		    return (MobileEntity) e;
-		}
+	LinkedList<Influence> cellInf = this.blockingEntityMap.getCellInfluences(cellPos);
+	for (Influence i : cellInf) {
+	    if (i.entity instanceof MobileEntity) {
+		return ((MobileEntity) i.entity);
 	    }
 	}
 
