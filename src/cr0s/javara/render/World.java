@@ -572,6 +572,11 @@ public class World implements TileBasedMap {
 
     public MobileEntity getMobileEntityInCell(Pos cellPos) {
 	LinkedList<Influence> cellInf = this.blockingEntityMap.getCellInfluences(cellPos);
+	
+	if (cellInf == null) {
+	    return null;
+	}
+	
 	for (Influence i : cellInf) {
 	    if (i.entity instanceof MobileEntity) {
 		return ((MobileEntity) i.entity);
