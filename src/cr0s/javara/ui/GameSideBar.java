@@ -498,15 +498,19 @@ public class GameSideBar {
 	// Transform click coordinates to button coordinates
 	int buttonX, buttonY;
 
-	if (currentPage == null) {
+	if (this.radarRect.contains(x, y)) {
+	    return;
+	}
+	
+	if (this.currentPage == null) {
 	    buttonX = 1 - (barX / 64);
 	    buttonY = (y - MENU_START_Y) / 48;
 
-	    startPageClick(button, buttonX, buttonY);
+	    this.startPageClick(button, buttonX, buttonY);
 	} else {
 	    if (button == 1) {
 		SoundManager.getInstance().playSfxGlobal("ramenu1", 0.8f);
-		switchPage("start");
+		this.switchPage("start");
 		return;
 	    }
 
