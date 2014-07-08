@@ -703,7 +703,11 @@ public class World implements TileBasedMap {
 	    
 	    for (Influence cellInf : influences) {
 		if (cellInf.entity != null && (cellInf.entity instanceof EntityActor)) {
-		    result.add((EntityActor) cellInf.entity);
+		    // XXX: additional check for duplicates increases algorithm complexity
+		    // TODO: look for another ways to avoid duplicates for actors, that occupies more than one cell 
+		    if (!result.contains((EntityActor) cellInf.entity)) {
+			result.add((EntityActor) cellInf.entity);
+		    }
 		}
 	    }
 	}

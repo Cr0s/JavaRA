@@ -2,6 +2,7 @@ package cr0s.javara.main;
 
 import java.util.LinkedList;
 
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -349,6 +350,8 @@ public class StateGameMap extends BasicGameState {
 	Main.getInstance().getSideBar().render(g);
 
 	PerfomanceGraphRenderer.render(g, new Pos(10, arg0.getHeight() - PerfomanceGraphRenderer.HEIGHT - 10));
+	
+	arg0.getDefaultFont().drawString(0, 0, "FPS: " + arg0.getFPS());
 	
 	CursorManager.getInstance().drawCursor(g);
     }

@@ -163,7 +163,7 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
     @Override
     public Order issueOrder(Entity self, OrderTargeter targeter, Target target,
 	    InputAttributes ia) {
-	if (ia.mouseButton != 1) {
+	if (ia.mouseButton != 1 || !targeter.canTarget(self, target)) {
 	    return null;
 	}
 	

@@ -80,7 +80,7 @@ public class Main extends StateBasedGame {
 
 	    container.setMinimumLogicUpdateInterval(50);
 	    container.setMaximumLogicUpdateInterval(50);
-	    //container.setShowFPS(false);
+	    container.setShowFPS(false);
 	    //container.setSmoothDeltas(true);
 	    //container.setVSync(true);
 	    container.setTargetFrameRate(75);
