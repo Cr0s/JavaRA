@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IEffect;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 
@@ -18,7 +19,7 @@ public class MinimapRenderer {
     private World w;
 
     private Image minimapImage;
-    
+
     private static final int ENTITY_ADDITIONAL_SIZE = 1; // grow entity rectangle point in pixels to see on mini map more clear
 
     public MinimapRenderer(World aWorld, int aWidth, int aHeight) {
@@ -60,7 +61,7 @@ public class MinimapRenderer {
 	}
     }
 
-    public void update( Color filterColor) {
+    public void update(Color filterColor) {
 	Graphics gr;
 	try {
 	    gr = this.minimapImage.getGraphics();
@@ -84,25 +85,25 @@ public class MinimapRenderer {
 		}
 	    }
 
-	    for (Entity e : w.getEntitiesList()) {
-		// Don't draw effects
-		if (e instanceof IEffect) {
+	    for (Entity e : this.w.getEntitiesList()) {		
+		if (!(e instanceof EntityActor)) {
 		    continue;
 		}
 		
-		int cellPosX = (int) (e.posX - this.w.getMap().getBounds().getMinX()) / 24;
-		int cellPosY = (int) (e.posY - this.w.getMap().getBounds().getMinY()) / 24;
+		EntityActor a = (EntityActor) e;
 
+		int cellPosX = (int) (a.getPosition().getX() - this.w.getMap().getBounds().getMinX()) / 24;
+		int cellPosY = (int) (a.getPosition().getY() - this.w.getMap().getBounds().getMinY()) / 24;		
+		
 		// Don't draw shrouded entities
-		if (Main.getInstance().getPlayer().getShroud() != null && !Main.getInstance().getPlayer().getShroud().isExplored(cellPosX, cellPosY)) {
+		if (Main.getInstance().getPlayer().getShroud() != null && !Main.getInstance().getPlayer().getShroud().isExplored(a.getCellPosition())) {
 		    continue;
 		}
-		
-		gr.setColor(e.owner.playerColor.multiply(filterColor));
+
+		gr.setColor(e.owner.playerColor);
 		gr.fillRect(cellPosX - ENTITY_ADDITIONAL_SIZE, cellPosY - ENTITY_ADDITIONAL_SIZE, (int) e.sizeWidth / 24 + ENTITY_ADDITIONAL_SIZE, (int) e.sizeHeight / 24 + ENTITY_ADDITIONAL_SIZE);
 	    }
 	} catch (SlickException e1) {
-	    // TODO Auto-generated catch block
 	    e1.printStackTrace();
 	}
     }
