@@ -23,6 +23,9 @@ public class AttackFollow extends AttackBase {
 	}
 	
 	this.isAttacking = this.target != null && this.target.isValidFor(self);
+	if (!isAttacking) {
+	    this.target = null;
+	}
     }
     
     @Override

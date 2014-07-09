@@ -48,7 +48,7 @@ public class AutoTarget {
 	if (this.self.isIdle()) {
 	    this.tickIdle();
 	} else {
-	    this.tick();
+	   this.tick();
 	}
     }
 
@@ -60,7 +60,7 @@ public class AutoTarget {
 
     private void tickIdle() {
 	// We can't attack in current stance, so do nothing
-	if (this.stance.ordinal() == UnitStance.DEFEND.ordinal() || !this.targetWhenIdle) {
+	if (this.stance == UnitStance.DEFEND || !this.targetWhenIdle) {
 	    return;
 	}
 	
@@ -89,7 +89,8 @@ public class AutoTarget {
 	float range = (this.scanRadius > 0) ? this.scanRadius : this.attack.getMaxRange();
     
 	if (this.self.isIdle() || currentTarget == null || !new Target(currentTarget).isInRange(this.self.getPosition(), range)) {
-	    if (this.nextScanTime <= 0) {
+	    if (--this.nextScanTime <= 0) {
+		this.nextScanTime = 0;
 		return this.chooseTarget(range);
 	    }
 	}

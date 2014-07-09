@@ -498,11 +498,11 @@ public class GameSideBar {
 	// Transform click coordinates to button coordinates
 	int buttonX, buttonY;
 
-	if (this.radarRect.contains(x, y)) {
-	    return;
-	}
-	
 	if (this.currentPage == null) {
+	    if (this.radarRect.contains(x, y)) {
+		return;
+	    }
+
 	    buttonX = 1 - (barX / 64);
 	    buttonY = (y - MENU_START_Y) / 48;
 
