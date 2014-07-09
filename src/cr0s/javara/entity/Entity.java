@@ -34,7 +34,7 @@ public abstract class Entity {
 
 	public boolean isMouseOver = false;
 
-	private boolean isInvuln = false;
+	protected boolean isInvuln = false;
 
 	private int SELECTION_BOX_ADD = 1;
 	

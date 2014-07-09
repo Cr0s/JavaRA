@@ -48,7 +48,7 @@ public class WeaponFireballLauncher extends Weapon {
 	
 	this.firingSound = "";
 	
-	wh.infDeath = "5";
+	wh.infDeath = 5;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = false;
 	

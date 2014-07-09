@@ -34,8 +34,8 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
 
 	this.texture = ResourceManager.getInstance().getInfantryTexture("e1.shp");
 
-	this.setMaxHp(15);
-	this.setHp(15);
+	this.setMaxHp(50);
+	this.setHp(50);
 
 	this.currentFrame = 0;
 
@@ -48,6 +48,13 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
 	
 	this.idleSequences.add(new Sequence(texture, 256, 0, 16, 2, owner.playerColor));
 	this.idleSequences.add(new Sequence(texture, 272, 0, 16, 2, owner.playerColor));
+	
+	this.deathSequences.add(new Sequence(texture, 288, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 296, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 304, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 312, 0, 12, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 324, 0, 18, 2, owner.playerColor));
+	//this.deathSequences.add(new Sequence(texture, , 0, 8, 2, owner.playerColor));
 	
 	this.attack = new AttackFrontal(this);
 	Armament arma = new Armament(this, new WeaponM1Carabine());

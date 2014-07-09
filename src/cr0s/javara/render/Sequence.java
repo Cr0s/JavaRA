@@ -94,4 +94,8 @@ public class Sequence {
     public void setIsLoop(boolean loop) {
 	this.isLoop = loop;
     }
+    
+    public ShpTexture getTexture() {
+	return this.tex;
+    }
 }

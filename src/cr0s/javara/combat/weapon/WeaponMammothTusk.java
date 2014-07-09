@@ -59,7 +59,7 @@ public class WeaponMammothTusk extends Weapon {
 	wh.waterExplosion = "h2o_exp2.shp";
 	wh.waterImpactSound = "splash9";
 		
-	wh.infDeath = "3";
+	wh.infDeath = 3;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = true;
 	

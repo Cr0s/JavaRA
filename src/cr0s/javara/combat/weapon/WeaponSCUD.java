@@ -51,7 +51,7 @@ public class WeaponSCUD extends Weapon {
 	
 	this.firingSound = "missile1";
 	
-	wh.infDeath = "3";
+	wh.infDeath = 3;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = true;
 	

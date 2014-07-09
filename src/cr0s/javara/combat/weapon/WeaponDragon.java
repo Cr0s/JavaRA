@@ -58,7 +58,7 @@ public class WeaponDragon extends Weapon {
 	wh.waterExplosion = "h2o_exp2.shp";
 	wh.waterImpactSound = "splash9";
 		
-	wh.infDeath = "4";
+	wh.infDeath = 4;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = true;
 	

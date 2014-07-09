@@ -35,8 +35,8 @@ public class EntityGrenadeTrooper extends EntityInfantry implements ISelectable,
 	
 	this.texture = ResourceManager.getInstance().getInfantryTexture("e2.shp");
 
-	this.setMaxHp(15);
-	this.setHp(15);
+	this.setMaxHp(50);
+	this.setHp(50);
 	
 	this.currentFrame = 0;
 	
@@ -48,6 +48,13 @@ public class EntityGrenadeTrooper extends EntityInfantry implements ISelectable,
 	
 	this.idleSequences.add(new Sequence(texture, 384, 0, 14, 2, owner.playerColor));
 	this.idleSequences.add(new Sequence(texture, 399, 0, 16, 2, owner.playerColor));
+	
+	this.deathSequences.add(new Sequence(texture, 416, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 424, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 432, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 440, 0, 12, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 452, 0, 18, 2, owner.playerColor));
+	//this.deathSequences.add(new Sequence(texture, , 0, 8, 2, owner.playerColor));	
 	
 	this.attack = new AttackFrontal(this);
 	Armament arma = new Armament(this, new WeaponGrenade());

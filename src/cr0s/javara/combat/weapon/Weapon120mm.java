@@ -48,7 +48,7 @@ public class Weapon120mm extends Weapon {
 	
 	this.firingSound = "cannon1";
 	
-	wh.infDeath = "4";
+	wh.infDeath = 4;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = true;
 	

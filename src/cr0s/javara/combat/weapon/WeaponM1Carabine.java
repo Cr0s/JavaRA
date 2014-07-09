@@ -48,7 +48,7 @@ public class WeaponM1Carabine extends Weapon {
 	
 	this.firingSound = "gun11";
 	
-	wh.infDeath = "2";
+	wh.infDeath = 2;
 	wh.leavesSmudge = false;
 	
 	wh.effectiveness.put(ArmorType.WOOD, 25);

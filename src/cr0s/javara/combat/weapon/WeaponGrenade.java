@@ -51,7 +51,7 @@ public class WeaponGrenade extends Weapon {
 	
 	this.firingSound = "grenade1";
 	
-	wh.infDeath = "3";
+	wh.infDeath = 3;
 	wh.leavesSmudge = true;
 	wh.isCraterSmudge = true;
 	

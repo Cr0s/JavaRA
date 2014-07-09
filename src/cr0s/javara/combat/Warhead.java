@@ -15,7 +15,7 @@ public class Warhead {
 
     public int explosionSize[] = { 0, 0 }; // inner and outer ranges
 
-    public String infDeath;
+    public int infDeath;
     public DamageModel model = DamageModel.NORMAL;
 
     public String impactSound = "";

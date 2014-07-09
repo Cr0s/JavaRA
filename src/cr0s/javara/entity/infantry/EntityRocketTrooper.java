@@ -35,8 +35,8 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
 	
 	this.texture = ResourceManager.getInstance().getInfantryTexture("e3.shp");
 
-	this.setMaxHp(15);
-	this.setHp(15);
+	this.setMaxHp(45);
+	this.setHp(45);
 	
 	this.currentFrame = 0;
 	
@@ -48,6 +48,13 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
 	
 	this.idleSequences.add(new Sequence(texture, 272, 0, 14, 2, owner.playerColor));
 	this.idleSequences.add(new Sequence(texture, 287, 0, 16, 2, owner.playerColor));	
+	
+	this.deathSequences.add(new Sequence(texture, 304, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 312, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 320, 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 328, 0, 12, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(texture, 324, 0, 18, 2, owner.playerColor));
+	//this.deathSequences.add(new Sequence(texture, , 0, 8, 2, owner.playerColor));	
 	
 	this.attack = new AttackFrontal(this);
 	Armament arma = new Armament(this, new WeaponDragon());

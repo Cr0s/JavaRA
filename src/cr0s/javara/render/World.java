@@ -24,6 +24,7 @@ import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.entity.effect.Explosion;
+import cr0s.javara.entity.effect.SequencePlayer;
 import cr0s.javara.entity.effect.Smoke;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.gameplay.Player;
@@ -752,5 +753,12 @@ public class World implements TileBasedMap {
 	}
 
 	return closest;	
+    }
+
+    public void playSequenceAt(Sequence deathSequence, Pos position) {
+	SequencePlayer sp = new SequencePlayer(position, deathSequence);
+	sp.isVisible = true;
+	
+	this.spawnEntityInWorld(sp);
     }
 }

@@ -7,15 +7,19 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.combat.ArmorType;
+import cr0s.javara.combat.TargetType;
+import cr0s.javara.combat.Warhead;
 import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
+import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.actor.activity.Activity;
 import cr0s.javara.entity.actor.activity.activities.Attack;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.MoveInfantry;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.effect.SmokeOnUnit;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.order.InputAttributes;
@@ -57,11 +61,12 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     protected Sequence standSequence;
     protected Sequence runSequence;    
     protected Sequence attackingSequence;
-    protected ArrayList<Sequence> idleSequences = new ArrayList<>();
+    protected ArrayList<Sequence> idleSequences = new ArrayList<Sequence>();
+    protected ArrayList<Sequence> deathSequences = new ArrayList<Sequence>();
 
     private int randomTicksBeforeIdleSeq = 0;
 
-    public enum AnimationState { IDLE, ATTACKING, MOVING, IDLE_ANIMATING, WAITING };
+    public enum AnimationState { IDLE, ATTACKING, MOVING, IDLE_ANIMATING, WAITING, DEATH };
     private AnimationState currentAnimationState;
 
 
@@ -73,6 +78,10 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     private final int MAX_VERSIONS = 4;    
 
     protected AttackBase attack;
+
+    private Sequence currentDeathSequence;
+    
+    protected ArrayList<String> deathSounds = new ArrayList<String>();
 
     public EntityInfantry(Float posX, Float posY, Team team, Player owner) {
 	this(posX, posY, team, owner, SubCell.CENTER);
@@ -105,11 +114,23 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
 	this.unitVersion = SoundManager.getInstance().r.nextInt(4); // from 0 to 3	
 
+	this.deathSounds.add("dedman1");
+	this.deathSounds.add("dedman2");
+	this.deathSounds.add("dedman3");
+	this.deathSounds.add("dedman4");
+	this.deathSounds.add("dedman5");
+	this.deathSounds.add("dedman6");
+	this.deathSounds.add("dedman7");
+	this.deathSounds.add("dedman8");
+	this.deathSounds.add("dedman10"); // last sound is for fire and shock death
+	
 	this.randomTicksBeforeIdleSeq = (int) (this.MIN_IDLE_DELAY_TICKS + Math.random() * (this.MAX_IDLE_DELAY_TICKS - this.MIN_IDLE_DELAY_TICKS));
 
 	this.armorType = ArmorType.NONE;
 
 	this.maxFacings = this.MAX_FACING;
+	
+	this.targetTypes.add(TargetType.GROUND);
     }
 
     @Override
@@ -342,4 +363,47 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public int getMaxFacings() {
 	return this.maxFacings;
     }
+    
+    @Override
+    public void giveDamage(EntityActor firedBy, int amount, Warhead warhead) {	
+	if (this.isInvuln) {
+	    return;
+	}
+	
+	if (this.isDead() || this.getHp() <= 0) {
+	    return;
+	}
+	
+	if (this.getHp() > 0 && this.getHp() - amount <= 0) { // prevent overkill and spawn unit explosion
+	    Sequence deathSeq = this.getDeathSequence(warhead);
+	    if (deathSeq != null) {
+		this.world.playSequenceAt(deathSeq, new Pos(this.posX, this.posY));
+	    }
+	    
+	    // Play random death sound
+	    SoundManager.getInstance().playSfxAt(getRandomDeathSound(warhead), this.getPosition());
+	    
+	    this.setHp(0);
+	    this.setDead();
+	    
+	    return;
+	}
+	
+	this.setHp(this.getHp() - amount);	
+    }
+
+    private String getRandomDeathSound(Warhead wh) {
+	if (wh.infDeath != 5) {
+	    // Get random sound from list excluding last one
+	    return this.deathSounds.get(this.world.getRandomInt(0, this.deathSounds.size() - 1));
+	} else { // death by fire/electro shock
+	    return this.deathSounds.get(this.deathSounds.size() - 1);
+	}
+    }
+
+    private Sequence getDeathSequence(Warhead warhead) {
+	Sequence seq = this.deathSequences.get(warhead.infDeath - 1);
+	
+	return seq;
+    }     
 }
