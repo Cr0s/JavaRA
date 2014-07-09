@@ -179,7 +179,7 @@ public class Production {
     public void drawProductionButton(Graphics g, float x, float y, Color filterColor, boolean withProgress) {
 	this.button.getTexture().draw(x, y, filterColor);
 
-	if (withProgress) {// Draw progress rect
+	if (withProgress) { // Draw progress rect
 	    Color pColor = g.getColor();
 
 	    g.setColor(this.progressHideColor.multiply(filterColor));
@@ -188,9 +188,9 @@ public class Production {
 
 	    // Draw status
 	    if (this.isReady && !this.isDeployed) {
-		g.drawString("ready", x + 5, y + 46 - g.getFont().getLineHeight());
+		g.drawString("ready", x + g.getFont().getWidth("ready") / 2, y + 46 - g.getFont().getLineHeight());
 	    } else if (this.isOnHold) {
-		g.drawString("on hold", x + 1, y + 46 - g.getFont().getLineHeight());
+		g.drawString("hold", x + g.getFont().getWidth("hold") / 2, y + 46 - g.getFont().getLineHeight());
 	    }
 
 	    g.setColor(pColor);
