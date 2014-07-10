@@ -8,6 +8,7 @@ import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
+import cr0s.javara.entity.building.soviet.EntityFireTurret;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.soviet.EntityMammothTank;
 import cr0s.javara.entity.vehicle.soviet.EntityV2Launcher;
@@ -121,7 +122,7 @@ public class Player {
 	}*/
 
 	Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
-	EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 12 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
+	/*EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 12 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
 
@@ -132,9 +133,13 @@ public class Player {
 	EntityMammothTank emt3 = new EntityMammothTank(24.0f * this.spawnX + 13 * 24, 24.0f * this.spawnY + 6 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(emt3);	
-		
+		*/
 	EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
 	m.isVisible = true;
+	
+	EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 5, 24.0f * this.spawnY + 24 * 5, team, other);
+	eft.isVisible = true;
+	this.world.spawnEntityInWorld(eft);
 
 	this.world.spawnEntityInWorld(m);	
 	

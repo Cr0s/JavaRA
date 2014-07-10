@@ -71,7 +71,12 @@ public class Sequence {
 	    f = this.currentFacing;
 	}
 	
-	int i = this.start + ((f % this.facings) * this.length) + (this.currentFrame % this.length);
+	int i = this.start + ((f % this.facings) * this.length);
+	if (this.isLoop) { 
+	    i += this.currentFrame % this.length;
+	} else {
+	    i += Math.min(this.currentFrame, this.length - 1);
+	}
 	
 	if (i >= this.tex.numImages) {
 	    i = this.tex.numImages - 1;
