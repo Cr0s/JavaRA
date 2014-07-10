@@ -92,6 +92,8 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	this.autoTarget = new AutoTarget(this, this.attack);
 	
 	this.ordersList.addAll(attack.getOrders());
+	
+	this.setName("3tnk");
     }
 
     @Override

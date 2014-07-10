@@ -42,6 +42,8 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     
     public int maxFacings = 32;
     
+    public String name;
+    
     public EntityActor(float posX, float posY, Team team, Player owner,
 	    final float aSizeWidth, final float aSizeHeight) {
 	super(posX, posY, team, owner, aSizeWidth, aSizeHeight);
@@ -152,5 +154,13 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     
     public int getMaxFacings() {
 	return this.maxFacings;
+    }
+    
+    public String getName() {
+	return this.name;
+    }
+    
+    public void setName(String name) {
+	this.name = name;
     }
 }

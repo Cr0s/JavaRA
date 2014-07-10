@@ -28,7 +28,9 @@ public class EntityConcreteWall extends EntityWall {
 	setHp(getMaxHp());
 
 	this.makeTextureName = "";
-	this.unitProductionAlingment = Alignment.NEUTRAL;	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.setName("brik");
     }
 
     @Override

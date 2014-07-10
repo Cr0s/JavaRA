@@ -109,6 +109,8 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.ordersList.addAll(attack.getOrders());
 	
 	this.autoTarget = new AutoTarget(this, this.attack);
+	
+	this.setName("4tnk");
     }
 
     @Override

@@ -60,6 +60,8 @@ public class EntityTeslaCoil extends EntityBuilding implements ISelectable, IPow
 	this.unitProductionAlingment = Alignment.SOVIET;
 
 	this.requiredToBuild.add(EntityWarFactory.class);
+	
+	this.setName("tsla");
     }
     
     private void initTextures() {

@@ -62,6 +62,8 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
 	this.attack.addArmament(arma);
 	
 	this.ordersList.addAll(this.attack.getOrders());
+	
+	this.setName("e1");
     }
 
     @Override 

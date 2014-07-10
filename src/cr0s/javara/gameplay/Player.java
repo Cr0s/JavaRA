@@ -212,4 +212,8 @@ public class Player {
     public Team getTeam() {
 	return this.team;
     }
+    
+    public void update(int delta) {
+	this.base.update();
+    }
 }

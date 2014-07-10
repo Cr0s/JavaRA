@@ -188,7 +188,7 @@ public class World implements TileBasedMap {
 	}  	
 	Profiler.getInstance().stopForSection("World: entity tick");
 	
-	updatePlayersBases();
+	updatePlayers();
 	
 	Profiler.getInstance().stopForSection("World tick");
     }
@@ -421,9 +421,9 @@ public class World implements TileBasedMap {
 	return null;
     }
 
-    private void updatePlayersBases() {
+    private void updatePlayers() {
 	for (Player p : this.players) {
-	    p.getBase().update();
+	    p.update(0);
 	}
     }
 

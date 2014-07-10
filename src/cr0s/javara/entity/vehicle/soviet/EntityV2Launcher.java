@@ -89,6 +89,8 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 	this.autoTarget = new AutoTarget(this, this.attack);
 	
 	this.ordersList.addAll(attack.getOrders());
+	
+	this.setName("v2rl");
     }
 
     @Override

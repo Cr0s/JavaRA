@@ -46,6 +46,8 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	initTextures();
 	
 	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.setName("powr");
     }
 
     private void initTextures() {

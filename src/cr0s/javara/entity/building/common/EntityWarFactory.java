@@ -97,6 +97,8 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	
 	this.requiredToBuild.add(EntityPowerPlant.class);
 	this.requiredToBuild.add(EntityProc.class);
+	
+	this.setName("weap");
     }
 
     private void initTextures() {

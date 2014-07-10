@@ -106,6 +106,8 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 
 	this.ordersList.add(new HarvestTargeter(this));
 	this.ordersList.add(new DeliverTargeter(this));
+	
+	this.setName("harv");
     }
 
     @Override

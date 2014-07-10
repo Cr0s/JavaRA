@@ -61,7 +61,9 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
 	arma.addBarrel(new Pos(0, 0), 0);
 	this.attack.addArmament(arma);
 	
-	this.ordersList.addAll(this.attack.getOrders());	
+	this.ordersList.addAll(this.attack.getOrders());
+	
+	this.setName("e3");
     }
 
     @Override 

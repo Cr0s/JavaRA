@@ -124,6 +124,8 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	    g.setColor(Color.yellow);
 	    g.draw(c);
 	}
+	
+	this.setName("ftur");
     }
 
     @Override

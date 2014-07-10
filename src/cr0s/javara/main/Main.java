@@ -8,6 +8,7 @@ import java.util.Random;
 
 
 
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
@@ -19,6 +20,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.openal.SoundStore;
 import org.newdawn.slick.state.StateBasedGame;
 
+import cr0s.javara.ai.AIPlayer;
 import cr0s.javara.gameplay.BuildingOverlay;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -136,8 +138,8 @@ public class Main extends StateBasedGame {
 	}
 
 	controller = new Controller(null, camera, this.getContainer().getInput());	
-	w = new World("haos-ridges",
-		this.getContainer(), camera);		
+	w = new World("forest-path",
+		this.getContainer(), camera);
 
 	initGame();
     }
@@ -165,7 +167,7 @@ public class Main extends StateBasedGame {
 	this.gsb.initSidebarPages();
 	
 	Team team2 = new Team();
-	Player otherPlayer = new Player(w, "Enemy", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+	Player otherPlayer = new AIPlayer(w, "NormalAI", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 	player.setTeam(team2);
 	w.addPlayer(otherPlayer);
     }

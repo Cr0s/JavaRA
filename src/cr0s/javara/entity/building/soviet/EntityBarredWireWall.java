@@ -25,7 +25,9 @@ public class EntityBarredWireWall extends EntityWall {
 	setHp(getMaxHp());
 
 	this.makeTextureName = "";
-	this.unitProductionAlingment = Alignment.NEUTRAL;	
+	this.unitProductionAlingment = Alignment.NEUTRAL;
+	
+	this.setName("fenc");
     }
 
     public EntityBarredWireWall(Float aTileX, Float aTileY, Team aTeam, Player aPlayer) {

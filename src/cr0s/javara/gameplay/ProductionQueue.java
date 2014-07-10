@@ -273,6 +273,10 @@ public class ProductionQueue {
 	return this.buildables.containsKey(name);
     }    
     
+    public HashMap<String, EntityActor> getBuildables() {
+	return this.buildables;
+    }
+    
     public EntityActor getCurrentProducingVehicle() {
 	return this.currentVehicle.getTargetActor();
     }

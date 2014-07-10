@@ -48,6 +48,8 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 	this.unitProductionAlingment = Alignment.NEUTRAL;
 	
 	this.requiredToBuild.add(EntityRadarDome.class);
+	
+	this.setName("apwr");
     }
 
     private void initTextures() {

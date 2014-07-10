@@ -98,6 +98,8 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	harv.queueActivity(new FindResources());
 	
 	world.spawnEntityInWorld(harv);
+	
+	this.setName("proc");
     }
     
     public Pos getHarvesterCell() {

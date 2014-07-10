@@ -70,6 +70,8 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	this.currentFacing = 16;
 	
 	this.ordersList.add(new McvDeployTargeter(this));
+	
+	this.setName("mcv");
     }
 
     @Override

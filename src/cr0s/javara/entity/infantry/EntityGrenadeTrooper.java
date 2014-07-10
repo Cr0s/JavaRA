@@ -62,6 +62,8 @@ public class EntityGrenadeTrooper extends EntityInfantry implements ISelectable,
 	this.attack.addArmament(arma);
 	
 	this.ordersList.addAll(this.attack.getOrders());	
+	
+	this.setName("e2");
     }
 
     @Override 

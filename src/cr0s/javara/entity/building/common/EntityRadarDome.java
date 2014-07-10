@@ -49,6 +49,8 @@ public class EntityRadarDome extends EntityBuilding implements ISelectable, IPow
 	
 	this.requiredToBuild.add(EntityPowerPlant.class);
 	this.requiredToBuild.add(EntityProc.class);
+	
+	this.setName("dome");
     }
 
     private void initTextures() {

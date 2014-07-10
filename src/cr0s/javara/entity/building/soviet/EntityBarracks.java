@@ -64,6 +64,8 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	this.unitProductionAlingment = Alignment.SOVIET;
 	
 	this.requiredToBuild.add(EntityPowerPlant.class);
+	
+	this.setName("barr");
     }
 
     private void initTextures() {

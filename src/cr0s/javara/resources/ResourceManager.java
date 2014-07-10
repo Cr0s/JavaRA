@@ -55,6 +55,9 @@ public class ResourceManager {
     public static final String MAPS_FOLDER = ROOT_FOLDER + "maps"
 	    + System.getProperty("file.separator");
 
+    public static final String AI_FOLDER = ROOT_FOLDER + "ai" 
+	    + System.getProperty("file.separator");
+    
     public static final String SIDEBAR_CATEGORIES_SHEET = RESOURCE_FOLDER + "sidebar_buttons.png";
 
     public static Cursor pointerCursor;
