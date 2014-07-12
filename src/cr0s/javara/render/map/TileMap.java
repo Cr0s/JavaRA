@@ -212,27 +212,15 @@ public class TileMap {
 	this.theater.getSpriteSheet().startUse();
 
 	// Draw tiles layer
-	for (int y = 0; y < this.height; y++) {
-	    for (int x = 0; x < this.width; x++) {
-		if (x < (int) -camera.offsetX / 24 - 1
-			|| x > (int) -camera.offsetX / 24 + (int) c.getWidth()
-			/ 24 + 1) {
-		    continue;
-		}
-
-		if (y < (int) -camera.offsetY / 24 - 1
-			|| y > (int) -camera.offsetY / 24 + (int) c.getHeight()
-			/ 24 + 1) {
-		    continue;
-		}
-
+	for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < this.getHeight(); y++) {
+	    for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < this.getWidth(); x++) {
 		// Don't render tile, if it shrouded and surrounding tiles shrouded too
 		if (Main.getInstance().getPlayer().getShroud() != null && Main.getInstance().getPlayer().getShroud().isAreaShrouded(x, y, 2, 2)) {
 		    continue;
 		}
 
 		if ((int) this.mapTiles[x][y].getTile() != 0) {
-		    Point sheetPoint = theater
+		    Point sheetPoint = this.theater
 			    .getTileTextureSheetCoord(this.mapTiles[x][y]);
 
 		    int index = (int) ((byte) this.mapTiles[x][y].getIndex() & 0xFF);

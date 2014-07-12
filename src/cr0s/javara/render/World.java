@@ -605,6 +605,33 @@ public class World implements TileBasedMap {
 	return from + random.nextInt(to - from);
     }
 
+    public ArrayList<Pos> chooseTilesInAnnulus(Pos centerPos, int minRange, int maxRange, CellChooser chooser) {
+	ArrayList<Pos> res = new ArrayList<Pos>();
+
+	if (minRange > maxRange) {
+	    throw new IllegalArgumentException("minRange > maxRange");
+	}
+	
+	if (maxRange > this.pointsInRange.length) {
+	    throw new IllegalArgumentException("maxRange exceeds possible value: " + this.pointsInRange.length);
+	}
+	
+	for (int i = minRange; i <= maxRange; i++) {
+	    for (Pos p : this.pointsInRange[i]) {
+		int cellPosX = (int) (centerPos.getX() + p.getX());
+		int cellPosY = (int) (centerPos.getY() + p.getY());
+
+		Pos cellPoint = new Pos(cellPosX, cellPosY);
+
+		if (map.isInMap(cellPosX * 24, cellPosY * 24) && chooser.isCellChoosable(cellPoint)) {
+		    res.add(cellPoint);
+		}
+	    }
+	}
+
+	return res;
+    }    
+    
     public ArrayList<Pos> chooseTilesInCircle(Pos centerPos, int range, CellChooser chooser) {
 	ArrayList<Pos> res = new ArrayList<Pos>();
 
@@ -760,5 +787,17 @@ public class World implements TileBasedMap {
 	sp.isVisible = true;
 	
 	this.spawnEntityInWorld(sp);
+    }
+
+    public ArrayList<Pos> chooseTilesInAnnulus(Pos center, int minRange,
+	    int maxRange) {
+	// Choose any tiles in annulus
+	return this.chooseTilesInAnnulus(center, minRange, maxRange, new CellChooser() {
+
+	    @Override
+	    public boolean isCellChoosable(Pos cellPos) {
+		return true;
+	    }    
+	});
     }
 }
