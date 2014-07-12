@@ -212,7 +212,6 @@ public class World implements TileBasedMap {
 	map.render(container, g, camera);
 	//Profiler.getInstance().stopForSection("r: Map");
 	
-	Color blockedColor = new Color(64, 0, 0, 64);
 	Color pColor = g.getColor();
 
 	//Profiler.getInstance().startForSection("r: Entity");
@@ -244,6 +243,8 @@ public class World implements TileBasedMap {
 
 	// Debug: render blocked cells
 	if (Main.DEBUG_MODE) {
+	    Color blockedColor = new Color(64, 0, 0, 64);
+		
 	    for (int y = (int) (-Main.getInstance().getCamera().getOffsetY()) / 24; y < map.getHeight(); y++) {
 		for (int x = (int) (-Main.getInstance().getCamera().getOffsetX()) / 24; x < map.getWidth(); x++) {
 		    if (!this.isCellPassable(new Pos(x, y))) {
