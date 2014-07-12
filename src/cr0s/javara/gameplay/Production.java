@@ -188,9 +188,9 @@ public class Production {
 
 	    // Draw status
 	    if (this.isReady && !this.isDeployed) {
-		g.drawString("ready", x + g.getFont().getWidth("ready") / 2, y + 46 - g.getFont().getLineHeight());
+		g.drawString("ready", x + (32 - g.getFont().getWidth("ready") / 2), y + 46 - g.getFont().getLineHeight());
 	    } else if (this.isOnHold) {
-		g.drawString("hold", x + g.getFont().getWidth("hold") / 2, y + 46 - g.getFont().getLineHeight());
+		g.drawString("hold", x + (32 - g.getFont().getWidth("hold") / 2), y + 46 - g.getFont().getLineHeight());
 	    }
 
 	    g.setColor(pColor);
