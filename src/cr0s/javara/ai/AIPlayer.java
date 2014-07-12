@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,12 +15,16 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.yaml.snakeyaml.Yaml;
 
+import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
+import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.ProductionQueue;
 import cr0s.javara.gameplay.Team.Alignment;
+import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.Pos;
 
 public class AIPlayer extends Player {
     private int squadSize = 8;
@@ -165,5 +171,120 @@ public class AIPlayer extends Player {
 	return (EntityActor) queue.getBuildables().values().toArray()[index];
     }
     
+    private int countBuildings(String frac, Player owner) {
+	int result = 0;
+	
+	for (EntityBuilding b : owner.getBase().getBuildings()) {
+	    if (b.owner == owner && b.getName().equals(frac)) {
+		result++;
+	    }
+	}
+	
+	return result;
+    }
     
+    private int countUnits(String unit, Player owner) {
+	int result = 0;
+	
+	for (Entity e : Main.getInstance().getWorld().getEntitiesList()) {
+	    if (!(e instanceof EntityActor)) {
+		continue;
+	    }
+	    
+	    EntityActor a = (EntityActor) e;
+	    
+	    if (a.owner == owner && a.getName().equals(unit)) {
+		result++;
+	    }
+	}
+	
+	return result;
+    }    
+    
+    private Integer countBuildingByCommonName(String commonName, Player owner) {
+	if (!this.buildingCommonNames.containsKey(commonName)) {
+	    return null;
+	}
+	
+	int result = 0;
+	
+	for (EntityBuilding b : owner.getBase().getBuildings()) {
+	    if (b.owner == owner) {
+		for (String name : this.buildingCommonNames.get(commonName)) {
+		    if (name.equals(b.getName())) {
+			result++;
+		    }
+		}
+	    }
+	}
+	
+	return result;
+    }
+    
+    private boolean hasAdequateFact() {
+	return (this.getBase().isAlliedCYPresent || this.getBase().isSovietCYPresent) 
+		|| (!this.getBase().isAlliedWarFactoryPresent && !this.getBase().isSovietWarFactoryPresent);
+    }
+    
+    public boolean hasAdequateProc() {
+	return this.countBuildingByCommonName("Refinery", this) > 0 ||
+		this.countBuildingByCommonName("Power", this) == 0;
+    }
+    
+    public boolean hasMinimumProc() {
+	return this.countBuildingByCommonName("Refinery", this) >= 2 ||
+		this.countBuildingByCommonName("Power", this) == 0 ||
+		this.countBuildingByCommonName("Barracks", this) == 0;
+    }
+    
+    public boolean hasAdequateAirUnits(EntityActor a) {
+	// TODO: finish it after air units being added
+	return true;
+    }
+    
+    private Pos findPosForBuilding(final Pos center, final Pos target, int minRange, int maxRange, EntityActor building, boolean distanceToBaseIsImportant) {
+	ArrayList<Pos> cells = Main.getInstance().getWorld().chooseTilesInAnnulus(center, minRange, maxRange);
+	
+	if (!center.equals(target)) {
+	    Collections.sort(cells, new Comparator<Pos>() {
+
+		@Override
+		public int compare(Pos p1, Pos p2) {
+		    return p1.distanceToSq(target) - p2.distanceToSq(target);
+		}
+		
+	    });
+	} else {
+	    Collections.shuffle(cells, this.rnd);
+	}
+	
+	for (Pos cell : cells) {
+	    if (!this.getBase().isPossibleToBuildHere((int) cell.getX(), (int) cell.getY(), (EntityBuilding) building)) {
+		continue;
+	    }
+	    
+	    if (distanceToBaseIsImportant && !this.getBase().checkBuildingDistance((int) cell.getX(), (int) cell.getY(), false)) {
+		continue;
+	    }
+	    
+	    return cell;
+	}
+	
+	return null;
+    }
+    
+    public Pos chooseBuildLocation(String actorType, boolean distanceToBaseIsImportant, BuildingType type) {
+	switch (type) {
+	case DEFENSE:
+	    
+	    break;
+	case BUILDING:
+	    break;
+	case REFINERY:
+	    break;
+	default:
+	    break;
+	}
+	return null;
+    }
 }
