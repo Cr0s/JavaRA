@@ -48,8 +48,6 @@ public class EntityTeslaCoil extends EntityBuilding implements ISelectable, IPow
     public EntityTeslaCoil(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_ x");
 
-	this.boundingBox.setBounds(this.posX, this.posY, WIDTH_TILES * 24, HEIGHT_TILES * 24);
-	
 	setBibType(BibType.NONE);
 	setProgressValue(-1);
 
