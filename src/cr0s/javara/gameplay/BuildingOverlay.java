@@ -70,10 +70,10 @@ public class BuildingOverlay {
 	    } else {
 		boolean isPossibleToBuild = this.player.getBase().checkBuildingDistance(cellX, cellY, this.isBuildingWalls())
 			&& this.player.getBase().isPossibleToBuildHere(cellX, cellY, targetBuilding);
-		
+
 		g.setColor(isPossibleToBuild ? freeCellColor : blockedCellColor);
 		g.fillRect(cellX * 24, cellY * 24, 24, 24);	
-		
+
 		for (Pos wallPos : this.currentWallsList) {
 		    float x = wallPos.getX() * 24;
 		    float y = wallPos.getY() * 24;
@@ -105,8 +105,12 @@ public class BuildingOverlay {
 	cellX = (int) (-Main.getInstance().getCamera().getOffsetX() + Main.getInstance().getContainer().getInput().getMouseX()) / 24;
 	cellY = (int) (-Main.getInstance().getCamera().getOffsetY() + Main.getInstance().getContainer().getInput().getMouseY()) / 24;
 
-	if (!Main.getInstance().getPlayer().getBase().getProductionQueue().canBuild(this.targetBuilding)) {
-	    resetBuildingMode();
+	if (this.targetBuilding != null) {
+	    boolean isBuildingCancelled = !Main.getInstance().getPlayer().getBase().getProductionQueue().getProductionForBuilding(this.targetBuilding).isReady();
+
+	    if (isBuildingCancelled || !Main.getInstance().getPlayer().getBase().getProductionQueue().canBuild(this.targetBuilding)) {
+		resetBuildingMode();
+	    }
 	}
     }
 
@@ -128,7 +132,7 @@ public class BuildingOverlay {
 		if (this.currentWallsList.isEmpty()) {
 		    this.currentWallsList.add(new Pos(cellX, cellY));
 		}
-		
+
 		result = player.getBase().tryToBuildWalls(this.currentWallsList, this.targetBuilding);
 		this.currentWallsList.clear();
 	    }
