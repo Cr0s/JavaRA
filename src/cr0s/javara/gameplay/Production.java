@@ -63,8 +63,8 @@ public class Production {
 	}
 
 	this.buildedTicks = 0;
-	this.maxBuildedTicks = this.buildingCost * (20 * 60) / 1000;
-	this.maxBuildedTicks = (int) (this.buildingCost * COST_TO_TICKS);
+	//this.maxBuildedTicks = this.buildingCost * (20 * 60) / 1000;
+	this.maxBuildedTicks = (int) (Math.max(1, this.buildingCost * this.COST_TO_TICKS));
 
 	if (this.INSTANT_BUILD) { 
 	    this.maxBuildedTicks = 1;
