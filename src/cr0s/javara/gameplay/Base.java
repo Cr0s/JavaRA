@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import cr0s.javara.entity.Entity;
+import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.IOreCapacitor;
@@ -291,6 +292,11 @@ public class Base {
 	int minDistanceToOtherBuildingsSq = 0;
 
 	for (EntityBuilding eb : this.buildings) {
+	    // Defense structures don't gives buildable area, so skip it
+	    if (eb instanceof IDefense) {
+		continue;
+	    }
+	    
 	    int dx = eb.getTileX() / 24 - cellX;
 	    int dy = eb.getTileY() / 24 - cellY;
 	    int distanceSq = dx * dx + dy * dy;
