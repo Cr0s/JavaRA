@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.util.pathfinding.Path;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IDeployable;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
@@ -83,9 +84,11 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	setBibType(BibType.MIDDLE);
 	setProgressValue(-1);
 
-	setMaxHp(100);
+	setMaxHp(1500);
 	setHp(getMaxHp());
 
+	this.armorType = ArmorType.WOOD;
+	
 	this.isDoorsOpen = false;
 	
 	this.buildingSpeed = 20;

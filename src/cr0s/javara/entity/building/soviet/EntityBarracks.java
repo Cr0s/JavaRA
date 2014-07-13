@@ -5,6 +5,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.util.pathfinding.Path;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -54,10 +55,10 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
 
-	setMaxHp(50);
+	setMaxHp(800);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 35;
+	this.armorType = ArmorType.WOOD;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 
 	initTextures();

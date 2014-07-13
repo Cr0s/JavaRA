@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.building.BibType;
@@ -45,6 +46,8 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	setMaxHp(1500);
 	setHp(getMaxHp());
 
+	this.armorType = ArmorType.WOOD;
+	
 	this.buildingSpeed = 100;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();

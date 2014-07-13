@@ -9,6 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
@@ -65,10 +66,11 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	setBibType(BibType.MIDDLE);
 	setProgressValue(-1);
 
-	setMaxHp(100);
+	setMaxHp(900);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 80;//20;
+	this.armorType = ArmorType.WOOD;
+	
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
 	

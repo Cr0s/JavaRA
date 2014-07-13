@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -38,10 +39,10 @@ public class EntityPowerPlant extends EntityBuilding implements ISelectable, IPo
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
 
-	setMaxHp(50);
+	setMaxHp(400);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 90;//50;
+	this.armorType = ArmorType.WOOD;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
 	

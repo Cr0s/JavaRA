@@ -7,6 +7,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.IPips;
 import cr0s.javara.entity.ISelectable;
@@ -53,10 +54,11 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
 	setBibType(BibType.NONE);
 	setProgressValue(-1);
 
-	setMaxHp(25);
+	setMaxHp(300);
 	setHp(getMaxHp());
 
-	this.buildingSpeed = 80;
+	this.armorType = ArmorType.WOOD;
+	
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
 	

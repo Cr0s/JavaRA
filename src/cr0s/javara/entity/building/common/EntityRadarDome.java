@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.combat.ArmorType;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.IShroudRevealer;
@@ -38,9 +39,11 @@ public class EntityRadarDome extends EntityBuilding implements ISelectable, IPow
 	setBibType(BibType.SMALL);
 	setProgressValue(-1);
 
-	setMaxHp(60);
+	setMaxHp(1000);
 	setHp(getMaxHp());
 
+	this.armorType = ArmorType.WOOD;
+	
 	this.buildingSpeed = 45;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
