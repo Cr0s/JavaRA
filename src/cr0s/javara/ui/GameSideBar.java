@@ -245,12 +245,25 @@ public class GameSideBar {
 	int mouseX = Main.getInstance().getContainer().getInput().getMouseX();
 	int mouseY = Main.getInstance().getContainer().getInput().getMouseY();
 
+	// Update current viewport rect
+	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
+	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	
+
+	int spaceLeft = (int) (this.radarRect.getWidth() - Main.getInstance().getWorld().getMap().getBounds().getWidth() / 24);
+
+	previewOrigin = new Point(this.radarRect.getMinX() + spaceLeft / 2, this.radarRect.getMinY() + spaceLeft / 2);
+
+	Point vpPoint = this.cellToMinimapPixel(new Point(-Main.getInstance().getCamera().getOffsetX() / 24, -Main.getInstance().getCamera().getOffsetY() / 24));
+	this.currentViewportRect.setBounds(0, 0, previewScale * Main.getInstance().getWorld().getMap().getWidth(), previewScale * Main.getInstance().getWorld().getMap().getHeight());
+	this.currentViewportRect.setLocation(vpPoint.getMinX(), vpPoint.getMinY());		
+	
 	if (this.currentPage == null && this.radarRect.contains(mouseX, mouseY) && Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
 	    mouseX = (int) (mouseX - this.radarRect.getMinX());
 	    mouseY = (int) (mouseY - this.radarRect.getMinY());
 
 	    Pos mapCellToScroll = this.minimapPixelToCell(new Pos(mouseX, mouseY));
 	    Main.getInstance().getCamera().scrollCenterToCell(mapCellToScroll);
+
 	    return;
 	}
 
@@ -290,18 +303,6 @@ public class GameSideBar {
 		this.minimap.update(this.getBackgroundColor());
 	    }
 	}
-
-	// Update current viewport rect
-	int size = Math.max(Main.getInstance().getContainer().getWidth(), Main.getInstance().getContainer().getHeight());
-	previewScale =  Math.min(Main.getInstance().getContainer().getWidth() / 24 * 1.0f / this.radarRect.getWidth(), Main.getInstance().getContainer().getHeight() / 24 * 1.0f / this.radarRect.getHeight());	
-
-	int spaceLeft = (int) (this.radarRect.getWidth() - Main.getInstance().getWorld().getMap().getBounds().getWidth() / 24);
-
-	previewOrigin = new Point(this.radarRect.getMinX() + spaceLeft / 2, this.radarRect.getMinY() + spaceLeft / 2);
-
-	Point vpPoint = this.cellToMinimapPixel(new Point(-Main.getInstance().getCamera().getOffsetX() / 24, -Main.getInstance().getCamera().getOffsetY() / 24));
-	this.currentViewportRect.setBounds(0, 0, previewScale * Main.getInstance().getWorld().getMap().getWidth(), previewScale * Main.getInstance().getWorld().getMap().getHeight());
-	this.currentViewportRect.setLocation(vpPoint.getMinX(), vpPoint.getMinY());	
 
 	// Update buttons presents
 	Base base = this.player.getBase();
