@@ -122,7 +122,7 @@ public class Base {
 	if (this.displayCash < this.cash)
 	{
 	    this.displayCash += move;
-	    
+
 	    if (this.owner == Main.getInstance().getPlayer()) {
 		SoundManager.getInstance().playSfxGlobal("cashup1", 0.8f);
 	    }
@@ -134,7 +134,7 @@ public class Base {
 		if (this.owner == Main.getInstance().getPlayer()) {
 		    SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
 		}
-		
+
 		this.ticksWaitCash = TICKS_WAIT_CASH;
 
 		this.displayCash = this.cash;
@@ -148,7 +148,7 @@ public class Base {
 	if (this.displayOre < this.ore)
 	{
 	    this.displayOre += move;
-	    
+
 	    if (this.owner == Main.getInstance().getPlayer()) {
 		SoundManager.getInstance().playSfxGlobal("cashup1", 0.8f);
 	    }
@@ -161,7 +161,7 @@ public class Base {
 		if (this.owner == Main.getInstance().getPlayer()) {
 		    SoundManager.getInstance().playSfxGlobal("cashdn1", 0.8f);
 		}
-		
+
 		this.ticksWaitOre = TICKS_WAIT_CASH;
 
 		this.displayOre = this.ore;
@@ -296,7 +296,7 @@ public class Base {
 	    if (eb instanceof IDefense) {
 		continue;
 	    }
-	    
+
 	    int dx = eb.getTileX() / 24 - cellX;
 	    int dy = eb.getTileY() / 24 - cellY;
 	    int distanceSq = dx * dx + dy * dy;
@@ -485,7 +485,7 @@ public class Base {
 	for (Pos wallPos : currentWallsList) {
 	    int cellX = (int) wallPos.getX();
 	    int cellY = (int) wallPos.getY();
-	    
+
 	    if (!isPossibleToBuildHere(cellX, cellY, targetBuilding)) {
 		return false;
 	    }
@@ -495,17 +495,17 @@ public class Base {
 	    }
 
 	    if (checkBuildingDistance(cellX, cellY, true)) {
-		    EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
-		    b.changeCellPos(cellX, cellY);
+		EntityBuilding b = (EntityBuilding) targetBuilding.newInstance();
+		b.changeCellPos(cellX, cellY);
 
-		    Main.getInstance().getWorld().addBuildingTo(b);
+		Main.getInstance().getWorld().addBuildingTo(b);
 
 		queue.getProductionForBuilding(targetBuilding).deployCurrentActor();
 	    } else {
 		return false;
 	    }
 	}
-	
+
 	return true;
     }
 

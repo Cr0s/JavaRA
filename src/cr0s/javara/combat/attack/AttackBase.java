@@ -173,8 +173,10 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 	    } else {
 		if (target.getTargetEntity() instanceof EntityActor) {
 		    EntityActor a = (EntityActor) target.getTargetEntity();
+		    Order attack = new Order("Attack", null, null, target.getTargetEntity());
+		    attack.isQueued = false;
 		    
-		    return new Order("Attack", null, null, target.getTargetEntity());
+		    return attack;
 		} else {
 		    return null;
 		}
@@ -192,8 +194,8 @@ public abstract class AttackBase implements IOrderResolver, IOrderIssuer {
 	    if (tgt == null || !tgt.isValidFor(this.self)) {
 		return;
 	    }
-	    
-	    this.attackTarget(tgt, false, true);
+	   
+	    this.attackTarget(tgt, order.isQueued, true);
 	}
     }
 
