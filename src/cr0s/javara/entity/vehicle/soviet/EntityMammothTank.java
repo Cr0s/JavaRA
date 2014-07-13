@@ -70,7 +70,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
     private final float SHIFT = 12;
 
-    private final int BUILDING_COST = 2000;
+    private final int BUILDING_COST = 100;
     private Turret turret;
 
     private AttackTurreted attack;

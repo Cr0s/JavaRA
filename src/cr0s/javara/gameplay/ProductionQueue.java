@@ -145,6 +145,21 @@ public class ProductionQueue {
 	return this.buildables.get(texture.getTextureName());
     }
 
+    /**
+     * Replicates a new copy of buildable actor by this name
+     * @param name name of actor
+     * @return new instance of actor
+     */
+    public EntityActor getBuildableActorByName(String name) {
+	EntityActor a = this.buildables.get(name + "icon.shp");
+	
+	if (a != null) {
+	    return a.newInstance();
+	}
+	
+	return null;
+    }
+    
     public void startBuildingActor(EntityActor target, SideBarItemsButton texture) {
 	if (target instanceof EntityBuilding) {
 	    getProductionForBuilding(target).startBuildingActor(target, texture);
