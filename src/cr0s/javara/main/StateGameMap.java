@@ -51,7 +51,7 @@ public class StateGameMap extends BasicGameState {
 
     @Override
     public void mouseDragged(final int oldX, final int oldY, final int newX, final int newY) {
-	if (Main.getInstance().getContainer().getInput().isMouseButtonDown(0)) {
+	if (Main.getInstance().getContainer().getInput().isMouseButtonDown(0) || Main.getInstance().getSideBar().isMouseInsideBar()) {
 	    if (!Main.getInstance().getBuildingOverlay().isInBuildingMode()) {
 		if (!this.selectionRectVisible) {
 		    this.selectionRectVisible = true;
