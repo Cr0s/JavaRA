@@ -83,14 +83,8 @@ public class BaseBuilder {
 		continue;
 	    }
 
-	    if (actors.contains(a.getName())) {
-		if (this.ai.buildingLimits.containsKey(a.getName())) {
-		    Integer limit = this.ai.buildingLimits.get(a.getName());
-
-		    if (this.ai.countBuildings(a.getName(), this.ai) < limit) {
-			available.add((EntityBuilding) a);
-		    }
-		}
+	    if (actors.contains(a.getName()) && checkBuildingLimit(a.getName())) {
+		available.add((EntityBuilding) a);
 	    }
 	}
 
@@ -103,6 +97,18 @@ public class BaseBuilder {
 
     }
 
+    private boolean checkBuildingLimit(String building) {
+	if (this.ai.buildingLimits.containsKey(building)) {
+	    Integer limit = this.ai.buildingLimits.get(building);
+
+	    if (this.ai.countBuildings(building, this.ai) < limit) {
+		return true;
+	    }
+	}	
+	
+	return false;
+    }
+    
     private EntityActor chooseBuildingToBuild() {
 	// At first we need to out from low power situation
 	if (this.ai.getBase().isLowPower() || this.ai.getBase().getPowerLevel() == 0) {
@@ -154,7 +160,8 @@ public class BaseBuilder {
 
 	    // Do we want to build this structure?
 	    int count = this.ai.countBuildings(key, this.ai);
-	    if (count > this.ai.buildingFractions.get(key) * ai.getBase().getBuildings().size()) {
+	    if (count > this.ai.buildingFractions.get(key) * ai.getBase().getBuildings().size() 
+		    && checkBuildingLimit(key)) {
 		continue;
 	    }
 
@@ -176,7 +183,7 @@ public class BaseBuilder {
 	    return a;
 	}
 
-	System.out.println("[AI] Can't decide what to build!");
+	//System.out.println("[AI] Can't decide what to build!");
 	return null;
     }
 }

@@ -81,8 +81,8 @@ public class Main extends StateBasedGame {
 	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 1200,
 		    700, false);
 
-	    container.setMinimumLogicUpdateInterval(10);
-	    container.setMaximumLogicUpdateInterval(10);
+	    container.setMinimumLogicUpdateInterval(50);
+	    container.setMaximumLogicUpdateInterval(50);
 	    container.setShowFPS(false);
 	    //container.setSmoothDeltas(true);
 	    //container.setVSync(true);
@@ -155,7 +155,7 @@ public class Main extends StateBasedGame {
 	player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 	player.setTeam(team);
 
-	player.setShroud(null);
+	//player.setShroud(null);
 	
 	bo = new BuildingOverlay(player, w);
 
