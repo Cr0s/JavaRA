@@ -95,6 +95,9 @@ public class EntityTeslaCoil extends EntityBuilding implements ISelectable, IPow
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
+	
+	this.boundingBox.setBounds(this.posX, this.posY + 12, this.WIDTH_TILES * 24, HEIGHT_TILES * 24 - 12);
     }
 
     @Override
