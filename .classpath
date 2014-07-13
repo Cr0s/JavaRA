@@ -7,20 +7,19 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="JavaRA/lib/natives"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="C:/Users/user/Downloads/slick2d-master/slick2d-master/slicksrc/">
+	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="">
 		<attributes>
 			<attribute name="source_encoding" value="UTF-8"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/ibxm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/jinput.jar" sourcepath="lib/jinput.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/jnlp.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/jogg-0.0.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/jorbis-0.0.15.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/lwjgl_util_applet.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/JavaRA/lib/tinylinepp.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Downloads/redhorizon-master/redhorizon-master/Libraries/blowfishj-2.41.jar"/>
+	<classpathentry kind="lib" path="lib/ibxm.jar"/>
+	<classpathentry kind="lib" path="lib/jinput.jar" sourcepath="lib/jinput.jar"/>
+	<classpathentry kind="lib" path="lib/jnlp.jar"/>
+	<classpathentry kind="lib" path="lib/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl_util_applet.jar"/>
+	<classpathentry kind="lib" path="lib/tinylinepp.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
