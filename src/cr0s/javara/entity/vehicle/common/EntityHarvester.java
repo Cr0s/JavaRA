@@ -338,7 +338,7 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	EntityProc closestProc = null;
 	
 	for (Entity e : world.getEntitiesList()) {
-	    if (e instanceof EntityProc) {
+	    if (e instanceof EntityProc && e.owner == this.owner) { // Check that is our ore refinery
 		int distance = this.getCenterPos().distanceToSq(new Pos(e.boundingBox.getCenterX(), e.boundingBox.getCenterY()));
 		if (closestProc == null || distance < this.getCenterPos().distanceToSq(new Pos(closestProc.boundingBox.getCenterX(), closestProc.boundingBox.getCenterY()))) {
 		    closestProc = (EntityProc) e;
