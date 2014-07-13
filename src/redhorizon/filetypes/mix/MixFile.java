@@ -16,7 +16,6 @@
 
 package redhorizon.filetypes.mix;
 
-import blowfishj.BlowfishECB;
 import redhorizon.filetypes.ArchiveFile;
 import redhorizon.filetypes.FileExtensions;
 import redhorizon.filetypes.AbstractFile;
@@ -76,14 +75,14 @@ public class MixFile extends AbstractFile implements ArchiveFile<MixRecord> {
 	
 			// If encrypted, decrypt the mixheader and index
 			if (encrypted) {
-	
+	/*
 				// Perform the public -> private/Blowfish key function
 				ByteBuffer keysource = ByteBuffer.allocate(KEY_SIZE_SOURCE);
 				filechannel.read(keysource);
 				ByteBuffer key = ByteBuffer.allocate(KEY_SIZE_BLOWFISH);
 				MixFileKey.getBlowfishKey(keysource, key);
-				BlowfishECB blowfish = new BlowfishECB();
-				blowfish.initialize(key.array(), 0, key.capacity());
+				//BlowfishECB blowfish = new BlowfishECB();
+				//blowfish.initialize(key.array(), 0, key.capacity());
 	
 				// Decrypt the mixheader
 				ByteBuffer headerbytesenc = ByteBuffer.allocate(ENCRYPT_BLOCK_SIZEI);
@@ -108,7 +107,7 @@ public class MixFile extends AbstractFile implements ArchiveFile<MixRecord> {
 				mixrecords = new MixRecord[numFiles()];
 				for (int i = 0; i < mixrecords.length; i++) {
 					mixrecords[i] = new MixRecord(recordsbytes);
-				}
+				}*/
 			}
 			// If not encrypted, just read the straight data
 			else {
