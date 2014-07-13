@@ -97,16 +97,24 @@ public class BaseBuilder {
 
     }
 
+    /**
+     * Checks that number of buildings of specified type does not exceeds a specified limit
+     * If limit is not specified at all, check returns true
+     * @param building name of building to check
+     * @return result of checking
+     */
     private boolean checkBuildingLimit(String building) {
 	if (this.ai.buildingLimits.containsKey(building)) {
 	    Integer limit = this.ai.buildingLimits.get(building);
 
 	    if (this.ai.countBuildings(building, this.ai) < limit) {
 		return true;
+	    } else {
+		return false;
 	    }
 	}	
 	
-	return false;
+	return true;
     }
     
     private EntityActor chooseBuildingToBuild() {
@@ -161,7 +169,7 @@ public class BaseBuilder {
 	    // Do we want to build this structure?
 	    int count = this.ai.countBuildings(key, this.ai);
 	    if (count > this.ai.buildingFractions.get(key) * ai.getBase().getBuildings().size() 
-		    && checkBuildingLimit(key)) {
+		    || !checkBuildingLimit(key)) {
 		continue;
 	    }
 
