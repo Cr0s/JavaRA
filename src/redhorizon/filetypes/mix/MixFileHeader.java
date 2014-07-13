@@ -42,6 +42,6 @@ public class MixFileHeader {
 		numfiles   = bytes.getShort();
 		bodylength = bytes.getInt();
 		
-		System.out.println("Mix header: " + numfiles + " | " + bodylength);
+		//System.out.println("Mix header: " + numfiles + " | " + bodylength);
 	}
 }

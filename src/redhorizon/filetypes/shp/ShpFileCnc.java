@@ -69,7 +69,7 @@ public class ShpFileCnc extends ShpFile<ShpFileHeaderCnc> implements AnimationFi
 			headerbytes.rewind();
 			
 			shpfileheader = new ShpFileHeaderCnc(headerbytes);
-			System.out.println("NumImages: " + shpfileheader.numimages + " | Width: " + shpfileheader.width + " | Height: " + shpfileheader.height);
+			//System.out.println("NumImages: " + shpfileheader.numimages + " | Width: " + shpfileheader.width + " | Height: " + shpfileheader.height);
 			
 			ShpImageOffsetCnc[] offsets = new ShpImageOffsetCnc[numImages() + 2];
 			for (int i = 0; i < numImages() + 2; i++) {

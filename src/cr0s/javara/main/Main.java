@@ -9,6 +9,7 @@ import java.util.Random;
 
 
 
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
@@ -99,6 +100,7 @@ public class Main extends StateBasedGame {
 	this.addState(new StateMainMenu());		
 	this.addState(new StateGameMap(arg0));
 	this.addState(new StatePauseMenu());
+	this.addState(new StateLoadingScreen());
 
 	// Disable native cursor
 	Cursor emptyCursor;

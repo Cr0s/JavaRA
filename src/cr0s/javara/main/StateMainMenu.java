@@ -29,8 +29,8 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	
 	private SpriteSheet ss;
 	private Image menuBackground;
-	private final int MENU_WIDTH = 480;
-	private final float MENU_X = 155f, MENU_Y = 25f;
+	private int menuWidth = 480;
+	private float menuX = 155f, menuY = 25f;
 	
 	private Image menuFrameVert;
 	private final int MENU_FRAME_VERT_HEIGHT = 192, MENU_FRAME_VERT_WIDTH = 18;
@@ -46,18 +46,16 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	private Image menuButton, menuButtonMouseover, menuButtonPressed;
 	private final int MENU_BUTTON_SIZE_SHEET = 128; // In sprites sheet
 	private final int MENU_BUTTON_HEIGHT = 60;
-	private final int MENU_BUTTON_WIDTH = MENU_WIDTH - MENU_BUTTONS_SPACE * 2;
+	private final int MENU_BUTTON_WIDTH = menuWidth - MENU_BUTTONS_SPACE * 2;
 	
 	private int MENU_HEIGHT;
-	
-	private final float ITEMS_X = MENU_X + 25f, ITEMS_Y = MENU_Y + 25f;
 	
 	private boolean leftMousePressed = false;
 	
 	GameContainer c;
 	
 	public StateMainMenu() {
-
+	    
 	}
 	
 	@Override
@@ -92,8 +90,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 				if (m.isSelected) {
 					switch (m.id) {
 						case 0:
-							Main.getInstance().startNewGame("map1");
-							Main.getInstance().enterState(1);
+							Main.getInstance().enterState(3);
 							break;
 							
 						case 2:
@@ -208,9 +205,13 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 	}
 
 	@Override
-	public void enter(GameContainer arg0, StateBasedGame arg1)
+	public void enter(GameContainer c, StateBasedGame arg1)
 			throws SlickException {
 	    CursorManager.getInstance().setCursorType(CursorType.CURSOR_POINTER);
+	    
+	    // Place menu on middle of screen
+	    this.menuX = (c.getWidth() / 2) - this.menuWidth / 2;
+	    
 	}
 
 	@Override
@@ -232,7 +233,7 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 		try {
 			this.ss = new SpriteSheet(ResourceManager.RESOURCE_FOLDER + "dialog.png", 1024, 512);
 			
-			this.menuBackground = ss.getSubImage(0, 0, MENU_WIDTH, MENU_HEIGHT);
+			this.menuBackground = ss.getSubImage(0, 0, menuWidth, MENU_HEIGHT);
 			this.menuFrameVert = ss.getSubImage(480, 0, MENU_FRAME_VERT_WIDTH, MENU_FRAME_VERT_HEIGHT);
 			this.menuFrameHoriz = ss.getSubImage(0, 480, MENU_FRAME_HORIZ_WIDTH, MENU_FRAME_HORIZ_HEIGHT);
 			
@@ -258,23 +259,23 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 			throws SlickException {
 		g.clear();
 		
-		this.menuBackground.draw(MENU_X, MENU_Y);
+		this.menuBackground.draw(menuX, menuY);
 		
 		// Draw frames
 		Image scaledFrameVert = this.menuFrameVert.getScaledCopy(MENU_FRAME_VERT_WIDTH, MENU_HEIGHT);
-		scaledFrameVert.draw(MENU_X - MENU_FRAME_VERT_WIDTH, MENU_Y);
-		scaledFrameVert.draw(MENU_X + MENU_WIDTH, MENU_Y);
+		scaledFrameVert.draw(menuX - MENU_FRAME_VERT_WIDTH, menuY);
+		scaledFrameVert.draw(menuX + menuWidth, menuY);
 		
-		Image scaledFrameHoriz = this.menuFrameHoriz.getScaledCopy(MENU_WIDTH + 2 * MENU_FRAME_TICK_WIDTH, MENU_FRAME_HORIZ_HEIGHT);
-		scaledFrameHoriz.draw(MENU_X - MENU_FRAME_TICK_WIDTH, MENU_Y - MENU_FRAME_HORIZ_HEIGHT);
-		scaledFrameHoriz.draw(MENU_X - MENU_FRAME_TICK_WIDTH, MENU_Y + MENU_HEIGHT);
+		Image scaledFrameHoriz = this.menuFrameHoriz.getScaledCopy(menuWidth + 2 * MENU_FRAME_TICK_WIDTH, MENU_FRAME_HORIZ_HEIGHT);
+		scaledFrameHoriz.draw(menuX - MENU_FRAME_TICK_WIDTH, menuY - MENU_FRAME_HORIZ_HEIGHT);
+		scaledFrameHoriz.draw(menuX - MENU_FRAME_TICK_WIDTH, menuY + MENU_HEIGHT);
 		
 		// Menu ticks in corners
-		/*this.menuFrameTick.draw(MENU_X - MENU_FRAME_TICK_WIDTH, MENU_Y - MENU_FRAME_TICK_HEIGHT);
-		this.menuFrameTick.draw(MENU_X + MENU_WIDTH, MENU_Y - MENU_FRAME_TICK_HEIGHT);
+		/*this.menuFrameTick.draw(menuX - MENU_FRAME_TICK_WIDTH, menuY - MENU_FRAME_TICK_HEIGHT);
+		this.menuFrameTick.draw(menuX + menuWidth, menuY - MENU_FRAME_TICK_HEIGHT);
 		
-		this.menuFrameTick.draw(MENU_X - MENU_FRAME_TICK_WIDTH, MENU_Y + MENU_HEIGHT);
-		this.menuFrameTick.draw(MENU_X + MENU_WIDTH, MENU_Y + MENU_HEIGHT);
+		this.menuFrameTick.draw(menuX - MENU_FRAME_TICK_WIDTH, menuY + MENU_HEIGHT);
+		this.menuFrameTick.draw(menuX + menuWidth, menuY + MENU_HEIGHT);
 		*/
 		
 		// Draw menu buttons
@@ -289,8 +290,8 @@ public class StateMainMenu extends BasicGameState implements MouseListener, Inpu
 		for (int i = 0; i < itemsSize; i++) {
 			MainMenuItem m = this.menuItems.get(i);
 			
-			float itemX = this.ITEMS_X;
-			float itemY = this.ITEMS_Y + (i * (this.MENU_BUTTON_HEIGHT + this.MENU_BUTTONS_SPACE));
+			float itemX = this.menuX + 25.0f;
+			float itemY = this.menuY + 25.0f + (i * (this.MENU_BUTTON_HEIGHT + this.MENU_BUTTONS_SPACE));
 			
 			m.boundingBox.setBounds(itemX, itemY, this.MENU_BUTTON_WIDTH, this.MENU_BUTTON_HEIGHT);
 			

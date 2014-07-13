@@ -151,7 +151,7 @@ public class TmpFileRA extends AbstractFile implements ImagesFile, Paletted {
 			for (int i = 0; i < tmpimages.length; i++) {
 				byte imageoffset = imageoffsets[i];
 
-				System.out.println("Imageoffset: " + imageoffset);
+				//System.out.println("Imageoffset: " + imageoffset);
 				
 				// Skip empty tiles
 				if (imageoffset == 0xff) {

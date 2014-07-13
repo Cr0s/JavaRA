@@ -65,9 +65,9 @@ public class TileSet {
 	    System.out.println("Loaded tileSet: " + ResourceManager.TILESETS_FOLDER + (aSetName + ".yaml").toLowerCase());
 	    Yaml tilesetYaml = new Yaml();
 	    Map<String, Object> tilesetYamlMap = (Map) tilesetYaml.load(input);
-	    for (String s : tilesetYamlMap.keySet()) {
-		System.out.println("Loaded tileset segment: " + s);
-	    }
+	    //for (String s : tilesetYamlMap.keySet()) {
+		//System.out.println("Loaded tileset segment: " + s);
+	    //}
 
 	    // Load terrain colors
 	    Map<String, Object> terrainMap = (Map) tilesetYamlMap.get("Terrain");
@@ -108,7 +108,7 @@ public class TileSet {
 		}
 
 		this.tilesSurfaces.put(id, tiles);
-		System.out.println("Loaded template: " + id + " @ " + image);
+		//System.out.println("Loaded template: " + id + " @ " + image);
 
 		this.tiles.put(id, image);
 	    }

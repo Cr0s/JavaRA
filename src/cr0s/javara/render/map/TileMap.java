@@ -103,7 +103,7 @@ public class TileMap {
 
 		String footprint = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Footprint");
 		String dimensions = ((Map<String, String>) (((Map<String, Object>) treesYamlMap.get(id.toUpperCase())).get("Building"))).get("Dimensions");
-		System.out.println("[MAP] Loaded Actor. ID: " + id + "(" + dimensions + "): " + footprint);
+		//System.out.println("[MAP] Loaded Actor. ID: " + id + "(" + dimensions + "): " + footprint);
 		int x = (Integer) actor.get("LocationX");
 		int y = (Integer) actor.get("LocationY");
 

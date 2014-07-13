@@ -237,11 +237,11 @@ public class ResourceManager {
 
 		return shpTexture;
 	    } else {
-		System.out.println("Record SHP (" + name +") in " + tileSetName + ".mix is not found");
+		System.err.println("Record SHP (" + name +") in " + tileSetName + ".mix is not found");
 		return null;
 	    }
 	} else {
-	    System.out.println("Mix file " + tileSetName + ".mix is not found");    
+	    System.err.println("Mix file " + tileSetName + ".mix is not found");    
 	}
 
 	return null;
@@ -268,7 +268,7 @@ public class ResourceManager {
 		templatesTexureSources.put(name, tmpTexture);
 		return tmpTexture;
 	    } else {
-		System.out.println("Record (" + name +") in " + type + ".mix is not found");
+		//System.out.println("Record (" + name +") in " + type + ".mix is not found");
 		return null;
 	    }
 	}

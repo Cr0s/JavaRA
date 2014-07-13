@@ -111,7 +111,7 @@ public class MixFile extends AbstractFile implements ArchiveFile<MixRecord> {
 			}
 			// If not encrypted, just read the straight data
 			else {
-				System.out.println("Non-encrypted mix");
+				//System.out.println("Non-encrypted mix");
 				// Read the mixheader
 				filechannel.position(4);
 				ByteBuffer headerbytes = ByteBuffer.allocate(MixFileHeader.HEADER_SIZE);
