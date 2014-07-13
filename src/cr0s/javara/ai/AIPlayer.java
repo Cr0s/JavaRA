@@ -24,6 +24,7 @@ import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.World;
 import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.util.CellChooser;
 import cr0s.javara.util.Pos;
 
 public class AIPlayer extends Player {
@@ -76,6 +77,8 @@ public class AIPlayer extends Player {
     
     private Random rnd;
     
+    private Pos defenseCenter;
+    
     public AIPlayer(World w, String name, Alignment side, Color color) {
 	super(w, name, side, color);
 	
@@ -84,6 +87,8 @@ public class AIPlayer extends Player {
 	this.rnd = new Random();
 	
 	loadAIRules(name);
+	
+	this.defenseCenter = this.getPlayerSpawnPoint();
     }
   
     private void loadAIRules(String name) {
@@ -95,7 +100,7 @@ public class AIPlayer extends Player {
 	
 	InputStream input = null;
 	try {
-	    input = new FileInputStream(new File((ResourceManager.AI_FOLDER + name + ".yaml").toString().toLowerCase()));
+	    input = new FileInputStream(new File(ResourceManager.AI_FOLDER + name + ".yaml"));
 
 	    Yaml yaml = new Yaml();
 	    Map<String, Object> map = (Map) yaml.load(input);	   
@@ -242,7 +247,7 @@ public class AIPlayer extends Player {
 	return true;
     }
     
-    private Pos findPosForBuilding(final Pos center, final Pos target, int minRange, int maxRange, EntityActor building, boolean distanceToBaseIsImportant) {
+    private Pos findPosForBuilding(String actorType, final Pos center, final Pos target, final int minRange, final int maxRange, final boolean distanceToBaseIsImportant) {
 	ArrayList<Pos> cells = Main.getInstance().getWorld().chooseTilesInAnnulus(center, minRange, maxRange);
 	
 	if (!center.equals(target)) {
@@ -258,8 +263,13 @@ public class AIPlayer extends Player {
 	    Collections.shuffle(cells, this.rnd);
 	}
 	
+	EntityActor b = this.getBase().getProductionQueue().getBuildableActorByName(actorType);
+	if (b == null || !(b instanceof EntityBuilding)) {
+	    return null;
+	}
+	
 	for (Pos cell : cells) {
-	    if (!this.getBase().isPossibleToBuildHere((int) cell.getX(), (int) cell.getY(), (EntityBuilding) building)) {
+	    if (!this.getBase().isPossibleToBuildHere((int) cell.getX(), (int) cell.getY(), (EntityBuilding) b)) {
 		continue;
 	    }
 	    
@@ -273,14 +283,45 @@ public class AIPlayer extends Player {
 	return null;
     }
     
+    private EntityActor findClosestEnemy(final Pos center) {
+	EntityActor closest = null;
+	
+	 for (Entity e : Main.getInstance().getWorld().getEntitiesList()) { 
+	     if (e.isDead() || !(e instanceof EntityActor)) {
+		 continue;
+	     }
+	     
+	     EntityActor a = (EntityActor) e;
+	     
+	     if (closest == null 
+		     || closest.getPosition().distanceToSq(center) < closest.getPosition().distanceToSq(a.getPosition())) {
+		 closest = a;
+	     }
+	 }
+	 
+	 return closest;
+    }
+    
     public Pos chooseBuildLocation(String actorType, boolean distanceToBaseIsImportant, BuildingType type) {
 	switch (type) {
 	case DEFENSE:
+	    EntityActor closestEnemy = findClosestEnemy(defenseCenter);
+	    Pos targetCell = (closestEnemy != null) ? closestEnemy.getCellPosition() : this.getPlayerSpawnPoint();
+
+	    return findPosForBuilding(actorType, this.defenseCenter, targetCell, this.minimumDefenseRadius, this.maximumDefenseRadius, distanceToBaseIsImportant);
+	case BUILDING:
 	    
 	    break;
-	case BUILDING:
-	    break;
 	case REFINERY:
+	    // Choose set of cells with resources nearby the base inside buildable area
+	    ArrayList<Pos> resourceTiles = Main.getInstance().getWorld().chooseTilesInCircle(this.getPlayerSpawnPoint(), this.maxBaseRadius, new CellChooser() {
+
+		@Override
+		public boolean isCellChoosable(Pos cellPos) {
+		    return !Main.getInstance().getWorld().getMap().getResourcesLayer().isCellEmpty(cellPos);
+		}
+		
+	    });
 	    break;
 	default:
 	    break;

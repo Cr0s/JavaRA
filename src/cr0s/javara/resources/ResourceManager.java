@@ -357,8 +357,7 @@ public class ResourceManager {
 	RandomAccessFile randomAccessFile = null;
 	
 	try {
-	    randomAccessFile = new RandomAccessFile(Paths
-			.get(RESOURCE_FOLDER + name).toString().toLowerCase(), "r");
+	    randomAccessFile = new RandomAccessFile(RESOURCE_FOLDER + name.toLowerCase(), "r");
 	    
 	    FileChannel inChannel = randomAccessFile.getChannel();
 	    

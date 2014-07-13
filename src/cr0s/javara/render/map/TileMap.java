@@ -66,9 +66,7 @@ public class TileMap {
 
 	InputStream input;
 	try {
-	    input = new FileInputStream(new File((ResourceManager.MAPS_FOLDER
-		    + mapName + System.getProperty("file.separator")
-		    + "map.yaml").toString().toLowerCase()));
+	    input = new FileInputStream(new File(ResourceManager.MAPS_FOLDER + (mapName + System.getProperty("file.separator") + "map.yaml").toLowerCase()));
 
 	    Yaml mapYaml = new Yaml();
 	    Map<String, Object> mapYamlMap = (Map) mapYaml.load(input);	    
@@ -91,8 +89,7 @@ public class TileMap {
 		    (String) mapYamlMap.get("Tileset"));
 	    this.tileSet = tileYamlSet;
 
-	    input = new FileInputStream(new File((ResourceManager.RESOURCE_FOLDER + System.getProperty("file.separator")
-		    + "trees.yaml").toLowerCase()));
+	    input = new FileInputStream(new File(ResourceManager.RESOURCE_FOLDER + (System.getProperty("file.separator") + "trees.yaml").toLowerCase()));
 
 	    Yaml treesYaml = new Yaml();
 	    Map<String, Object> treesYamlMap = (Map) mapYaml.load(input);	    
@@ -131,10 +128,7 @@ public class TileMap {
     }
 
     private void loadBinaryMap(String mapName) {
-	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
-		.get(ResourceManager.MAPS_FOLDER + mapName
-			+ System.getProperty("file.separator") + "map.bin")
-			.toString().toLowerCase(), "r")) {
+	try (RandomAccessFile randomAccessFile = new RandomAccessFile(ResourceManager.MAPS_FOLDER + (mapName + System.getProperty("file.separator") + "map.bin").toLowerCase(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 
 	    // Read one byte and pair of two shorts: map height and width

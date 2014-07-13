@@ -60,9 +60,9 @@ public class TileSet {
 
 	InputStream input;
 	try {
-	    input = new FileInputStream(new File((ResourceManager.TILESETS_FOLDER + aSetName + ".yaml").toLowerCase()));
+	    input = new FileInputStream(new File(ResourceManager.TILESETS_FOLDER + (aSetName + ".yaml").toLowerCase()));
 
-	    System.out.println("Loaded tileSet: " + (ResourceManager.TILESETS_FOLDER + aSetName + ".yaml").toLowerCase());
+	    System.out.println("Loaded tileSet: " + ResourceManager.TILESETS_FOLDER + (aSetName + ".yaml").toLowerCase());
 	    Yaml tilesetYaml = new Yaml();
 	    Map<String, Object> tilesetYamlMap = (Map) tilesetYaml.load(input);
 	    for (String s : tilesetYamlMap.keySet()) {
