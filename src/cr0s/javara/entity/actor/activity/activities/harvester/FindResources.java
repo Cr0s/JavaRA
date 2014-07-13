@@ -85,7 +85,7 @@ public class FindResources extends Activity {
 	    Collections.sort(resourcePoints, new Comparator<Pos>() {
 		@Override
 		public int compare(Pos p1, Pos p2) {
-		    return p1.distanceToSq(centerPos) - p2.distanceToSq(centerPos);
+		    return  p2.distanceToSq(centerPos) - p1.distanceToSq(centerPos);
 		}
 	    });
 	    
