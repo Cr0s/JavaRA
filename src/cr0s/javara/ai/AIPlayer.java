@@ -351,10 +351,13 @@ public class AIPlayer extends Player {
     public Pos chooseBuildLocation(String actorType, boolean distanceToBaseIsImportant, BuildingType type) {
 	switch (type) {
 	case DEFENSE:
-	    EntityActor closestEnemy = this.findClosestEnemy(this.defenseCenter);
-	    Pos targetCell = (closestEnemy != null) ? closestEnemy.getCellPosition() : this.getPlayerSpawnPoint();
-
-	    return this.findPosForBuilding(actorType, this.defenseCenter, targetCell, this.minimumDefenseRadius, this.maximumDefenseRadius, distanceToBaseIsImportant);
+	    if (this.rnd.nextInt(100) >= 30) { // In ~70% of cases we build defensive structures as close as possible to the enemy
+		EntityActor closestEnemy = this.findClosestEnemy(this.defenseCenter);
+		Pos targetCell = (closestEnemy != null) ? closestEnemy.getCellPosition() : this.getPlayerSpawnPoint();
+		return this.findPosForBuilding(actorType, this.defenseCenter, targetCell, this.minimumDefenseRadius, this.maximumDefenseRadius, distanceToBaseIsImportant);
+	    } else { // In other cases place build somewhere in base
+		return this.findPosForBuilding(actorType, this.getPlayerSpawnPoint(), this.getPlayerSpawnPoint(), 0, this.maxBaseRadius, false);
+	    }
 	
 	case BUILDING:
 	    return this.findPosForBuilding(actorType, this.getPlayerSpawnPoint(), this.getPlayerSpawnPoint(), 0, distanceToBaseIsImportant ? this.maxBaseRadius : Main.getInstance().getWorld().MAX_RANGE, distanceToBaseIsImportant);
