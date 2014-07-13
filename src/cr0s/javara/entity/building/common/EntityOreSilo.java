@@ -64,6 +64,8 @@ public class EntityOreSilo extends EntityBuilding implements ISelectable, IPower
 
 	this.requiredToBuild.add(EntityProc.class);
 	this.requiredToBuild.add(EntityPowerPlant.class);
+	
+	this.setName("silo");
     }
     
     private void initTextures() {
