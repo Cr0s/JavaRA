@@ -36,8 +36,8 @@ BuildingFractions:
     afld: 4%
     pbox: 7%
     gun: 7%
-    ftur: 10%
-    tsla: 5%
+    ftur: 40%
+    tsla: 25%
     fix: 1%
     agun: 5%
     sam: 1%

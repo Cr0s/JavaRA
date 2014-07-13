@@ -132,7 +132,7 @@ public class EntityRadarDome extends EntityBuilding implements ISelectable, IPow
     public void onBuildFinished() {
 	super.onBuildFinished();
 	
-	if (!Main.getInstance().getPlayer().getBase().isLowPower()) {
+	if (this.owner == Main.getInstance().getPlayer() && !Main.getInstance().getPlayer().getBase().isLowPower()) {
 	    SoundManager.getInstance().playSfxGlobal("radaron2", 0.9f);
 	}
     }

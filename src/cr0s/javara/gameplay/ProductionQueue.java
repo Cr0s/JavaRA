@@ -181,7 +181,7 @@ public class ProductionQueue {
 	
 	return null;
     }
-
+    
     public Production getProductionForBuilding(EntityActor target) {
 	switch (target.unitProductionAlingment) {
 	case NEUTRAL:
@@ -271,13 +271,14 @@ public class ProductionQueue {
 	    return false;
 	}
 	
+	return this.buildables.containsKey(targetBuilding.getName() + "icon.shp");
+	
+	/*
 	for (EntityActor e : this.buildables.values()) {
 	    if (targetBuilding.getClass().equals(e.getClass())) {
 		return true;
 	    }
-	}
-	
-	return false;
+	}*/
     }
     
     public boolean isBuildable(String name) {

@@ -94,6 +94,8 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	
 	this.turret = new Turret(this, new Pos(0, 0), null, 0, 32);
 	this.turret.width = this.turret.height = 24;
+	
+	this.setName("ftur");
     }
     
     private void initTextures() {

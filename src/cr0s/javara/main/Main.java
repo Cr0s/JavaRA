@@ -81,8 +81,8 @@ public class Main extends StateBasedGame {
 	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 1200,
 		    700, false);
 
-	    container.setMinimumLogicUpdateInterval(50);
-	    container.setMaximumLogicUpdateInterval(50);
+	    container.setMinimumLogicUpdateInterval(10);
+	    container.setMaximumLogicUpdateInterval(10);
 	    container.setShowFPS(false);
 	    //container.setSmoothDeltas(true);
 	    //container.setVSync(true);
@@ -155,6 +155,8 @@ public class Main extends StateBasedGame {
 	player = new Player(w, "Player", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
 	player.setTeam(team);
 
+	player.setShroud(null);
+	
 	bo = new BuildingOverlay(player, w);
 
 	w.addPlayer(player);
@@ -169,7 +171,7 @@ public class Main extends StateBasedGame {
 	this.gsb.initSidebarPages();
 	
 	Team team2 = new Team();
-	Player otherPlayer = new AIPlayer(w, "NormalAI", Alignment.SOVIET, new Color(r.nextInt(256), r.nextInt(256), r.nextInt(256)));
+	Player otherPlayer = new AIPlayer(w, "NormalAI", Alignment.SOVIET, new Color(128, 0, 0));
 	player.setTeam(team2);
 	w.addPlayer(otherPlayer);
     }

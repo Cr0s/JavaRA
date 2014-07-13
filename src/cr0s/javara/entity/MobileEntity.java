@@ -314,7 +314,10 @@ public abstract class MobileEntity extends EntityActor implements Mover, INotify
     @Override
     public void resolveOrder(Order order) {
 	if (order.orderString.equals("Move") && order.targetPosition != null) {
-	    this.cancelActivity();
+	    if (!order.isQueued) {
+		this.cancelActivity();
+	    }
+	    
 	    this.moveTo(order.targetPosition);
 	}
     }

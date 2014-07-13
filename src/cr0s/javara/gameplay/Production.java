@@ -2,6 +2,7 @@ package cr0s.javara.gameplay;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Point;
 
 import cr0s.javara.entity.IHaveCost;
@@ -11,6 +12,8 @@ import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.infantry.EntityInfantry;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.main.Main;
+import cr0s.javara.resources.ResourceManager;
+import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.ui.sbpages.SideBarItemsButton;
 import cr0s.javara.util.PointsUtil;
@@ -41,6 +44,7 @@ public class Production {
     private Color progressHideColor = new Color(0, 0, 0, 128);
 
     private SideBarItemsButton button;
+    private Image overrideTexutre;
 
     private boolean notifiedNoFunds = false;
     private final int NO_FUNDS_INTERVAL = 300;
@@ -73,6 +77,13 @@ public class Production {
 	this.isBuilding = true;
 	this.isReady = false;
 	this.isDeployed = false;
+	
+	if (btn == null) {
+	    ShpTexture s = ResourceManager.getInstance().getSidebarTexture(target.getName() + "icon.shp");
+	    if (s != null) {
+		this.overrideTexutre = s.getAsImage(0, null);
+	    }
+	}
     }
 
     public void update() {
@@ -88,7 +99,9 @@ public class Production {
 	    // Insufficient funds
 	    if (cashPerTick != 0 && !this.player.getBase().takeCash(cashPerTick)) {
 		if (!this.notifiedNoFunds) {
-		    SoundManager.getInstance().playSpeechSoundGlobal("nofunds1");
+		    if (this.player == Main.getInstance().getPlayer()) {
+			SoundManager.getInstance().playSpeechSoundGlobal("nofunds1");
+		    }
 		    this.notifiedNoFunds = true;
 		}
 		return;
@@ -105,7 +118,10 @@ public class Production {
 		if (!(this.targetActor instanceof EntityBuilding)) {
 		    this.ticksBeforeDeploy = DEPLOY_WAIT_TIME_TICKS;
 		    
-		    SoundManager.getInstance().playSpeechSoundGlobal("unitrdy1");
+		    if (this.player == Main.getInstance().getPlayer()) {
+			SoundManager.getInstance().playSpeechSoundGlobal("unitrdy1");
+		    }
+		    
 		    this.isBuilding = false;
 		} else {
 		    this.isBuilding = false;
@@ -177,13 +193,19 @@ public class Production {
     }
 
     public void drawProductionButton(Graphics g, float x, float y, Color filterColor, boolean withProgress) {
-	this.button.getTexture().draw(x, y, filterColor);
-
+	if (this.button != null) {
+	    this.button.getTexture().draw(x, y, filterColor);
+	} else if (this.overrideTexutre != null) {
+	    this.overrideTexutre.draw(x, y, filterColor);
+	} else {
+	    return;
+	}
+	
 	if (withProgress) { // Draw progress rect
 	    Color pColor = g.getColor();
 
 	    g.setColor(this.progressHideColor.multiply(filterColor));
-	    g.fillRect(x, y, 64, 48 - 48 * currentBuildingProgress);
+	    g.fillRect(x, y, 64, 48 - 48 * this.currentBuildingProgress);
 	    g.setColor(Color.white.multiply(filterColor));
 
 	    // Draw status
@@ -215,5 +237,9 @@ public class Production {
     
     public boolean isDeployed() {
 	return this.isDeployed;
+    }
+    
+    public float getCurrentBuildingProgress() {
+	return this.currentBuildingProgress;
     }
 }

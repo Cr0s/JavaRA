@@ -121,7 +121,7 @@ public class Player {
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}*/
 
-	Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
+	//Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
 	/*EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 12 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
@@ -134,7 +134,7 @@ public class Player {
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(emt3);	
 		*/
-	EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
+	/*EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
 	m.isVisible = true;
 	
 	EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 5, 24.0f * this.spawnY + 24 * 5, team, other);
@@ -142,7 +142,7 @@ public class Player {
 	this.world.spawnEntityInWorld(eft);
 
 	this.world.spawnEntityInWorld(m);	
-	
+	*/
 	this.base.gainCash(5000);
     }
 

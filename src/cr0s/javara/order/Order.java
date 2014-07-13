@@ -12,6 +12,14 @@ public class Order {
     public String targetString;
     public Pos extraPosition;
     
+    public boolean isQueued = false;
+    
+    public Order(String order, Entity subj, Pos targetLoc, boolean queued) {
+	this(order, subj, targetLoc, null, null, null);
+	
+	this.isQueued = queued;
+    }
+    
     public Order(String order, Entity subj, Pos targetLoc, Entity targetEnt, String targetStr, Pos extraLoc) {
 	this.orderString = order;
 	this.subject = subj;

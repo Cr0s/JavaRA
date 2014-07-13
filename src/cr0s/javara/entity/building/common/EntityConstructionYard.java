@@ -11,6 +11,7 @@ import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.building.BibType;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
+import cr0s.javara.gameplay.Production;
 import cr0s.javara.gameplay.Team;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
@@ -47,8 +48,10 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	this.buildingSpeed = 100;
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
-	
+
 	this.unitProductionAlingment = Alignment.NEUTRAL;
+
+	this.setName("fact");
     }
 
     private void initTextures() {
@@ -75,6 +78,17 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
 	}
+
+	if (this.isSelected) {
+	    EntityBuilding currentlyBuilding = (EntityBuilding) this.owner.getBase().getProductionQueue().getCurrentProducingBuilding();
+	    if (currentlyBuilding != null) {
+		Production p = this.owner.getBase().getProductionQueue().getProductionForBuilding(currentlyBuilding);
+
+		if (p.isBuilding()) {
+		    p.drawProductionButton(g, this.boundingBox.getMinX(), this.boundingBox.getMinY(), new Color(255, 255, 255, 255), true);
+		}
+	    }
+	}
     }
 
     @Override
@@ -84,8 +98,19 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
+	super.updateEntity(delta);
 
+	EntityBuilding currentlyBuilding = (EntityBuilding) this.owner.getBase().getProductionQueue().getCurrentProducingBuilding();
+	if (currentlyBuilding != null) {
+	    Production p = this.owner.getBase().getProductionQueue().getProductionForBuilding(currentlyBuilding);
+
+	    if (p.isBuilding()) {
+		this.setProgressValue((int) (p.getCurrentBuildingProgress() * 100));
+		this.setMaxProgress(100);
+	    }
+	} else {
+	    this.setProgressValue(-1);
+	}
     }
 
     @Override
@@ -121,13 +146,13 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
-    
+
     @Override
     public Image getTexture() {
 	if (sheet == null) {
 	    return null;
 	}
-	
+
 	return sheet.getSubImage(0, 0);
     }    
 }

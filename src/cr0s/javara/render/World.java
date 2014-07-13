@@ -71,7 +71,7 @@ public class World implements TileBasedMap {
 
     private Random random;
 
-    private final int MAX_RANGE = 50;
+    public final int MAX_RANGE = 50;
     private ArrayList<Pos> pointsInRange[] = new ArrayList[MAX_RANGE + 1];
 
     public World(String mapName, GameContainer c, Camera camera) {

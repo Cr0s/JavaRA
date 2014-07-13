@@ -74,6 +74,8 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	
 	this.unitProductionAlingment = Alignment.NEUTRAL;
 	this.requiredToBuild.add(EntityPowerPlant.class);
+	
+	this.setName("proc");
     }
 
     @Override
