@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.entity.building.IOreCapacitor;
 import cr0s.javara.entity.building.IPowerConsumer;
 import cr0s.javara.entity.building.IPowerProducer;
@@ -92,6 +94,8 @@ public class Base {
 
     private HashSet<Class> buildingClasses = new HashSet<>();
 
+    private ArrayList<EntityBuildingProgress> currentlyBuilding = new ArrayList<>();
+    
     public Base(Team team, Player aOwner) {
 	this.owner = aOwner;
 
@@ -515,5 +519,14 @@ public class Base {
 
     public boolean isSilosNeeded() {
 	return this.ore > 0.9f * this.oreCapacity;
+    }
+
+    public void addToCurrentlyBuilding(
+	    EntityBuildingProgress entityBuildingProgress) {
+	this.currentlyBuilding.add(entityBuildingProgress);
+    }
+    
+    public ArrayList<EntityBuildingProgress> getCurrentlyBuilding() {
+	return this.currentlyBuilding;
     }
 }

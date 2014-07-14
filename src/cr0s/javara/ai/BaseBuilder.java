@@ -107,6 +107,8 @@ public class BaseBuilder {
 	if (this.ai.buildingLimits.containsKey(building)) {
 	    Integer limit = this.ai.buildingLimits.get(building);
 
+	    System.out.println("[AI] Checking building limit for " + building + ": " + this.ai.countBuildings(building, this.ai) + " / " + limit);
+	    
 	    if (this.ai.countBuildings(building, this.ai) < limit) {
 		return true;
 	    } else {

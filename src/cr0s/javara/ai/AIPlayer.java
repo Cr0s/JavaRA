@@ -18,6 +18,7 @@ import org.yaml.snakeyaml.Yaml;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
+import cr0s.javara.entity.building.EntityBuildingProgress;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.ProductionQueue;
@@ -227,6 +228,13 @@ public class AIPlayer extends Player {
 	for (EntityBuilding b : owner.getBase().getBuildings()) {
 	    if (b.owner == owner 
 		    && b.getName().equals(frac)) {
+		result++;
+	    }
+	}
+	
+	// Also check current building progress
+	for (EntityBuildingProgress b : owner.getBase().getCurrentlyBuilding()) {
+	    if (b.getTargetBuilding().getName().equals(frac)) {
 		result++;
 	    }
 	}
