@@ -27,6 +27,8 @@ import cr0s.javara.entity.actor.activity.activities.harvester.FinishDrop;
 import cr0s.javara.entity.actor.activity.activities.harvester.HarvestResource;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.building.common.EntityProc;
+import cr0s.javara.entity.building.common.EntityRadarDome;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -108,6 +110,9 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
 	this.ordersList.add(new DeliverTargeter(this));
 	
 	this.setName("harv");
+	
+	this.requiredToBuild.add(EntityWarFactory.class);
+	this.requiredToBuild.add(EntityProc.class);
     }
 
     @Override

@@ -27,6 +27,8 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Move;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
+import cr0s.javara.entity.building.common.EntityProc;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.entity.turreted.Turret;
 import cr0s.javara.entity.vehicle.EntityVehicle;
@@ -111,6 +113,10 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.autoTarget = new AutoTarget(this, this.attack);
 	
 	this.setName("4tnk");
+	
+	this.requiredToBuild.add(EntityWarFactory.class);
+	//this.requiredToBuild.add(EntityFix.class);
+	//this.requiredToBuild.add(EntitySovietTechCenter.class);
     }
 
     @Override

@@ -24,6 +24,8 @@ import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.entity.vehicle.common.EntityHarvester;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.soviet.EntityHeavyTank;
+import cr0s.javara.entity.vehicle.soviet.EntityMammothTank;
+import cr0s.javara.entity.vehicle.soviet.EntityV2Launcher;
 import cr0s.javara.gameplay.Team.Alignment;
 import cr0s.javara.main.Main;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
@@ -39,6 +41,7 @@ public class ProductionQueue {
     private HashMap<String, EntityActor> sovietBuildings = new HashMap<>();
     private HashMap<String, EntityActor> alliedBuildings = new HashMap<>();
 
+    private HashMap<String, EntityActor> neutralVehicles = new HashMap<>();
     private HashMap<String, EntityActor> sovietVehicles = new HashMap<>();
     private HashMap<String, EntityActor> alliedVehicles = new HashMap<>();
 
@@ -139,6 +142,16 @@ public class ProductionQueue {
 	//this.sovietInfantry.put("e6icon.shp", new EntityEngineer(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
 	this.sovietInfantry.put("e2icon.shp", new EntityGrenadeTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
 	this.sovietInfantry.put("e3icon.shp", new EntityRocketTrooper(0.0f, 0.0f, this.player.getTeam(), this.player, SubCell.CENTER));
+		
+	// Put neutral common vehicles
+	this.neutralVehicles.put("mcvicon.shp", new EntityMcv(0.0f, 0.0f, this.player.getTeam(), this.player));
+	this.neutralVehicles.put("harvicon.shp", new EntityHarvester(0.0f, 0.0f, this.player.getTeam(), this.player));
+	
+	// Put soviet vehicles
+	this.sovietVehicles.put("4tnkicon.shp", new EntityMammothTank(0.0f, 0.0f, this.player.getTeam(), this.player));
+	this.sovietVehicles.put("3tnkicon.shp", new EntityHeavyTank(0.0f, 0.0f, this.player.getTeam(), this.player));
+	this.sovietVehicles.put("v2rlicon.shp", new EntityV2Launcher(0.0f, 0.0f, this.player.getTeam(), this.player));
+
     }
 
     public EntityActor getBuildableActor(SideBarItemsButton texture) {
@@ -216,6 +229,7 @@ public class ProductionQueue {
 	
 	addToBuildablesFrom(this.sovietVehicles);
 	addToBuildablesFrom(this.alliedVehicles);
+	addToBuildablesFrom(this.neutralVehicles);
 	
 	addToBuildablesFrom(this.sovietInfantry);
 	addToBuildablesFrom(this.sovietInfantry);
@@ -272,13 +286,6 @@ public class ProductionQueue {
 	}
 	
 	return this.buildables.containsKey(targetBuilding.getName() + "icon.shp");
-	
-	/*
-	for (EntityActor e : this.buildables.values()) {
-	    if (targetBuilding.getClass().equals(e.getClass())) {
-		return true;
-	    }
-	}*/
     }
     
     public boolean isBuildable(String name) {

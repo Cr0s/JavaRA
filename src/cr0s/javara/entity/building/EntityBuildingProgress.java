@@ -1,5 +1,7 @@
 package cr0s.javara.entity.building;
 
+import java.io.File;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -48,6 +50,8 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 		SoundManager.getInstance().playSfxGlobal("build5", 0.7f);
 	    }
 	}
+	
+	this.owner.getBase().addToCurrentlyBuilding(this);
     }
 
     @Override
@@ -58,7 +62,8 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 	    setDead();
 
 	    this.owner.getBase().addBuilding(this.targetBuilding);
-
+	    this.owner.getBase().getCurrentlyBuilding().remove(this);
+	    
 	    this.targetBuilding.isVisible = true;
 	    world.spawnEntityInWorld(this.targetBuilding);
 
@@ -102,5 +107,9 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
     @Override
     public Image getTexture() {
 	return this.targetBuilding.getTexture();
+    }
+
+    public EntityBuilding getTargetBuilding() {
+	return this.targetBuilding;
     }  
 }

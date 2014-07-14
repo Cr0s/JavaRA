@@ -26,6 +26,9 @@ import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
 import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Turn.RotationDirection;
+import cr0s.javara.entity.building.common.EntityProc;
+import cr0s.javara.entity.building.common.EntityRadarDome;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.turreted.IHaveTurret;
 import cr0s.javara.entity.turreted.Turret;
 import cr0s.javara.entity.vehicle.EntityVehicle;
@@ -91,6 +94,9 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 	this.ordersList.addAll(attack.getOrders());
 	
 	this.setName("v2rl");
+	
+	this.requiredToBuild.add(EntityWarFactory.class);
+	this.requiredToBuild.add(EntityRadarDome.class);
     }
 
     @Override

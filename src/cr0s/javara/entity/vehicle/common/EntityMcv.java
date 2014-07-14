@@ -18,6 +18,8 @@ import cr0s.javara.entity.MobileEntity;
 import cr0s.javara.entity.actor.activity.activities.Deploy;
 import cr0s.javara.entity.actor.activity.activities.Turn;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
+import cr0s.javara.entity.building.common.EntityProc;
+import cr0s.javara.entity.building.common.EntityWarFactory;
 import cr0s.javara.entity.vehicle.EntityVehicle;
 import cr0s.javara.gameplay.Player;
 import cr0s.javara.gameplay.Team;
@@ -72,6 +74,9 @@ public class EntityMcv extends EntityVehicle implements ISelectable, IDeployable
 	this.ordersList.add(new McvDeployTargeter(this));
 	
 	this.setName("mcv");
+	
+	this.requiredToBuild.add(EntityWarFactory.class);
+	//this.requiredToBuild.add(EntityFix.class);
     }
 
     @Override
