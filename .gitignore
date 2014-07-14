@@ -211,6 +211,6 @@ JavaRA.jar
 launch.bat
 JavaRA.zip
 .checkstyle
-.settings/
+.settings/*
 .project
 .classpath
