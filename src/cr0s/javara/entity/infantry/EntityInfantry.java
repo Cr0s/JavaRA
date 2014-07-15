@@ -30,6 +30,7 @@ import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.EntityBlockingMap.SubCell;
 import cr0s.javara.render.Sequence;
+import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.util.Pos;
@@ -70,7 +71,11 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     public enum AnimationState { IDLE, ATTACKING, MOVING, IDLE_ANIMATING, WAITING, DEATH };
     private AnimationState currentAnimationState;
 
-
+    protected static ShpTexture electro;
+    static {
+	electro = ResourceManager.getInstance().getTemplateShpTexture("temperat", "electro.tem");
+    }
+    
     private final static int MIN_IDLE_DELAY_TICKS = 350;
     private final static int MAX_IDLE_DELAY_TICKS = 900;
 

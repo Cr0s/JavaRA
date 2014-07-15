@@ -28,6 +28,8 @@ public class AutoTarget {
     public EntityActor targetedActor;
     
     private EntityActor self;
+
+    public float RANGE_TOLERANCE = 0.5f;
     
     public AutoTarget(EntityActor self, AttackBase attack) {
 	this.self = self;
@@ -86,7 +88,7 @@ public class AutoTarget {
     }
 
     private EntityActor scanForTarget(EntityActor currentTarget) {
-	float range = (this.scanRadius > 0) ? this.scanRadius : this.attack.getMaxRange();
+	float range = (this.scanRadius > 0) ? this.scanRadius : this.attack.getMaxRange() - this.RANGE_TOLERANCE;
     
 	if (this.self.isIdle() || currentTarget == null || !new Target(currentTarget).isInRange(this.self.getPosition(), range)) {
 	    if (--this.nextScanTime <= 0) {
@@ -100,7 +102,7 @@ public class AutoTarget {
     
     private EntityActor chooseTarget(float rangeInCells) {
 	this.nextScanTime = this.self.world.getRandomInt(this.minimumScanInterval, this.maximumScanInterval);
-	ArrayList<EntityActor> actorsInRange = this.self.world.getActorsInCircle(this.self.getPosition(), rangeInCells * 24.0f);
+	ArrayList<EntityActor> actorsInRange = this.self.world.getActorsInCircle(this.self.getPosition(), rangeInCells * 24.0f - this.RANGE_TOLERANCE * 24.0f);
 	
 	// Choose closest hostile actor that we can use our weapons against it
 	EntityActor bestTarget = null;

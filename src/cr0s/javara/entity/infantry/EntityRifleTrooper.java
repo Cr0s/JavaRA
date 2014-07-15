@@ -55,7 +55,7 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
 	this.deathSequences.add(new Sequence(texture, 304, 0, 8, 2, owner.playerColor));
 	this.deathSequences.add(new Sequence(texture, 312, 0, 12, 2, owner.playerColor));
 	this.deathSequences.add(new Sequence(texture, 324, 0, 18, 2, owner.playerColor));
-	//this.deathSequences.add(new Sequence(texture, , 0, 8, 2, owner.playerColor));
+	this.deathSequences.add(new Sequence(electro, 0, 14, 0, 1, owner.playerColor));
 	
 	this.attack = new AttackFrontal(this);
 	Armament arma = new Armament(this, new WeaponM1Carabine());

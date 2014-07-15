@@ -10,6 +10,7 @@ import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.common.EntityConstructionYard;
 import cr0s.javara.entity.building.soviet.EntityFireTurret;
+import cr0s.javara.entity.building.soviet.EntityTeslaCoil;
 import cr0s.javara.entity.vehicle.common.EntityMcv;
 import cr0s.javara.entity.vehicle.soviet.EntityMammothTank;
 import cr0s.javara.entity.vehicle.soviet.EntityV2Launcher;
@@ -122,7 +123,7 @@ public class Player {
 	    e.isVisible = true; this.world.spawnEntityInWorld(e);
 	}*/
 
-	//Player other = new Player(world, "", Alignment.SOVIET, new Color(200, 0, 0));
+	Player other = new Player(world, "", Alignment.SOVIET, new Color(0, 200, 0));
 	/*EntityMammothTank eht = new EntityMammothTank(24.0f * this.spawnX + 12 * 24, 24.0f * this.spawnY + 7 * 24, team, this);
 	eht.isVisible = true;
 	this.world.spawnEntityInWorld(eht);
@@ -137,14 +138,18 @@ public class Player {
 		*/
 	/*EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
 	m.isVisible = true;
-	
-	EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 5, 24.0f * this.spawnY + 24 * 5, team, other);
+	*/
+	EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 10, 24.0f * this.spawnY + 24 * 5, team, other);
 	eft.isVisible = true;
-	this.world.spawnEntityInWorld(eft);
-
+	//this.world.spawnEntityInWorld(eft);
+	
+	EntityTeslaCoil etc = new EntityTeslaCoil(24.0f * this.spawnX + 24 * 10, 24.0f * this.spawnY + 24 * 4, team, other);
+	etc.isVisible = true;
+	this.world.spawnEntityInWorld(etc);	
+/*
 	this.world.spawnEntityInWorld(m);	
 	*/
-	this.base.gainCash(5000);
+	this.base.gainCash(10000);
     }
 
     public OrderTargeter getBestOrderTargeterForTarget(Target target) {

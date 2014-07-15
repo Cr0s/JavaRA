@@ -125,5 +125,21 @@ public class Pos extends Point {
 	p.setZ(this.getZ() * other.getZ());
 	
 	return p;
+    }
+
+    public Pos add(float a) {
+	return this.add(new Pos(a, a));
     }    
+    
+    public float lengthSquared() {
+	return this.getX() * this.getX() + this.getY() * this.getY();
+    }
+    
+    public float length() {
+	return (float) Math.sqrt(this.lengthSquared());
+    }
+    
+    public float dot(Pos other) {
+	return this.getX() * other.getX() + this.getY() + other.getY() + this.getZ() + other.getZ();	
+    }
 }

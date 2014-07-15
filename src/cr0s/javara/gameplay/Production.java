@@ -50,7 +50,7 @@ public class Production {
     private final int NO_FUNDS_INTERVAL = 300;
     private int ticksBeforeNotifyNoFunds = NO_FUNDS_INTERVAL;
     
-    private final boolean INSTANT_BUILD = false;
+    private final boolean INSTANT_BUILD = true;
     
     public Production(Player p) {
 	this.player = p;
@@ -70,8 +70,9 @@ public class Production {
 	//this.maxBuildedTicks = this.buildingCost * (20 * 60) / 1000;
 	this.maxBuildedTicks = (int) (Math.max(1, this.buildingCost * this.COST_TO_TICKS));
 
-	if (this.INSTANT_BUILD) { 
+	if (this.INSTANT_BUILD && this.player == Main.getInstance().getPlayer()) { 
 	    this.maxBuildedTicks = 1;
+	    this.buildingCost = 0;
 	}	
 	
 	this.isBuilding = true;

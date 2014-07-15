@@ -55,7 +55,7 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
 	this.deathSequences.add(new Sequence(texture, 320, 0, 8, 2, owner.playerColor));
 	this.deathSequences.add(new Sequence(texture, 328, 0, 12, 2, owner.playerColor));
 	this.deathSequences.add(new Sequence(texture, 340, 0, 18, 2, owner.playerColor));
-	//this.deathSequences.add(new Sequence(texture, , 0, 8, 2, owner.playerColor));	
+	this.deathSequences.add(new Sequence(electro, 0, 14, 0, 1, owner.playerColor));
 	
 	this.attack = new AttackFrontal(this);
 	Armament arma = new Armament(this, new WeaponDragon());

@@ -58,6 +58,6 @@ public class PointsUtil {
 	    result += -CELL_SIZE + r.nextInt(2 * CELL_SIZE);
 	}
 	
-	return result;
+	return result / samples;
     }    
 }

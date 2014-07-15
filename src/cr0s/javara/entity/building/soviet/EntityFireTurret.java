@@ -16,6 +16,7 @@ import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.WeaponFireballLauncher;
+import cr0s.javara.combat.weapon.WeaponTeslaZap;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.IHaveCost;
@@ -121,6 +122,7 @@ public class EntityFireTurret extends EntityBuilding implements ISelectable, IPo
 	    g.setLineWidth(1);
 	}
 
+	// Draw range circle
 	if (this.isSelected) {
 	    Circle c = new Circle(this.getPosition().getX(), this.getPosition().getY(), this.attack.getMaxRange() * 24);
 	    g.setColor(Color.yellow);
