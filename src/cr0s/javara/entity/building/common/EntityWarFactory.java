@@ -140,6 +140,11 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
 	}
+	
+	// Render repairing wrench
+	if (this.repairIconBlink) {
+	    repairImage.draw(this.boundingBox.getX() + this.boundingBox.getWidth() / 2 - repairImage.getWidth() / 2, this.boundingBox.getY() + this.boundingBox.getHeight() / 2 - repairImage.getHeight() / 2);
+	}	
     }
 
     @Override
@@ -151,6 +156,8 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
+	
 	this.isCorrupted = this.getHp() <= this.getMaxHp() / 2;
 	
 	if (this.isDoorsCloseAnimation && ++this.ticksBeforeClose <= this.TICKS_BEFORE_CLOSE) {

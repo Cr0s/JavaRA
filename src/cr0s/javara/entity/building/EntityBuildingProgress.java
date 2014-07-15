@@ -42,6 +42,9 @@ public class EntityBuildingProgress extends EntityBuilding implements IShroudRev
 	this.setMaxHp(10);
 	this.setHp(10);
 
+	// Set building progress is invulnerable to avoid glitches
+	this.setInvuln(true);
+	
 	// Play "building" sound
 	if (this.owner == Main.getInstance().getPlayer()) {
 	    SoundManager.getInstance().playSfxGlobal("placbldg", 0.7f);

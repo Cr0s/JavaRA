@@ -95,7 +95,7 @@ public class Base {
     private HashSet<Class> buildingClasses = new HashSet<>();
 
     private ArrayList<EntityBuildingProgress> currentlyBuilding = new ArrayList<>();
-    
+
     public Base(Team team, Player aOwner) {
 	this.owner = aOwner;
 
@@ -108,6 +108,7 @@ public class Base {
 
 	this.updateDisplayedCash();
     }
+
 
     public void updateDisplayedCash() {
 	if (this.ticksWaitCash > 0) {
@@ -525,8 +526,12 @@ public class Base {
 	    EntityBuildingProgress entityBuildingProgress) {
 	this.currentlyBuilding.add(entityBuildingProgress);
     }
-    
+
     public ArrayList<EntityBuildingProgress> getCurrentlyBuilding() {
 	return this.currentlyBuilding;
+    }
+
+    public void repairBuilding(EntityBuilding entityBuilding) {
+	entityBuilding.setRepairing(true);
     }
 }

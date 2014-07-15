@@ -92,6 +92,11 @@ public class EntityConstructionYard extends EntityBuilding implements ISelectabl
 		}
 	    }
 	}
+	
+	// Render repairing wrench
+	if (this.repairIconBlink) {
+	    repairImage.draw(this.boundingBox.getX() + this.boundingBox.getWidth() / 2 - repairImage.getWidth() / 2, this.boundingBox.getY() + this.boundingBox.getHeight() / 2 - repairImage.getHeight() / 2);
+	}	
     }
 
     @Override

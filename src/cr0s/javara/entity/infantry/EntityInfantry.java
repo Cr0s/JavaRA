@@ -10,6 +10,7 @@ import cr0s.javara.combat.ArmorType;
 import cr0s.javara.combat.TargetType;
 import cr0s.javara.combat.Warhead;
 import cr0s.javara.combat.attack.AttackBase;
+import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.IShroudRevealer;
 import cr0s.javara.entity.MobileEntity;
@@ -78,7 +79,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
     private final int MAX_VERSIONS = 4;    
 
     protected AttackBase attack;
-
+    protected AutoTarget autoTarget;
+    
     private Sequence currentDeathSequence;
     
     protected ArrayList<String> deathSounds = new ArrayList<String>();
@@ -164,6 +166,10 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
 	if (this.attack != null) {
 	    this.attack.update(delta);
+	    
+	    if (this.autoTarget != null) {
+		this.autoTarget.update(delta);
+	    }
 	}
 
 	if (this.currentSequence != null) { 
@@ -344,12 +350,12 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 
     @Override
     public void resolveOrder(Order order) {
-	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
+	if (this.attack != null) {
 	    this.attack.resolveOrder(order);
-	} else {
-	    super.resolveOrder(order);
 	}
-    }      
+	
+	super.resolveOrder(order);
+    }         
 
     @Override
     public Activity moveToRange(Pos cellPos, int range) {
@@ -390,6 +396,8 @@ public abstract class EntityInfantry extends MobileEntity implements IShroudReve
 	}
 	
 	this.setHp(this.getHp() - amount);	
+	
+	this.owner.notifyDamaged(this, firedBy, amount, warhead);
     }
 
     private String getRandomDeathSound(Warhead wh) {

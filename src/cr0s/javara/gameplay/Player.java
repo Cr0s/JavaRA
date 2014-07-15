@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import org.newdawn.slick.Color;
 
+import cr0s.javara.combat.Warhead;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.INotifySelected;
 import cr0s.javara.entity.actor.EntityActor;
@@ -215,5 +216,10 @@ public class Player {
     
     public void update(int delta) {
 	this.base.update();
+    }
+
+    public void notifyDamaged(Entity entity, EntityActor firedBy, int amount,
+	    Warhead warhead) {
+
     }
 }

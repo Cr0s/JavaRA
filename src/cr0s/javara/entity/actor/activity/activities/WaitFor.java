@@ -10,6 +10,7 @@ public class WaitFor extends Activity {
 
     private WaitAction f;
     private boolean interruptable = true;
+    private boolean cancelNextActivity = true;
     
     public WaitFor(WaitAction f) {
 	this.f = f;
@@ -19,6 +20,12 @@ public class WaitFor extends Activity {
 	this.f = f;
 	this.interruptable = interruptable;
     }
+
+    public WaitFor(WaitAction f, boolean interruptable, boolean cancelNextActivity) {
+	this.f = f;
+	this.interruptable = interruptable;
+	this.cancelNextActivity = cancelNextActivity;
+    }    
     
     @Override
     public Activity tick(EntityActor a) {
@@ -31,7 +38,13 @@ public class WaitFor extends Activity {
 	    return;
 	}
 	
+	// Interrupt
 	this.f = null;
 	super.cancel();
+	
+	// Interrupt next if needed
+	if (this.cancelNextActivity && this.nextActivity != null) {
+	    this.nextActivity.cancel();
+	}
     }
 }

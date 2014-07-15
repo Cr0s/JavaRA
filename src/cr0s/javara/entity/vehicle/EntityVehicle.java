@@ -201,5 +201,7 @@ public abstract class EntityVehicle extends MobileEntity implements IShroudRevea
 	}
 	
 	this.setHp(this.getHp() - amount);	
+	
+	this.owner.notifyDamaged(this, firedBy, amount, warhead);
     }    
 }

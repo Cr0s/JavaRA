@@ -77,6 +77,11 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
 	}
+	
+	// Render repairing wrench
+	if (this.repairIconBlink) {
+	    repairImage.draw(this.boundingBox.getX() + this.boundingBox.getWidth() / 2 - repairImage.getWidth() / 2, this.boundingBox.getY() + this.boundingBox.getHeight() / 2 - repairImage.getHeight() / 2);
+	}
     }
 
     @Override
@@ -86,8 +91,7 @@ public class EntityAdvPowerPlant extends EntityBuilding implements ISelectable, 
 
     @Override
     public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
+	super.updateEntity(delta);
     }
 
     @Override

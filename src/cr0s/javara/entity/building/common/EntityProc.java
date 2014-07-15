@@ -51,15 +51,15 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     private static final int HARV_OFFSET_Y = 2;
 
     public static final int HARV_FACING = 8;
-    
+
     // Ore capacity
     public static final int MAX_CAPACITY = 2000;
     public static final int PIPS_COUNT = 17;
-    
+
     private LinkedList<TargetLine> targetLines = new LinkedList<>();
-    
+
     private static final int BUILDING_COST = 1400;
-    
+
     public EntityProc(Float tileX, Float tileY, Team team, Player player) {
 	super(tileX, tileY, team, player, WIDTH_TILES * 24, HEIGHT_TILES * 24, "_x_ xxx x~~ ~~~");
 
@@ -70,13 +70,13 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	setHp(getMaxHp());
 
 	this.armorType = ArmorType.WOOD;
-	
+
 	this.makeTextureName = MAKE_TEXTURE_NAME;
 	initTextures();
-	
+
 	this.unitProductionAlingment = Alignment.NEUTRAL;
 	this.requiredToBuild.add(EntityPowerPlant.class);
-	
+
 	this.setName("proc");
     }
 
@@ -85,31 +85,31 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	super.onBuildFinished();
 	spawnHarvester();
     }
-    
+
     private void spawnHarvester() {
 	if (world == null) {
 	    return;
 	}
-		
+
 	Pos harvCell = getHarvesterCell();
 	EntityHarvester harv = new EntityHarvester(harvCell.getX() * 24f, harvCell.getY() * 24f, team, owner);
-	
+
 	harv.currentFacing = HARV_FACING;
 	harv.isVisible = true;
 	harv.setWorld(world);
-	
+
 	harv.linkedProc = this;
 	harv.queueActivity(new FindResources());
-	
+
 	world.spawnEntityInWorld(harv);
-	
+
 	this.setName("proc");
     }
-    
+
     public Pos getHarvesterCell() {
 	return new Pos((this.getTileX() / 24) + HARV_OFFSET_X, (this.getTileY() / 24) + HARV_OFFSET_Y);	
     }
-    
+
     private void initTextures() {
 	ShpTexture tex = ResourceManager.getInstance().getConquerTexture(TEXTURE_NAME);
 	corrupted = tex.getAsImage(1, owner.playerColor);
@@ -134,17 +134,16 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
 	}
+
+	// Render repairing wrench
+	if (this.repairIconBlink) {
+	    repairImage.draw(this.boundingBox.getX() + this.boundingBox.getWidth() / 2 - repairImage.getWidth() / 2, this.boundingBox.getY() + this.boundingBox.getHeight() / 2 - repairImage.getHeight() / 2);
+	}
     }
 
     @Override
     public boolean shouldRenderedInPass(int passnum) {
 	return passnum == 0;
-    }
-
-    @Override
-    public void updateEntity(int delta) {
-	// TODO Auto-generated method stub
-
     }
 
     @Override
@@ -181,7 +180,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     public int getRevealingRange() {
 	return this.SHROUD_REVEALING_RANGE;
     }
-    
+
     @Override
     public Image getTexture() {
 	return normal;
@@ -190,7 +189,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
     public void acceptResources(int aCapacity) {
 	owner.getBase().giveOre(aCapacity);
     }
-    
+
     @Override
     public int getPipCount() {
 	return this.PIPS_COUNT;
@@ -213,7 +212,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 
     private LinkedList<TargetLine> linkedHarvestersLines() {
 	this.targetLines.clear();
-	
+
 	for (Entity e : world.getEntitiesList()) {
 	    if (e instanceof EntityHarvester) {
 		if (((EntityHarvester)e).linkedProc == this) {
@@ -221,7 +220,7 @@ public class EntityProc extends EntityBuilding implements ISelectable, IPowerCon
 		}
 	    }
 	}
-	
+
 	return this.targetLines;
     }
 

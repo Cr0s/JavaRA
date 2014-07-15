@@ -211,10 +211,7 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 
     @Override
     public void resolveOrder(Order order) {
-	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
-	    this.attack.resolveOrder(order);
-	} else {
-	    super.resolveOrder(order);
-	}
-    }    
+	this.attack.resolveOrder(order);
+	super.resolveOrder(order);
+    }     
 }

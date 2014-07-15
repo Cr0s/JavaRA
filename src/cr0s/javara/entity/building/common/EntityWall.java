@@ -128,4 +128,9 @@ public abstract class EntityWall extends EntityBuilding implements IHaveCost {
 	this.dirty = true;
 	this.updateNeighbours();
     }
+    
+    @Override
+    public void setRepairing(boolean b) {
+	return;
+    }
 }

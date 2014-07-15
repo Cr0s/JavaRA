@@ -98,6 +98,11 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 	    g.draw(boundingBox);
 	    g.setLineWidth(1);
 	}
+	
+	// Render repairing wrench
+	if (this.repairIconBlink) {
+	    repairImage.draw(this.boundingBox.getX() + this.boundingBox.getWidth() / 2 - repairImage.getWidth() / 2, this.boundingBox.getY() + this.boundingBox.getHeight() / 2 - repairImage.getHeight() / 2);
+	}
     }
 
     @Override
@@ -107,6 +112,8 @@ public class EntityBarracks extends EntityBuilding implements ISelectable, IPowe
 
     @Override
     public void updateEntity(int delta) {
+	super.updateEntity(delta);
+	
 	if (animDelayTicks++ > ANIM_DELAY_TICKS) {
 	    animDelayTicks = 0;
 

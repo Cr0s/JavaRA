@@ -12,7 +12,6 @@ public abstract class Activity {
     
     public void cancel() {
 	this.isCancelled = true;
-	this.nextActivity = null;
     }
     
     public boolean isCancelled() {

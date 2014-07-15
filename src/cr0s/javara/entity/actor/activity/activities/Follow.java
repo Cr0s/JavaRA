@@ -34,10 +34,9 @@ public class Follow extends Activity {
 		public boolean waitFor() {
 		    return !Follow.this.target.isValidFor(Follow.this.self) || !Follow.this.target.centerPosition().equals(cachedPosition);
 		}
-	    });
+	    }, true);
 	    
-	    wait.queueActivity(move);
-	    move.queueActivity(this);
+	    wait.queueActivity(this);
 	    
 	    return wait;
 	}

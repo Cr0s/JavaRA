@@ -12,7 +12,7 @@ import cr0s.javara.util.RotationUtil;
 
 public class AttackFrontal extends AttackBase {
     
-    private static final float RANGE_TOLERANCE = 2.0f;
+    private static final float RANGE_TOLERANCE = 1.0f;
     private final float ANGLE_TOLERANCE = 1f;
     
     public AttackFrontal(EntityActor s) {

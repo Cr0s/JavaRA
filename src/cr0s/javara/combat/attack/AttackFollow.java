@@ -29,7 +29,7 @@ public class AttackFollow extends AttackBase {
     }
     
     @Override
-    public Activity getAttackActivity(Target tgt, boolean allowMove) {
+    public Activity getAttackActivity(final Target tgt, boolean allowMove) {
 	return new AttackActivity(this, this.self, tgt, allowMove);
     }
 
@@ -37,7 +37,7 @@ public class AttackFollow extends AttackBase {
     public void resolveOrder(Order order) {
 	super.resolveOrder(order);
 	
-	if (order.orderString.equals("Stop")) {
+	if (order.orderString.equals("Stop") || order.orderString.equals("Move")) {
 	    this.target = null;
 	}
     }
@@ -62,7 +62,7 @@ public class AttackFollow extends AttackBase {
 
 	@Override
 	public Activity tick(EntityActor a) {
-	    if (this.isCancelled() || !this.target.isValidFor(this.self)) {
+	    if (this.isCancelled() || this.attack == null || !this.target.isValidFor(this.self)) {
 		return this.nextActivity;
 	    }
 	    

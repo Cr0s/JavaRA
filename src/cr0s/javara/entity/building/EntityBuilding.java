@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 
 import cr0s.javara.combat.ArmorType;
@@ -23,6 +24,7 @@ import cr0s.javara.order.OrderTargeter;
 import cr0s.javara.order.Target;
 import cr0s.javara.render.EntityBlockingMap.FillsSpace;
 import cr0s.javara.render.map.TileSet;
+import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.SoundManager;
 import cr0s.javara.util.Pos;
 
@@ -87,9 +89,20 @@ public abstract class EntityBuilding extends EntityActor {
      */
     private String footprint;
     private int[][] blockingCells;
-    
+
     public String explosionSound = "kaboom22";
-    
+
+    private int repairingTicks;
+    private static final int REPAIR_INTERVAL_TICKS = 15;
+    private static final int REPAIR_HP_AMOUNT = 5;
+    private static final int REPAIR_COST = 5;
+    protected boolean repairIconBlink;
+
+    protected static Image repairImage;
+    static {
+	repairImage = ResourceManager.getInstance().getConquerTexture("select.shp").getAsImage(2, null);
+    }
+
     /**
      * Creates new building.
      * @param aTileX tiled map grid-aligned location of building by X-axis 
@@ -121,11 +134,11 @@ public abstract class EntityBuilding extends EntityActor {
 
 	this.blockingCells = new int[this.tileWidth][this.tileHeight];
 	generateCellsFromFootprint(aFootprint, this.blockingCells);
-	
+
 	this.fillsSpace = FillsSpace.ONE_OR_MORE_CELLS;
-	
+
 	requiredToBuild.add(EntityConstructionYard.class);
-	
+
 	this.armorType = ArmorType.CONCRETE;
 	this.targetTypes.add(TargetType.GROUND);
     }
@@ -133,6 +146,32 @@ public abstract class EntityBuilding extends EntityActor {
     @Override
     public void updateEntity(int delta) {
 	super.updateEntity(delta);
+
+	if (this.isRepairing) {
+	    if (--this.repairingTicks < 0) {
+		this.repairingTicks = this.REPAIR_INTERVAL_TICKS;
+		this.repairIconBlink = !this.repairIconBlink; // blink wrench icon
+
+		if (this.getHp() + this.REPAIR_HP_AMOUNT >= this.getMaxHp()) {
+		    if (this.owner.getBase().takeCash(this.REPAIR_COST)) {
+			this.setHp(this.getMaxHp());
+		    }
+
+		    this.isRepairing = false;
+		    this.repairIconBlink = false;
+		    this.repairingTicks = 0;
+		} else {
+		    if (this.owner.getBase().takeCash(this.REPAIR_COST)) {
+			this.setHp(this.getHp() + this.REPAIR_HP_AMOUNT);
+		    } else {
+			this.isRepairing = false;
+			this.repairIconBlink = false;
+			this.repairingTicks = 0;
+		    }
+
+		}
+	    }
+	}
     }
 
     @Override
@@ -327,47 +366,49 @@ public abstract class EntityBuilding extends EntityActor {
     @Override
     public void resolveOrder(Order order) {
     }
-    
+
     public void explodeBuilding() {
 	SoundManager.getInstance().playSfxAt(this.explosionSound, ((EntityActor) this).getPosition());
-	
+
 	for (int bX = 0; bX < this.getWidthInTiles(); bX++) {
 	    for (int bY = 0; bY < this.getHeightInTiles(); bY++) {
 		world.spawnExplosionAt(new Pos(this.posX + bX * 24, this.posY + bY * 24), "fball1.shp");
 	    }
 	}
-	
+
 	ScreenShaker.getInstance().addEffect((int) (2 * (this.getHeightInTiles() + this.getWidthInTiles())), this.getPosition(), (int) (2 * (this.getHeightInTiles() + this.getWidthInTiles())));
     }
-    
+
     @Override
     public void giveDamage(EntityActor firedBy, int amount, Warhead warhead) {
 	if (!this.isDead() && getHp() - amount <= 0) {
 	    this.setHp(0);
 	    this.setDead();
-	    
+
 	    this.owner.getBase().removeBuilding(this);
-	    
+
 	    explodeBuilding();
 	}
-		
+
 	// Play half damage sound and effect
 	if (this.getHp() >= this.getMaxHp() / 2 && this.getHp() - amount < this.getMaxHp() / 2) {
 	    SoundManager.getInstance().playSfxAt("kaboom1", this.getPosition());
-	    
+
 	    for (int bX = 0; bX < this.getWidthInTiles(); bX++) {
 		for (int bY = 0; bY < this.getHeightInTiles(); bY++) {
 		    if (this.blockingCells[bX][bY] == TileSet.SURFACE_BUILDING_CLEAR_ID) {
 			continue;
 		    }
-		    
+
 		    if (world.getRandomInt(0, 10) >= 8) { 
 			world.spawnExplosionAt(new Pos(this.posX + bX * 24 + 12, this.posY + bY * 24 + 12), "fire1.shp");
 		    }
 		}
 	    }	    
 	}
-	
+
 	this.setHp(this.getHp() - amount);	
+
+	this.owner.notifyDamaged(this, firedBy, amount, warhead);
     }
 }

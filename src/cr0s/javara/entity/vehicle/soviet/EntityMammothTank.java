@@ -190,6 +190,8 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	}*/
 	
 	drawPath(g);
+
+	g.getFont().drawString(this.posX, this.posY + this.boundingBox.getHeight() + 5, (this.isIdle()) ? "idle" : this.currentActivity.getClass().getSimpleName());
     }
 
     @Override
@@ -288,10 +290,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
     @Override
     public void resolveOrder(Order order) {
-	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
-	    this.attack.resolveOrder(order);
-	} else {
-	    super.resolveOrder(order);
-	}
-    }    
+	this.attack.resolveOrder(order);
+	super.resolveOrder(order);
+    }      
 }

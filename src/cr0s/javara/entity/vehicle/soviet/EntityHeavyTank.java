@@ -69,7 +69,7 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 
     private AttackTurreted attack;
     private AutoTarget autoTarget;
-    
+
     public EntityHeavyTank(Float posX, Float posY, Team team, Player player) {
 	super(posX, posY, team, player, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
@@ -92,11 +92,11 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	attack.armaments.add(arma);
 
 	this.autoTarget = new AutoTarget(this, this.attack);
-	
+
 	this.ordersList.addAll(attack.getOrders());
-	
+
 	this.setName("3tnk");
-	
+
 	this.requiredToBuild.add(EntityWarFactory.class);
 	//this.requiredToBuild.add(EntityFix.class);
     }
@@ -258,16 +258,13 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
 	}
 
 	this.attack.cancelAttack();
-	
+
 	return super.issueOrder(self, targeter, target, ia);
     }
 
     @Override
     public void resolveOrder(Order order) {
-	if (order.orderString.equals("Attack") || order.orderString.equals("Stop")) {
-	    this.attack.resolveOrder(order);
-	} else {
-	    super.resolveOrder(order);
-	}
+	this.attack.resolveOrder(order);
+	super.resolveOrder(order);
     }    
 }

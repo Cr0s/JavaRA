@@ -15,6 +15,7 @@ import java.util.Random;
 import org.newdawn.slick.Color;
 import org.yaml.snakeyaml.Yaml;
 
+import cr0s.javara.combat.Warhead;
 import cr0s.javara.entity.Entity;
 import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
@@ -314,6 +315,7 @@ public class AIPlayer extends Player {
 
 	    });
 	} else {
+	    // Shuffling is needed to make sure bot place building in random location at the base
 	    Collections.shuffle(cells, this.rnd);
 	}
 
@@ -321,7 +323,8 @@ public class AIPlayer extends Player {
 	if (b == null || !(b instanceof EntityBuilding)) {
 	    return null;
 	}
-
+	
+	
 	for (Pos cell : cells) {
 	    if (!this.getBase().isPossibleToBuildHere((int) cell.getX(), (int) cell.getY(), (EntityBuilding) b)) {
 		continue;
@@ -341,14 +344,14 @@ public class AIPlayer extends Player {
 	EntityActor closest = null;
 
 	for (Entity e : Main.getInstance().getWorld().getEntitiesList()) { 
-	    if (e.isDead() || !(e instanceof EntityActor)) {
+	    if (e.isDead() || !(e instanceof EntityActor) || (e.owner != this)) {
 		continue;
 	    }
 
 	    EntityActor a = (EntityActor) e;
 
 	    if (closest == null 
-		    || a.getPosition().distanceToSq(center) < closest.getPosition().distanceToSq(center)) {
+		    || a.getPosition().getCellPos().distanceToSq(center) < closest.getPosition().getCellPos().distanceToSq(center)) {
 		closest = a;
 	    }
 	}
@@ -362,6 +365,8 @@ public class AIPlayer extends Player {
 	    if (this.rnd.nextInt(100) >= 30) { // In ~70% of cases we build defensive structures as close as possible to the enemy
 		EntityActor closestEnemy = this.findClosestEnemy(this.defenseCenter);
 		Pos targetCell = (closestEnemy != null) ? closestEnemy.getCellPosition() : this.getPlayerSpawnPoint();
+		
+		System.out.println("[AI] Closest enemy: " + closestEnemy.getClass().getSimpleName());
 		return this.findPosForBuilding(actorType, this.defenseCenter, targetCell, this.minimumDefenseRadius, this.maximumDefenseRadius, distanceToBaseIsImportant);
 	    } else { // In other cases place build somewhere in base
 		return this.findPosForBuilding(actorType, this.getPlayerSpawnPoint(), this.getPlayerSpawnPoint(), 0, this.maxBaseRadius, false);
@@ -399,5 +404,19 @@ public class AIPlayer extends Player {
 	return null;
     }
 
-
+    @Override
+    public void notifyDamaged(Entity who, EntityActor by, int amount, Warhead warhead) {
+	if (!who.isDead() && who.owner == this && by != null && amount > 0 && warhead != null) {
+	    if (who instanceof EntityBuilding) { // Defense our buildings
+		if (who instanceof EntityBuildingProgress) {
+		    who = ((EntityBuildingProgress) who).getTargetBuilding();
+		}
+		
+		this.defenseCenter = ((EntityBuilding) who).getCellPosition();
+		
+		// Try to repair building
+		this.getBase().repairBuilding((EntityBuilding) who);
+	    }
+	}
+    }
 }

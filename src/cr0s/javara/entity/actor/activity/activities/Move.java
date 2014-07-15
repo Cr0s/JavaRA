@@ -304,7 +304,7 @@ public class Move extends Activity {
 		this.isNewPath = false;
 	    }
 
-	    me.setPos(nextPos);		    
+	    me.setPos(nextPos);
 
 	    ticks++;
 	    // If move is finished, return control to parent activity
@@ -313,7 +313,7 @@ public class Move extends Activity {
 		me.finishMoving();
 
 		// Parent Move activity is cancelled, lets switch to next activity (user send move order when Move/PartMove activity is working)
-		if (this.nextActivity instanceof Move || parentMove.isCancelled()) {
+		if (this.nextActivity instanceof Move || this.parentMove.isCancelled() || this.isCancelled) {
 		    return this.nextActivity;
 		} else {
 		    return parentMove;

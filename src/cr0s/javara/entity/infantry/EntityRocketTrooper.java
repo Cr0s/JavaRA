@@ -8,6 +8,7 @@ import org.newdawn.slick.SpriteSheet;
 
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.attack.AttackFrontal;
+import cr0s.javara.combat.attack.AutoTarget;
 import cr0s.javara.combat.weapon.WeaponDragon;
 import cr0s.javara.combat.weapon.WeaponM1Carabine;
 import cr0s.javara.entity.IHaveCost;
@@ -62,6 +63,7 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
 	this.attack.addArmament(arma);
 	
 	this.ordersList.addAll(this.attack.getOrders());
+	this.autoTarget = new AutoTarget(this, this.attack);
 	
 	this.setName("e3");
     }
