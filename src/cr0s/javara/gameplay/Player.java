@@ -227,4 +227,8 @@ public class Player {
 	    Warhead warhead) {
 
     }
+
+    public boolean isEnemyFor(Player player) {
+	return this.team != player.team;
+    }
 }

@@ -801,4 +801,8 @@ public class World implements TileBasedMap {
 	    }    
 	});
     }
+
+    public ArrayList<Player> getPlayers() {
+	return this.players;
+    }
 }

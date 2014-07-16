@@ -163,4 +163,8 @@ public abstract class EntityActor extends Entity implements IOrderIssuer, IOrder
     public void setName(String name) {
 	this.name = name;
     }
+
+    public Activity getCurrentActivity() {
+	return this.currentActivity;
+    }
 }

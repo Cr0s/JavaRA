@@ -38,15 +38,15 @@ public class ProductionQueue {
     private Base base;
     private Player player;
 
-    private HashMap<String, EntityActor> sovietBuildings = new HashMap<>();
-    private HashMap<String, EntityActor> alliedBuildings = new HashMap<>();
+    public HashMap<String, EntityActor> sovietBuildings = new HashMap<>();
+    public HashMap<String, EntityActor> alliedBuildings = new HashMap<>();
 
-    private HashMap<String, EntityActor> neutralVehicles = new HashMap<>();
-    private HashMap<String, EntityActor> sovietVehicles = new HashMap<>();
-    private HashMap<String, EntityActor> alliedVehicles = new HashMap<>();
+    public HashMap<String, EntityActor> neutralVehicles = new HashMap<>();
+    public HashMap<String, EntityActor> sovietVehicles = new HashMap<>();
+    public HashMap<String, EntityActor> alliedVehicles = new HashMap<>();
 
-    private HashMap<String, EntityActor> sovietInfantry = new HashMap<>();
-    private HashMap<String, EntityActor> alliedInfantry = new HashMap<>();
+    public HashMap<String, EntityActor> sovietInfantry = new HashMap<>();
+    public HashMap<String, EntityActor> alliedInfantry = new HashMap<>();
 
     private HashMap<String, EntityActor> buildables = new HashMap<>();
 
@@ -116,10 +116,6 @@ public class ProductionQueue {
 	this.alliedBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
 	
 	
-	this.sovietVehicles.put("harvicon.shp", new EntityHarvester(0.0f, 0.0f, this.player.getTeam(), this.player));
-	this.sovietVehicles.put("3tnkicon.shp", new EntityHeavyTank(0.0f, 0.0f, this.player.getTeam(), this.player));
-	this.sovietVehicles.put("mcvcon.shp", new EntityMcv(0.0f, 0.0f, this.player.getTeam(), this.player));
-	
 	/*
 	 	addButton(new InfantrySidebarButton("", "shokicon.shp", this.getPosition(), 0, 4, false, null));
 	
@@ -171,6 +167,18 @@ public class ProductionQueue {
 	}
 	
 	return null;
+    }
+
+    public void startBuildingActor(String name, SideBarItemsButton texture) {
+	EntityActor target = this.buildables.get(name);
+	
+	if (target instanceof EntityBuilding) {
+	    getProductionForBuilding(target).startBuildingActor(target, texture);
+	} else if (target instanceof EntityVehicle) {
+	    this.currentVehicle.startBuildingActor(target, texture);
+	} else if (target instanceof EntityInfantry) {
+	    this.currentInfantry.startBuildingActor(target, texture);
+	}
     }
     
     public void startBuildingActor(EntityActor target, SideBarItemsButton texture) {

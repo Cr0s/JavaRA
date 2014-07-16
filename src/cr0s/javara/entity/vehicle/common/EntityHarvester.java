@@ -317,12 +317,14 @@ public class EntityHarvester extends EntityVehicle implements ISelectable, IShro
     public void resolveOrder(Order order) {
 	super.resolveOrder(order);
 	
-	if (order.orderString.equals("Harvest")) {
-	    this.lastOrderPoint = order.targetPosition;
-	    
+	if (order.orderString.equals("Harvest")) {	    
 	    cancelActivity();
 	    
-	    this.moveTo(order.targetPosition);
+	    this.lastOrderPoint = order.targetPosition;
+	    if (order.targetPosition != null) { // Is order is not from AI?
+		this.moveTo(order.targetPosition);
+	    }
+	    
 	    queueActivity(new FindResources());
 	} else if (order.orderString.equals("Deliver")) {
 	    Entity e = order.targetEntity;

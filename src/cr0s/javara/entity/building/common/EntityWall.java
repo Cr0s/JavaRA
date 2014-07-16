@@ -5,6 +5,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
 
+import cr0s.javara.entity.IDefense;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.gameplay.Player;
@@ -13,7 +14,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
 
-public abstract class EntityWall extends EntityBuilding implements IHaveCost {
+public abstract class EntityWall extends EntityBuilding implements IHaveCost, IDefense {
 
     protected boolean dirty;
     protected int adjacent = 0;
