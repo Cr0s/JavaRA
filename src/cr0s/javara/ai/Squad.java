@@ -66,4 +66,12 @@ public class Squad {
     public void setTarget(EntityActor tgt) {
 	this.target = new Target(tgt);
     }
+    
+    public AIPlayer getBot() {
+	return this.bot;
+    }
+
+    public ArrayList<EntityActor> getUnits() {
+	return this.units;
+    }
 }

@@ -353,7 +353,7 @@ public class AIPlayer extends Player {
 	return null;
     }
 
-    private EntityActor findClosestEnemy(final Pos center) {
+    public EntityActor findClosestEnemy(final Pos center) {
 	return this.findClosestEnemy(center, null);
     }
 
@@ -767,7 +767,7 @@ public class AIPlayer extends Player {
 	if (!buildables.isEmpty()) {
 	    String randomName = buildables.get(this.rnd.nextInt(buildables.size()));
 	    
-	    System.out.println("[AI] Building unit: " + randomName);
+	    //System.out.println("[AI] Building unit: " + randomName);
 	    this.getBase().getProductionQueue().startBuildingActor(this.getBase().getProductionQueue().getBuildables().get(randomName), null);
 	}
     }
@@ -806,6 +806,10 @@ public class AIPlayer extends Player {
 
 	// No any our MCV is found
 	return false;
+    }
+
+    public Random getRandom() {
+	return this.rnd;
     }
 
 }

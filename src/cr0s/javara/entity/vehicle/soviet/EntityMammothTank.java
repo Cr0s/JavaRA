@@ -74,7 +74,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 
     private final float SHIFT = 12;
 
-    private final int BUILDING_COST = 100;
+    private final int BUILDING_COST = 900;
     private Turret turret;
 
     private AttackTurreted attack;
@@ -193,7 +193,7 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	
 	drawPath(g);
 
-	g.getFont().drawString(this.posX, this.posY + this.boundingBox.getHeight() + 5, (this.isIdle()) ? "idle" : this.currentActivity.getClass().getSimpleName());
+	//g.getFont().drawString(this.posX, this.posY + this.boundingBox.getHeight() + 5, (this.isIdle()) ? "idle" : this.currentActivity.getClass().getSimpleName());
     }
 
     @Override
