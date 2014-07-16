@@ -282,8 +282,7 @@ public class ResourceManager {
 	    return palettes.get(name);
 	}
 
-	try (RandomAccessFile randomAccessFile = new RandomAccessFile(Paths
-		.get(PAL_FOLDER + name).toString().toLowerCase(), "r")) {
+	try (RandomAccessFile randomAccessFile = new RandomAccessFile(PAL_FOLDER + name.toString().toLowerCase(), "r")) {
 	    FileChannel inChannel = randomAccessFile.getChannel();
 	    PalFile palfile = new PalFile(name, inChannel);
 
