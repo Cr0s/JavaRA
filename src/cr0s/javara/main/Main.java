@@ -101,6 +101,7 @@ public class Main extends StateBasedGame {
 	this.addState(new StateGameMap(arg0));
 	this.addState(new StatePauseMenu());
 	this.addState(new StateLoadingScreen());
+	this.addState(new StateTestScreen());
 
 	// Disable native cursor
 	Cursor emptyCursor;

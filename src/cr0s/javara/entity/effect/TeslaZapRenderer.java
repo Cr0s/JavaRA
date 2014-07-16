@@ -49,14 +49,14 @@ public class TeslaZapRenderer extends Projectile implements IEffect {
 
     private Pos p;
     private boolean isBright;
-    
+
     public TeslaZapRenderer(EntityActor srcActor, Pos srcPos, Pos passivePos,
 	    EntityActor targetActor, int width, int height, boolean isBright) {
 	this(srcActor, srcPos, passivePos, targetActor, width, height);
 
 	this.isBright = isBright;
     }    
-    
+
     public TeslaZapRenderer(EntityActor srcActor, Pos srcPos, Pos passivePos,
 	    EntityActor targetActor, int width, int height) {
 	super(srcActor, srcPos, passivePos, targetActor, width, height);
@@ -75,18 +75,22 @@ public class TeslaZapRenderer extends Projectile implements IEffect {
 	}
     }
 
+    public static float getRandom(float from, float to) {
+	return (float) (from + Math.random() * (to - from));
+    }
+
     @Override
     public void renderEntity(Graphics g) {
 	this.tex.startUse();
 
 	this.p = this.guided.isValidFor(this.sourceActor) ? this.guidedTarget.getPosition() : this.passiveTargetPos;	
-	this.drawZapWandering(this.sourcePos, this.p);
+	this.drawZapWandering(this.sourcePos, this.p, this.world.getRandomInt(25, 50), 5.0f);
 
 	this.tex.endUse();
     }      
 
-    private void drawZapWandering(Pos from, Pos to) {
-	System.out.println("From: " + from + " to " + to);
+    private void drawZapWandering(Pos from, Pos to, float displace, float detail) {
+	/*System.out.println("From: " + from + " to " + to);
 	Pos z = new Pos(0, 0);
 	Pos dist = to.sub(from);
 	Pos norm = new Pos(-dist.getY(), dist.getX()).mul(1.0f / dist.length());
@@ -104,6 +108,21 @@ public class TeslaZapRenderer extends Projectile implements IEffect {
 
 	    p1 = this.drawZap(from, p1);
 	    z = this.drawZap(p1, to);
+	}*/
+
+	if (displace < detail) {
+	    this.drawZap(from, to);
+	} else {
+	    float midX = (to.getX() + from.getX()) * 0.5f;
+	    float midY = (to.getY() + from.getY()) * 0.5f;
+
+	    midX += (Math.random() - 0.5f) * displace;
+	    midY += (Math.random() - 0.5f) * displace;	
+	    
+	    //drawSingleP2PLightning(g, x1,y1,mid_x,mid_y,displace*0.5f, detail, thickness);
+	    //drawSingleP2PLightning(g, x2,y2,mid_x,mid_y,displace*0.5f, detail, thickness);
+	    this.drawZapWandering(from, new Pos(midX, midY), displace * 0.5f, detail);
+	    this.drawZapWandering(to, new Pos(midX, midY), displace * 0.5f, detail);
 	}
     }
 
