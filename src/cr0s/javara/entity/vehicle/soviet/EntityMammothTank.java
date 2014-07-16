@@ -14,8 +14,10 @@ import org.newdawn.slick.util.pathfinding.Path;
 
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
+import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.attack.ICanAttack;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.Weapon120mm;
 import cr0s.javara.combat.weapon.WeaponMammothTusk;
@@ -43,7 +45,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityMammothTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
+public class EntityMammothTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret, ICanAttack {
 
     private String TEXTURE_NAME = "4tnk.shp";
     private SpriteSheet texture;
@@ -293,4 +295,9 @@ public class EntityMammothTank extends EntityVehicle implements ISelectable, Mov
 	this.attack.resolveOrder(order);
 	super.resolveOrder(order);
     }      
+    
+    @Override
+    public AttackBase getAttackStrategy() {
+	return this.attack;
+    }  
 }

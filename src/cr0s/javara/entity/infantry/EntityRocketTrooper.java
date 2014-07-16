@@ -7,8 +7,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 
 import cr0s.javara.combat.Armament;
+import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.combat.attack.AttackFrontal;
 import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.attack.ICanAttack;
 import cr0s.javara.combat.weapon.WeaponDragon;
 import cr0s.javara.combat.weapon.WeaponM1Carabine;
 import cr0s.javara.entity.IHaveCost;
@@ -22,7 +24,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
 
-public class EntityRocketTrooper extends EntityInfantry implements ISelectable, IHaveCost {
+public class EntityRocketTrooper extends EntityInfantry implements ISelectable, IHaveCost, ICanAttack {
     
     private int BUILD_COST = 300;
     
@@ -113,5 +115,10 @@ public class EntityRocketTrooper extends EntityInfantry implements ISelectable, 
     @Override
     public int getBuildingCost() {
 	return BUILD_COST;
+    }
+
+    @Override
+    public AttackBase getAttackStrategy() {
+	return this.attack;
     }
 }

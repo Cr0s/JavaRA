@@ -15,8 +15,10 @@ import org.newdawn.slick.util.pathfinding.Path;
 import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.Weapon;
+import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.attack.ICanAttack;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
@@ -40,7 +42,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret {
+public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover, IHaveCost, IHaveTurret, ICanAttack {
 
     private String TEXTURE_NAME = "3tnk.shp";
     private SpriteSheet texture;
@@ -266,5 +268,10 @@ public class EntityHeavyTank extends EntityVehicle implements ISelectable, Mover
     public void resolveOrder(Order order) {
 	this.attack.resolveOrder(order);
 	super.resolveOrder(order);
+    }
+
+    @Override
+    public AttackBase getAttackStrategy() {
+	return this.attack;
     }    
 }

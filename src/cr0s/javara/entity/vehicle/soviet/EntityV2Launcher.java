@@ -16,9 +16,11 @@ import cr0s.javara.combat.Armament;
 import cr0s.javara.combat.Armament.Barrel;
 import cr0s.javara.combat.ArmorType;
 import cr0s.javara.combat.Weapon;
+import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.combat.attack.AttackFrontal;
 import cr0s.javara.combat.attack.AttackTurreted;
 import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.attack.ICanAttack;
 import cr0s.javara.combat.weapon.Weapon105mm;
 import cr0s.javara.combat.weapon.WeaponSCUD;
 import cr0s.javara.entity.Entity;
@@ -43,7 +45,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.util.Pos;
 import cr0s.javara.util.RotationUtil;
 
-public class EntityV2Launcher extends EntityVehicle implements ISelectable, Mover, IHaveCost {
+public class EntityV2Launcher extends EntityVehicle implements ISelectable, Mover, IHaveCost, ICanAttack {
 
     private String TEXTURE_NAME = "v2rl.shp";
     private SpriteSheet texture;
@@ -214,4 +216,9 @@ public class EntityV2Launcher extends EntityVehicle implements ISelectable, Move
 	this.attack.resolveOrder(order);
 	super.resolveOrder(order);
     }     
+    
+    @Override
+    public AttackBase getAttackStrategy() {
+	return this.attack;
+    }      
 }

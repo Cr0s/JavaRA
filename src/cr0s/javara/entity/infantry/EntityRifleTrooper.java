@@ -7,8 +7,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SpriteSheet;
 
 import cr0s.javara.combat.Armament;
+import cr0s.javara.combat.attack.AttackBase;
 import cr0s.javara.combat.attack.AttackFrontal;
 import cr0s.javara.combat.attack.AutoTarget;
+import cr0s.javara.combat.attack.ICanAttack;
 import cr0s.javara.combat.weapon.WeaponM1Carabine;
 import cr0s.javara.entity.IHaveCost;
 import cr0s.javara.entity.ISelectable;
@@ -21,7 +23,7 @@ import cr0s.javara.resources.ResourceManager;
 import cr0s.javara.resources.ShpTexture;
 import cr0s.javara.util.Pos;
 
-public class EntityRifleTrooper extends EntityInfantry implements ISelectable, IHaveCost {
+public class EntityRifleTrooper extends EntityInfantry implements ISelectable, IHaveCost, ICanAttack {
 
     private final int BUILD_COST = 100;
     
@@ -80,13 +82,11 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
 
     @Override
     public int getWaitAverageTime() {
-	// TODO Auto-generated method stub
 	return 50;
     }
 
     @Override
     public int getWaitSpreadTime() {
-	// TODO Auto-generated method stub
 	return 10;
     }
 
@@ -113,5 +113,10 @@ public class EntityRifleTrooper extends EntityInfantry implements ISelectable, I
     @Override
     public int getBuildingCost() {
 	return BUILD_COST;
+    }
+
+    @Override
+    public AttackBase getAttackStrategy() {
+	return this.attack;
     }
 }
