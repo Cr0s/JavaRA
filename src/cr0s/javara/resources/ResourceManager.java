@@ -110,7 +110,7 @@ public class ResourceManager {
 	    List<Path> mixFiles = listDirectoryMixes(Paths.get(RESOURCE_FOLDER));
 
 	    for (Path f : mixFiles) {
-		randomAccessFile = new RandomAccessFile(f.toString().toLowerCase(), "r");
+		randomAccessFile = new RandomAccessFile(f.toString(), "r");
 		FileChannel inChannel = randomAccessFile.getChannel();
 
 		MixFile mix = new MixFile(f.getFileName().toString(), inChannel);
