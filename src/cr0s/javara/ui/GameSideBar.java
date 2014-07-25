@@ -37,8 +37,8 @@ public class GameSideBar {
     private static final int BAR_HEIGHT = 482;
     private static final int BAR_WIDTH = 130;
 
-    private static final int BAR_SPACING_W = 25;
-    private static final int BAR_SPACING_H = 25;
+    public static final int BAR_SPACING_W = 25;
+    public static final int BAR_SPACING_H = 25;
 
     private static final int RADAR_HEIGHT = BAR_WIDTH - 4;
 
@@ -123,8 +123,8 @@ public class GameSideBar {
 	g.setColor(BG_COLOR.multiply(this.getBackgroundColor()));
 	g.fill(this.sidebarBounds);
 	this.powerBar.render(g, this.getBackgroundColor());
-	drawSideBarButtons(g);
-	drawMoney(g);
+	this.drawSideBarButtons(g);
+	this.drawMoney(g);
 	g.setColor(pColor);
 
     }

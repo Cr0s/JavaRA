@@ -49,7 +49,7 @@ public class PageVehicle extends SideBarPage {
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 1, 8, false));
 	
 	//addButton(new VehicleSidebarButton("", "icon.shp", this.getPosition(), 0, 9, false));
-	addButton(new VehicleSidebarButton("Ore truck", "harvicon.shp", this.getPosition(), 1, 9, false));
+	addButton(new VehicleSidebarButton("Ore Truck", "harvicon.shp", this.getPosition(), 1, 9, false));
     }
 
     @Override
