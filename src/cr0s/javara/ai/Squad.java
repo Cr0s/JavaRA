@@ -74,4 +74,8 @@ public class Squad {
     public ArrayList<EntityActor> getUnits() {
 	return this.units;
     }
+    
+    public StateMachine getFsm() {
+	return this.fsm;
+    }
 }
