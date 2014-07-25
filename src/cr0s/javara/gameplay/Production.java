@@ -49,9 +49,9 @@ public class Production {
     private boolean notifiedNoFunds = false;
     private final int NO_FUNDS_INTERVAL = 300;
     private int ticksBeforeNotifyNoFunds = NO_FUNDS_INTERVAL;
-    
-    private final boolean INSTANT_BUILD = true;
-    
+
+    private final boolean INSTANT_BUILD = false;
+
     public Production(Player p) {
 	this.player = p;
     }
@@ -74,11 +74,11 @@ public class Production {
 	    this.maxBuildedTicks = 1;
 	    this.buildingCost = 0;
 	}	
-	
+
 	this.isBuilding = true;
 	this.isReady = false;
 	this.isDeployed = false;
-	
+
 	if (btn == null) {
 	    ShpTexture s = ResourceManager.getInstance().getSidebarTexture(target.getName() + "icon.shp");
 	    if (s != null) {
@@ -118,15 +118,15 @@ public class Production {
 
 		if (!(this.targetActor instanceof EntityBuilding)) {
 		    this.ticksBeforeDeploy = DEPLOY_WAIT_TIME_TICKS;
-		    
+
 		    if (this.player == Main.getInstance().getPlayer()) {
 			SoundManager.getInstance().playSpeechSoundGlobal("unitrdy1");
 		    }
-		    
+
 		    this.isBuilding = false;
 		} else {
 		    this.isBuilding = false;
-		    
+
 		    if (this.player == Main.getInstance().getPlayer()) {
 			SoundManager.getInstance().playSpeechSoundGlobal("conscmp1");
 		    }
@@ -155,6 +155,17 @@ public class Production {
 	    this.isDeployed = true;
 	    this.player.getBase().deployTrainedInfantry((EntityInfantry) targetActor);
 	}
+    }
+
+    public String getBuildingTime() {
+	int buildSeconds = (int) Math.ceil((this.maxBuildedTicks - this.buildedTicks) / 20); // 20 ticks per second
+	int buildMinutes = buildSeconds / 60;
+	int buildSecRemainder = buildSeconds % 60;
+
+	String buildMin = ((buildMinutes < 10) ? "0" : "") + buildMinutes;
+	String buildSec = ((buildSecRemainder < 10) ? "0" : "") + buildSecRemainder;
+
+	return buildMin + ":" + buildSec;
     }
 
     public void setOnHold(boolean hold) {
@@ -201,7 +212,7 @@ public class Production {
 	} else {
 	    return;
 	}
-	
+
 	if (withProgress) { // Draw progress rect
 	    Color pColor = g.getColor();
 
@@ -210,10 +221,15 @@ public class Production {
 	    g.setColor(Color.white.multiply(filterColor));
 
 	    // Draw status
-	    if (this.isReady && !this.isDeployed) {
-		g.drawString("ready", x + (32 - g.getFont().getWidth("ready") / 2), y + 46 - g.getFont().getLineHeight());
-	    } else if (this.isOnHold) {
-		g.drawString("hold", x + (32 - g.getFont().getWidth("hold") / 2), y + 46 - g.getFont().getLineHeight());
+	    if (!this.isDeployed) {
+		if (this.isReady) {
+		    g.drawString("READY", x + (32 - g.getFont().getWidth("READY") / 2), y + (48 - g.getFont().getLineHeight()) / 2);
+		} else if (this.isOnHold) {
+		    g.drawString("HOLD", x + (32 - g.getFont().getWidth("HOLD") / 2), y + (48 - g.getFont().getLineHeight()) / 2);
+		} else {
+		    String time = this.getBuildingTime();
+		    g.drawString(time, x + (32 - g.getFont().getWidth(time) / 2), y + (48 - g.getFont().getLineHeight()) / 2);
+		}
 	    }
 
 	    g.setColor(pColor);
@@ -232,14 +248,14 @@ public class Production {
 	this.buildedTicks = 0;
 	this.cashSpent = 0;
 	this.buildingCost = 0;
-	
+
 	startBuildingActor(this.targetActor, this.button);
     }
-    
+
     public boolean isDeployed() {
 	return this.isDeployed;
     }
-    
+
     public float getCurrentBuildingProgress() {
 	return this.currentBuildingProgress;
     }
