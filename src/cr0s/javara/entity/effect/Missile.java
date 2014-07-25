@@ -142,7 +142,7 @@ public class Missile extends Projectile {
 	// TODO: check for walls
 	boolean shouldExplode = (this.pos.getZ() < 0)
 		|| (dist.distanceToSq(this.pos) < this.enoughRange * this.enoughRange)
-		|| (this.rangeLimit > 0 && ticks > this.rangeLimit) 
+		|| (this.rangeLimit > 0 && this.ticks > this.rangeLimit) 
 		|| (this.boundToTerrainType != null && this.world.getCellTargetType(cell) != this.boundToTerrainType);
 	
 	if (shouldExplode) {

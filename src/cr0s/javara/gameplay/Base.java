@@ -329,7 +329,11 @@ public class Base {
     }
 
     public void deployBuildedVehicle(EntityVehicle v) {
-	getPrimaryWarFactory().deployEntity(EntityVehicle.newInstance(v));
+	EntityWarFactory ewf = getPrimaryWarFactory();
+	
+	if (ewf != null) {
+	    ewf.deployEntity(EntityVehicle.newInstance(v));
+	}
     }
 
     public EntityBuilding getPrimaryBarrackOrTent() {

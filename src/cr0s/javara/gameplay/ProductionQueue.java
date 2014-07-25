@@ -7,11 +7,13 @@ import cr0s.javara.entity.actor.EntityActor;
 import cr0s.javara.entity.building.EntityBuilding;
 import cr0s.javara.entity.building.common.EntityAdvPowerPlant;
 import cr0s.javara.entity.building.common.EntityConcreteWall;
+import cr0s.javara.entity.building.common.EntityHelipad;
 import cr0s.javara.entity.building.common.EntityOreSilo;
 import cr0s.javara.entity.building.common.EntityPowerPlant;
 import cr0s.javara.entity.building.common.EntityProc;
 import cr0s.javara.entity.building.common.EntityRadarDome;
 import cr0s.javara.entity.building.common.EntityWarFactory;
+import cr0s.javara.entity.building.soviet.EntityAirField;
 import cr0s.javara.entity.building.soviet.EntityBarracks;
 import cr0s.javara.entity.building.soviet.EntityBarredWireWall;
 import cr0s.javara.entity.building.soviet.EntityFireTurret;
@@ -103,7 +105,9 @@ public class ProductionQueue {
 	this.sovietBuildings.put("siloicon.shp", new EntityOreSilo(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("weapicon.shp", new EntityWarFactory(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
-
+	this.sovietBuildings.put("afldicon.shp", new EntityAirField(0f, 0f, this.player.getTeam(), this.player));
+	this.sovietBuildings.put("hpadicon.shp", new EntityHelipad(0f, 0f, this.player.getTeam(), this.player));
+	
 	this.sovietBuildings.put("fturicon.shp", new EntityFireTurret(0f, 0f, this.player.getTeam(), this.player));
 	this.sovietBuildings.put("tslaicon.shp", new EntityTeslaCoil(0f, 0f, this.player.getTeam(), this.player));	
 	
@@ -114,7 +118,7 @@ public class ProductionQueue {
 	this.alliedBuildings.put("siloicon.shp", new EntityOreSilo(0f, 0f, this.player.getTeam(), this.player));
 	this.alliedBuildings.put("weapicon.shp", new EntityWarFactory(0f, 0f, this.player.getTeam(), this.player));
 	this.alliedBuildings.put("domeicon.shp", new EntityRadarDome(0f, 0f, this.player.getTeam(), this.player));
-	
+	this.alliedBuildings.put("hpadicon.shp", new EntityHelipad(0f, 0f, this.player.getTeam(), this.player));
 	
 	/*
 	 	addButton(new InfantrySidebarButton("", "shokicon.shp", this.getPosition(), 0, 4, false, null));

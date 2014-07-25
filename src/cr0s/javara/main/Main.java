@@ -10,6 +10,7 @@ import java.util.Random;
 
 
 
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
@@ -19,6 +20,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.openal.SoundStore;
+import org.newdawn.slick.opengl.renderer.Renderer;
 import org.newdawn.slick.state.StateBasedGame;
 
 import cr0s.javara.ai.AIPlayer;
@@ -81,6 +83,8 @@ public class Main extends StateBasedGame {
 	    AppGameContainer container = new AppGameContainer(Main.getInstance(), 1200,
 		    700, false);
 
+	    //Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
+	    
 	    container.setMinimumLogicUpdateInterval(50);
 	    container.setMaximumLogicUpdateInterval(50);
 	    container.setShowFPS(false);

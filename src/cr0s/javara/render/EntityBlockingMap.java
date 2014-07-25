@@ -261,4 +261,23 @@ public class EntityBlockingMap {
 	
 	return false;
     }
+
+    /**
+     * Returns true if any entity except building is have influence to specified cell
+     * @param cellPos cell position
+     * @return result
+     */
+    public boolean isAnyUnitInCell(Pos cellPos) {
+	if (!this.isAnyInfluenceInCell(cellPos)) {
+	    return false;
+	}
+	
+	for (Influence e : this.getCellInfluences(cellPos)) {
+	    if (e.entity != null && !(e.entity instanceof EntityBuilding)) {
+		return true;
+	    }
+	}
+	
+	return false;
+    }
 }
