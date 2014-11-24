@@ -179,7 +179,6 @@ public class AIPlayer extends Player {
 	    try {
 		input.close();
 	    } catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	}
@@ -361,7 +360,7 @@ public class AIPlayer extends Player {
 	EntityActor closest = null;
 
 	for (Entity e : Main.getInstance().getWorld().getEntitiesList()) { 
-	    if (e.isDead() || !(e instanceof EntityActor) || (e.owner.isEnemyFor(this))) {
+	    if (e.isDead() || !(e instanceof EntityActor) || (!e.owner.isEnemyFor(this))) {
 		continue;
 	    }
 
@@ -388,7 +387,9 @@ public class AIPlayer extends Player {
 		EntityActor closestEnemy = this.findClosestEnemy(this.defenseCenter);
 		Pos targetCell = (closestEnemy != null) ? closestEnemy.getCellPosition() : this.getPlayerSpawnPoint();
 
-		System.out.println("[AI] Closest enemy: " + closestEnemy.getClass().getSimpleName());
+		if (closestEnemy != null) {
+		    System.out.println("[AI] Closest enemy: " + closestEnemy.getClass().getSimpleName() + " | owner: " + closestEnemy.owner.name);
+		}
 		return this.findPosForBuilding(actorType, this.defenseCenter, targetCell, this.minimumDefenseRadius, this.maximumDefenseRadius, distanceToBaseIsImportant);
 	    } else { // In other cases place build somewhere in base
 		return this.findPosForBuilding(actorType, this.getPlayerSpawnPoint(), this.getPlayerSpawnPoint(), 0, this.maxBaseRadius, false);
@@ -805,7 +806,7 @@ public class AIPlayer extends Player {
 	}
 
 	// No any our MCV is found
-	return false;
+	return true;
     }
 
     public Random getRandom() {
