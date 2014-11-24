@@ -214,3 +214,4 @@ JavaRA.zip
 .settings/*
 .project
 .classpath
+/nbproject/private/
