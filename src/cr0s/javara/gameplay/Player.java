@@ -139,13 +139,13 @@ public class Player {
 	/*EntityConstructionYard m = new EntityConstructionYard(24.0f * this.spawnX, 24.0f * this.spawnY, team, other);
 	m.isVisible = true;
 	*/
-	EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 10, 24.0f * this.spawnY + 24 * 5, team, other);
+	/*EntityFireTurret eft = new EntityFireTurret(24.0f * this.spawnX + 24 * 10, 24.0f * this.spawnY + 24 * 5, team, other);
 	eft.isVisible = true;
 	//this.world.spawnEntityInWorld(eft);
 	
 	EntityTeslaCoil etc = new EntityTeslaCoil(24.0f * this.spawnX + 24 * 10, 24.0f * this.spawnY + 24 * 4, team, other);
 	etc.isVisible = true;
-	this.world.spawnEntityInWorld(etc);	
+	this.world.spawnEntityInWorld(etc);	*/
 /*
 	this.world.spawnEntityInWorld(m);	
 	*/

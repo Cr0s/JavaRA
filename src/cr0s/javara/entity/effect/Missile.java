@@ -149,23 +149,6 @@ public class Missile extends Projectile {
 	    explode();
 	}	
     }
-
-
-    @Override
-    public void renderEntity(Graphics g) {
-	super.renderEntity(g);
-	
-	float x = this.pos.getX();
-	float y = this.pos.getY();
-	
-	float angle = RotationUtil.facingToAngle(this.currentFacing, this.numFacings);
-	
-	float xto = x - (float) Math.sin(angle) * 5;
-	float yto = y - (float) Math.cos(angle) * 5;
-	
-	g.setColor(Color.red);
-	g.drawLine(x, y, xto, yto);	
-    }  
     
     private void explode() {
 	this.setDead();
