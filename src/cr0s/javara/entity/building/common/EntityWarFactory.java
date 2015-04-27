@@ -36,7 +36,7 @@ public class EntityWarFactory extends EntityBuilding implements ISelectable, ISh
     private final String TEXTURE_NAME_DOWN = "weap.shp";
     private final String TEXTURE_NAME_TOP = "weap2.shp";
     private final String MAKE_TEXTURE_NAME = "weapmake.shp";
-    private final int CORRUPTION_INDEX = 3;
+    private final int CORRUPTION_INDEX = 4;
 
     public static final int WIDTH_TILES = 3;
     public static final int HEIGHT_TILES = 4;
