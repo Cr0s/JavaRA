@@ -27,7 +27,7 @@ public class WeaponTeslaZap extends Weapon {
     private final static int BURST = 1;
     private final static int BURST_DELAY = 20;
     
-    private final static int DAMAGE = 25;
+    private final static int DAMAGE = 400;
     private final static float SPREAD = 1f;
     private static final float PROJECTILE_SPEED = 2.0f;
     private static final int BULLET_ANGLE = 0;
